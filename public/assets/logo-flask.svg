@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 220" fill="none">
+  
+  <g fill="currentColor">
+    
+    <path d="M78 6 h44 a6 6 0 0 1 6 6 v8 a6 6 0 0 1 -6 6 h-8 v4 h-24 v-4 h-8 a6 6 0 0 1 -6 -6 v-8 a6 6 0 0 1 6 -6 z"></path>
+  </g>
+  
+  <g stroke="currentColor" stroke-width="9" stroke-linejoin="round" stroke-linecap="round" fill="none">
+    
+    <path d="M88 34 v36 M112 34 v36"></path>
+    
+    <circle cx="100" cy="134" r="72"></circle>
+  </g>
+  
+  <g fill="currentColor" transform="translate(100 138)">
+    <text text-anchor="middle" dominant-baseline="central" font-family="&#39;Times New Roman&#39;, &#39;EB Garamond&#39;, Georgia, serif" font-style="italic" font-weight="700" font-size="86" letter-spacing="-2">X</text>
+  </g>
+  
+  <path fill="currentColor" d="M50 170&#xA;      C 68 184, 96 188, 118 180&#xA;      C 134 174, 146 168, 154 166&#xA;      C 148 176, 136 184, 120 189&#xA;      C 98 196, 72 193, 54 184&#xA;      C 50 180, 48 174, 50 170 Z"></path>
+</svg>
