@@ -1,0 +1,134 @@
+.section {
+  padding: 140px 0 120px;
+  position: relative;
+  overflow: hidden;
+}
+
+.inner {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 80px;
+  align-items: center;
+}
+
+.eyebrow {
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 11px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--fg-3);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.eyebrow::before {
+  content: '';
+  display: inline-block;
+  width: 14px;
+  height: 1px;
+  background: var(--ex-gold);
+}
+
+.signal {
+  color: var(--ex-gold);
+}
+
+.title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: clamp(44px, 6.2vw, 84px);
+  line-height: 0.98;
+  letter-spacing: 0.005em;
+  color: var(--fg-1);
+}
+
+.gold {
+  color: var(--ex-gold);
+}
+
+.body {
+  margin-top: 32px;
+  max-width: 48ch;
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--fg-2);
+}
+
+.cta {
+  margin-top: 44px;
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.card {
+  background: var(--bg-panel);
+  border: 1px solid var(--line-subtle);
+  border-radius: var(--r-4);
+  padding: 32px;
+  position: relative;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  right: 32px;
+  width: 40px;
+  height: 1px;
+  background: var(--ex-gold);
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 16px 0;
+  border-top: 1px solid var(--line-hairline);
+  font-size: 13px;
+}
+
+.row:first-of-type {
+  border-top: none;
+  padding-top: 0;
+}
+
+.k {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--fg-3);
+}
+
+.v {
+  color: var(--fg-1);
+  font-family: var(--font-mono);
+}
+
+.vSignal {
+  color: var(--ex-gold);
+}
+
+.disclaimer {
+  font-size: 12px;
+  color: var(--fg-3);
+  line-height: 1.55;
+  padding-top: 16px;
+  margin-top: 20px;
+  border-top: 1px solid var(--line-hairline);
+}
+
+@media (max-width: 1024px) {
+  .inner {
+    grid-template-columns: 1fr;
+    gap: 48px;
+  }
+  .section {
+    padding: 80px 0;
+  }
+}

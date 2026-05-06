@@ -1,0 +1,257 @@
+.section {
+  background: var(--bg-panel);
+  border-top: 1px solid var(--line-hairline);
+  border-bottom: 1px solid var(--line-hairline);
+  position: relative;
+  padding: 120px 0;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  position: relative;
+  border-top: 1px solid var(--line-subtle);
+}
+
+.step {
+  padding: 28px 28px 28px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  position: relative;
+  border-right: 1px solid var(--line-hairline);
+}
+
+.step:last-child {
+  border-right: none;
+}
+
+.step:hover .arrow {
+  color: var(--ex-gold);
+  transform: translateX(4px);
+}
+
+.step:hover .num {
+  color: var(--ex-gold);
+}
+
+.step:hover .illust {
+  border-color: var(--line-strong);
+}
+
+.head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.num {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 300;
+  font-size: 56px;
+  line-height: 0.9;
+  letter-spacing: 0.005em;
+  color: var(--fg-1);
+  transition: color 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.arrow {
+  width: 18px;
+  height: 14px;
+  color: var(--fg-3);
+  margin-top: 18px;
+  transition: all 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  flex: none;
+}
+
+.title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 22px;
+  letter-spacing: 0.04em;
+  color: var(--fg-1);
+  line-height: 1;
+}
+
+.copy {
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--fg-2);
+  max-width: 32ch;
+}
+
+.tag {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--fg-3);
+  padding-top: 14px;
+  border-top: 1px solid var(--line-hairline);
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.tagK {
+  color: var(--fg-3);
+}
+
+.tagV {
+  color: var(--fg-2);
+}
+
+/* Codified illustration tile */
+.illust {
+  margin-top: 8px;
+  aspect-ratio: 4 / 5;
+  background: var(--bg-canvas);
+  border: 1px solid var(--line-hairline);
+  border-radius: var(--r-2);
+  position: relative;
+  overflow: hidden;
+  color: var(--fg-2);
+  transition: border-color 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.illust::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(to right, rgba(234, 234, 234, 0.025) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(234, 234, 234, 0.025) 1px, transparent 1px);
+  background-size: 24px 24px;
+  pointer-events: none;
+}
+
+.illust::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent 0px,
+    transparent 3px,
+    rgba(0, 0, 0, 0.18) 3px,
+    rgba(0, 0, 0, 0.18) 4px
+  );
+  opacity: 0.4;
+  pointer-events: none;
+  mix-blend-mode: multiply;
+}
+
+.illust :global(svg) {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* Corner crosshair brackets */
+.corner {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-color: rgba(234, 234, 234, 0.18);
+  border-style: solid;
+  border-width: 0;
+  z-index: 2;
+}
+
+.cornerTl {
+  top: 8px;
+  left: 8px;
+  border-top-width: 1px;
+  border-left-width: 1px;
+}
+
+.cornerTr {
+  top: 8px;
+  right: 8px;
+  border-top-width: 1px;
+  border-right-width: 1px;
+}
+
+.cornerBl {
+  bottom: 8px;
+  left: 8px;
+  border-bottom-width: 1px;
+  border-left-width: 1px;
+}
+
+.cornerBr {
+  bottom: 8px;
+  right: 8px;
+  border-bottom-width: 1px;
+  border-right-width: 1px;
+}
+
+/* Mono coords inside the tile */
+.coord {
+  position: absolute;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--fg-3);
+  z-index: 3;
+}
+
+.coordTL {
+  top: 12px;
+  left: 22px;
+}
+
+.coordTR {
+  top: 12px;
+  right: 22px;
+}
+
+.coordBL {
+  bottom: 12px;
+  left: 22px;
+}
+
+.coordBR {
+  bottom: 12px;
+  right: 22px;
+}
+
+.coordSignal {
+  color: var(--ex-gold);
+}
+
+@media (max-width: 1024px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .step:nth-child(2n) {
+    border-right: none;
+  }
+  .step:nth-child(-n + 2) {
+    border-bottom: 1px solid var(--line-hairline);
+  }
+}
+
+@media (max-width: 720px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+  .step {
+    border-right: none;
+    border-bottom: 1px solid var(--line-hairline);
+  }
+  .step:last-child {
+    border-bottom: none;
+  }
+  .section {
+    padding: 72px 0;
+  }
+}
