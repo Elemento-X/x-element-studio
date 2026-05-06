@@ -1,0 +1,49 @@
+.btn {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: 14px 22px;
+  border-radius: var(--r-2);
+  border: 1px solid transparent;
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  transition: all var(--t-fast);
+  white-space: nowrap;
+  line-height: 1;
+}
+
+.primary {
+  background: var(--ex-gold);
+  color: var(--ex-deep-black);
+}
+
+.primary:hover {
+  background: var(--ex-gold-dim);
+}
+
+.primary .arrow {
+  transition: transform var(--t-fast);
+}
+
+.primary:hover .arrow {
+  transform: translateX(3px);
+}
+
+.ghost {
+  background: transparent;
+  color: var(--fg-2);
+  border-color: var(--line-subtle);
+}
+
+.ghost:hover {
+  color: var(--fg-1);
+  border-color: var(--line-strong);
+}
+
+.arrow {
+  width: 12px;
+  height: 10px;
+}
