@@ -1,0 +1,29 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="_card.css">
+<style>
+.field-label { font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: #6A6A6F; margin-bottom: 6px; display:block; }
+.field { width: 100%; font-family: var(--font-body); font-size: 14px; background: #0A0A0C; border: 1px solid rgba(234,234,234,0.1); color: #EAEAEA; padding: 12px 14px; border-radius: 4px; box-sizing: border-box; transition: border-color 150ms, box-shadow 150ms; }
+.field::placeholder { color: #6A6A6F; }
+.field:focus, .field.focus { outline: none; border-color: rgba(245,194,26,0.55); box-shadow: 0 0 0 1px rgba(245,194,26,0.35), 0 0 24px rgba(245,194,26,0.1); }
+.field.error { border-color: #B8443C; }
+.err { font-size: 11px; letter-spacing: 0.08em; color:#B8443C; margin-top:6px; }
+</style></head>
+<body>
+<div class="col" style="gap:14px">
+  <div class="eyebrow">Input fields · 4px radius · gold focus</div>
+  <div class="row" style="gap:12px">
+    <div style="flex:1">
+      <label class="field-label">Identifier</label>
+      <input class="field" placeholder="agent.elementox.io"/>
+    </div>
+    <div style="flex:1">
+      <label class="field-label">Access key</label>
+      <input class="field focus" value="sk-7A3F•••••••••29B"/>
+    </div>
+  </div>
+  <div>
+    <label class="field-label">Signal threshold</label>
+    <input class="field error" value="invalid entry"/>
+    <div class="err">REQUIRED · Use a numeric value.</div>
+  </div>
+</div>
+</body></html>

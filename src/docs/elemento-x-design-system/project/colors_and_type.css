@@ -1,0 +1,219 @@
+/* ============================================================
+   Elemento-X — Colors & Type tokens
+   Darkness as default. Gold as signal.
+   ============================================================ */
+
+/* Fonts — Inter is the uploaded brand typeface (shipped in /fonts as 18pt/24pt/28pt optical sizes).
+   Display: Exo 2 (loaded from Google Fonts — matches brief exactly).
+   Mono (dashboards / data): JetBrains Mono (Google Fonts). */
+@import url('https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+/* ---------- Inter — brand files, optical sizes 18 / 24 / 28 ---------- */
+/* 18pt — default for small / body / UI copy */
+@font-face { font-family: 'Inter'; font-style: normal;  font-weight: 100; src: url('fonts/Inter_18pt-Thin.ttf') format('truetype');        font-display: swap; }
+@font-face { font-family: 'Inter'; font-style: italic;  font-weight: 100; src: url('fonts/Inter_18pt-ThinItalic.ttf') format('truetype');  font-display: swap; }
+@font-face { font-family: 'Inter'; font-style: normal;  font-weight: 200; src: url('fonts/Inter_18pt-ExtraLight.ttf') format('truetype');  font-display: swap; }
+@font-face { font-family: 'Inter'; font-style: italic;  font-weight: 200; src: url('fonts/Inter_18pt-ExtraLightItalic.ttf') format('truetype'); font-display: swap; }
+@font-face { font-family: 'Inter'; font-style: normal;  font-weight: 300; src: url('fonts/Inter_18pt-Light.ttf') format('truetype');       font-display: swap; }
+@font-face { font-family: 'Inter'; font-style: italic;  font-weight: 300; src: url('fonts/Inter_18pt-LightItalic.ttf') format('truetype'); font-display: swap; }
+@font-face { font-family: 'Inter'; font-style: normal;  font-weight: 400; src: url('fonts/Inter_18pt-Regular.ttf') format('truetype');     font-display: swap; }
+@font-face { font-family: 'Inter'; font-style: italic;  font-weight: 400; src: url('fonts/Inter_18pt-Italic.ttf') format('truetype');      font-display: swap; }
+@font-face { font-family: 'Inter'; font-style: normal;  font-weight: 500; src: url('fonts/Inter_18pt-Medium.ttf') format('truetype');      font-display: swap; }
+@font-face { font-family: 'Inter'; font-style: italic;  font-weight: 500; src: url('fonts/Inter_18pt-MediumItalic.ttf') format('truetype');font-display: swap; }
+@font-face { font-family: 'Inter'; font-style: normal;  font-weight: 600; src: url('fonts/Inter_18pt-SemiBold.ttf') format('truetype');    font-display: swap; }
+@font-face { font-family: 'Inter'; font-style: italic;  font-weight: 600; src: url('fonts/Inter_18pt-SemiBoldItalic.ttf') format('truetype'); font-display: swap; }
+@font-face { font-family: 'Inter'; font-style: normal;  font-weight: 700; src: url('fonts/Inter_18pt-Bold.ttf') format('truetype');        font-display: swap; }
+@font-face { font-family: 'Inter'; font-style: italic;  font-weight: 700; src: url('fonts/Inter_18pt-BoldItalic.ttf') format('truetype');  font-display: swap; }
+@font-face { font-family: 'Inter'; font-style: normal;  font-weight: 800; src: url('fonts/Inter_18pt-ExtraBold.ttf') format('truetype');   font-display: swap; }
+@font-face { font-family: 'Inter'; font-style: italic;  font-weight: 800; src: url('fonts/Inter_18pt-ExtraBoldItalic.ttf') format('truetype'); font-display: swap; }
+@font-face { font-family: 'Inter'; font-style: normal;  font-weight: 900; src: url('fonts/Inter_18pt-Black.ttf') format('truetype');       font-display: swap; }
+@font-face { font-family: 'Inter'; font-style: italic;  font-weight: 900; src: url('fonts/Inter_18pt-BlackItalic.ttf') format('truetype'); font-display: swap; }
+
+/* 24pt — medium-size headings / callouts */
+@font-face { font-family: 'Inter Display'; font-style: normal; font-weight: 400; src: url('fonts/Inter_24pt-Regular.ttf') format('truetype'); font-display: swap; }
+@font-face { font-family: 'Inter Display'; font-style: normal; font-weight: 500; src: url('fonts/Inter_24pt-Medium.ttf') format('truetype');  font-display: swap; }
+@font-face { font-family: 'Inter Display'; font-style: normal; font-weight: 600; src: url('fonts/Inter_24pt-SemiBold.ttf') format('truetype');font-display: swap; }
+@font-face { font-family: 'Inter Display'; font-style: normal; font-weight: 700; src: url('fonts/Inter_24pt-Bold.ttf') format('truetype');    font-display: swap; }
+@font-face { font-family: 'Inter Display'; font-style: normal; font-weight: 800; src: url('fonts/Inter_24pt-ExtraBold.ttf') format('truetype'); font-display: swap; }
+
+/* 28pt — display-size headings */
+@font-face { font-family: 'Inter Headline'; font-style: normal; font-weight: 500; src: url('fonts/Inter_28pt-Medium.ttf') format('truetype');  font-display: swap; }
+@font-face { font-family: 'Inter Headline'; font-style: normal; font-weight: 600; src: url('fonts/Inter_28pt-SemiBold.ttf') format('truetype');font-display: swap; }
+@font-face { font-family: 'Inter Headline'; font-style: normal; font-weight: 700; src: url('fonts/Inter_28pt-Bold.ttf') format('truetype');    font-display: swap; }
+@font-face { font-family: 'Inter Headline'; font-style: normal; font-weight: 800; src: url('fonts/Inter_28pt-ExtraBold.ttf') format('truetype'); font-display: swap; }
+@font-face { font-family: 'Inter Headline'; font-style: normal; font-weight: 900; src: url('fonts/Inter_28pt-Black.ttf') format('truetype');   font-display: swap; }
+
+:root {
+  /* ---------- Core surface (90% dark) ---------- */
+  --ex-deep-black:   #0D0D0F;   /* canvas */
+  --ex-near-black:   #111114;   /* panels */
+  --ex-graphite:     #1A1A1E;   /* elevated surfaces */
+  --ex-dark-gray:    #2B2B2E;   /* borders, inputs */
+
+  /* ---------- Signal (10%) ---------- */
+  --ex-gold:         #F5C21A;
+  --ex-gold-dim:     #C89E14;   /* hover on gold button */
+  --ex-gold-deep:    #6E5B00;   /* subtle accents, focus ring halo */
+
+  /* ---------- Neutrals ---------- */
+  --ex-soft-white:   #EAEAEA;
+  --ex-muted-gray:   #6A6A6F;
+
+  /* ---------- Semantic foreground ---------- */
+  --fg-1: var(--ex-soft-white);   /* primary text */
+  --fg-2: #B8B8BD;                /* secondary text */
+  --fg-3: var(--ex-muted-gray);   /* tertiary / meta */
+  --fg-signal: var(--ex-gold);    /* accent */
+
+  /* ---------- Semantic background ---------- */
+  --bg-canvas:  var(--ex-deep-black);
+  --bg-panel:   var(--ex-near-black);
+  --bg-raised:  var(--ex-graphite);
+  --bg-input:   #0A0A0C;
+
+  /* ---------- Lines & edges ---------- */
+  --line-hairline: rgba(234, 234, 234, 0.06);  /* the default system border */
+  --line-subtle:   rgba(234, 234, 234, 0.10);
+  --line-strong:   rgba(234, 234, 234, 0.16);
+  --line-gold:     rgba(245, 194, 26, 0.45);
+
+  /* ---------- Radii ---------- */
+  --r-1: 2px;
+  --r-2: 4px;
+  --r-3: 6px;
+  --r-4: 8px;      /* MAX — brief */
+
+  /* ---------- Spacing (4px base) ---------- */
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 24px;
+  --s-6: 32px;
+  --s-7: 48px;
+  --s-8: 64px;
+  --s-9: 96px;
+
+  /* ---------- Shadows (soft, almost invisible) ---------- */
+  --shadow-1: 0 1px 0 rgba(0,0,0,0.6);
+  --shadow-2: 0 2px 10px rgba(0,0,0,0.45);
+  --shadow-3: 0 10px 40px rgba(0,0,0,0.55);
+  --glow-gold: 0 0 0 1px rgba(245,194,26,0.35), 0 0 24px rgba(245,194,26,0.10);
+
+  /* ---------- Type ramp ---------- */
+  --font-display: 'Exo 2', 'Inter Headline', 'Neue Haas Grotesk', system-ui, sans-serif;
+  --font-body:    'Inter', 'Söhne', system-ui, -apple-system, sans-serif;
+  --font-headline:'Inter Headline', 'Inter', system-ui, sans-serif;
+  --font-mono:    'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace;
+
+  /* Display (Exo 2) — uppercase, wide tracking */
+  --h-display-size: 72px; --h-display-lh: 0.95; --h-display-track: 0.02em;
+  --h1-size: 40px;        --h1-lh: 1.05;         --h1-track: 0.01em;
+  --h2-size: 28px;        --h2-lh: 1.15;         --h2-track: 0.02em;
+  --h3-size: 20px;        --h3-lh: 1.25;         --h3-track: 0.02em;
+
+  /* Eyebrow / kicker — tiny, uppercase, wide tracking */
+  --eyebrow-size: 11px;   --eyebrow-track: 0.22em;
+
+  /* Body */
+  --body-size: 15px;  --body-lh: 1.55;
+  --small-size: 13px; --small-lh: 1.5;
+  --caption-size: 12px; --caption-lh: 1.4;
+
+  /* Data */
+  --data-xl: 48px;
+  --data-lg: 32px;
+  --data-md: 20px;
+}
+
+/* Body default */
+html, body {
+  background: var(--bg-canvas);
+  color: var(--fg-1);
+  font-family: var(--font-body);
+  font-size: var(--body-size);
+  line-height: var(--body-lh);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: 'ss01', 'cv11';
+}
+
+/* ---------- Semantic element styles ---------- */
+.ex-display, h1.ex-display {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--h-display-size);
+  line-height: var(--h-display-lh);
+  letter-spacing: var(--h-display-track);
+  text-transform: uppercase;
+  color: var(--fg-1);
+  margin: 0;
+}
+
+h1, .ex-h1 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--h1-size);
+  line-height: var(--h1-lh);
+  letter-spacing: var(--h1-track);
+  text-transform: uppercase;
+  color: var(--fg-1);
+  margin: 0;
+}
+
+h2, .ex-h2 {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: var(--h2-size);
+  line-height: var(--h2-lh);
+  letter-spacing: var(--h2-track);
+  color: var(--fg-1);
+  margin: 0;
+}
+
+h3, .ex-h3 {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: var(--h3-size);
+  line-height: var(--h3-lh);
+  letter-spacing: var(--h3-track);
+  color: var(--fg-1);
+  margin: 0;
+}
+
+.ex-eyebrow {
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: var(--eyebrow-size);
+  line-height: 1;
+  letter-spacing: var(--eyebrow-track);
+  text-transform: uppercase;
+  color: var(--fg-3);
+}
+
+p, .ex-body {
+  font-size: var(--body-size);
+  line-height: var(--body-lh);
+  color: var(--fg-2);
+  margin: 0;
+}
+
+small, .ex-small {
+  font-size: var(--small-size);
+  line-height: var(--small-lh);
+  color: var(--fg-3);
+}
+
+code, .ex-mono, .ex-data {
+  font-family: var(--font-mono);
+  font-feature-settings: 'tnum';
+}
+
+.ex-data-xl { font-family: var(--font-mono); font-size: var(--data-xl); font-weight: 500; letter-spacing: -0.01em; color: var(--fg-1); line-height: 1; }
+.ex-data-lg { font-family: var(--font-mono); font-size: var(--data-lg); font-weight: 500; letter-spacing: -0.01em; color: var(--fg-1); line-height: 1; }
+.ex-data-md { font-family: var(--font-mono); font-size: var(--data-md); font-weight: 500; color: var(--fg-1); line-height: 1; }
+
+.ex-signal { color: var(--fg-signal); }
+
+/* subtle scanline-style divider used throughout the system */
+.ex-hairline { height: 1px; background: var(--line-hairline); width: 100%; }

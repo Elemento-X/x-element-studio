@@ -1,0 +1,21 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="_card.css">
+<style>
+.link { font-family: var(--font-body); font-weight: 500; font-size: 13px; letter-spacing: 0.04em; text-decoration: none; display:inline-flex; align-items:center; gap:8px; transition: color 150ms; cursor: pointer; }
+.link-default { color: #B8B8BD; }
+.link-default:hover { color: #EAEAEA; }
+.link-signal { color: #F5C21A; border-bottom: 1px solid rgba(245,194,26,0.35); padding-bottom: 2px; }
+.link-signal:hover { border-color: #F5C21A; }
+.link-muted { color: #6A6A6F; }
+.link-muted:hover { color: #B8B8BD; }
+</style></head>
+<body>
+<div class="col" style="gap:14px">
+  <div class="eyebrow">Links · text · tertiary</div>
+  <div class="row" style="gap:22px;flex-wrap:wrap">
+    <a class="link link-default" href="#">Default link<svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 6h8M7 3l3 3-3 3"/></svg></a>
+    <a class="link link-signal" href="#">Signal link<svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 6h8M7 3l3 3-3 3"/></svg></a>
+    <a class="link link-muted" href="#">Meta link</a>
+    <a class="link link-default" href="#"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 2L2 5l3 3M2 5h8"/></svg>Back</a>
+  </div>
+</div>
+</body></html>

@@ -1,0 +1,24 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="_card.css">
+<style>
+.badge { font-family: var(--font-body); font-weight:500; font-size:10px; letter-spacing:0.2em; text-transform:uppercase; padding:5px 10px; border-radius:3px; display:inline-flex; align-items:center; gap:6px; border:1px solid transparent; }
+.dot { width:6px; height:6px; border-radius:50%; }
+.b-active { background: rgba(245,194,26,0.08); color:#F5C21A; border-color: rgba(245,194,26,0.3); }
+.b-neutral { background: rgba(234,234,234,0.04); color:#B8B8BD; border-color: rgba(234,234,234,0.1); }
+.b-mute { color:#6A6A6F; border-color:rgba(234,234,234,0.06); }
+.b-warn { background: rgba(184,68,60,0.1); color:#E87264; border-color: rgba(232,114,100,0.3); }
+.b-ok { color:#8BB89A; border-color: rgba(139,184,154,0.25); }
+</style></head>
+<body>
+<div class="col" style="gap:14px">
+  <div class="eyebrow">Badges · status chips</div>
+  <div class="row" style="gap:8px;flex-wrap:wrap">
+    <span class="badge b-active"><span class="dot" style="background:#F5C21A"></span>Signal</span>
+    <span class="badge b-ok"><span class="dot" style="background:#8BB89A"></span>Operational</span>
+    <span class="badge b-neutral">Standby</span>
+    <span class="badge b-mute">Archived</span>
+    <span class="badge b-warn"><span class="dot" style="background:#E87264"></span>Review</span>
+    <span class="badge b-neutral" style="font-family:var(--font-mono);letter-spacing:0.08em">v2.4.1</span>
+    <span class="badge b-neutral" style="font-family:var(--font-mono);letter-spacing:0.08em">EX-2049</span>
+  </div>
+</div>
+</body></html>

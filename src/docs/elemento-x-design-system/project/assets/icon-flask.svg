@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none">
+  
+  <g stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    
+    <circle cx="100" cy="116" r="64"></circle>
+    
+    <path d="M84 16v42"></path>
+    <path d="M116 16v42"></path>
+    
+    <path d="M80 16h40"></path>
+  </g>
+  
+  <text x="100" y="135" text-anchor="middle" font-family="&#39;Times New Roman&#39;, &#39;EB Garamond&#39;, serif" font-size="80" font-style="italic" font-weight="700" fill="currentColor" stroke="none">X</text>
+  
+  <path d="M60 156 Q100 176 140 156 Q112 168 88 164 Q72 162 60 156 Z" fill="currentColor"></path>
+</svg>

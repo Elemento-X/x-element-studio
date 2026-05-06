@@ -1,0 +1,22 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="_card.css">
+<style>
+.btn { font-family: var(--font-body); font-weight: 600; font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; padding: 12px 22px; border-radius: 4px; cursor: pointer; display: inline-flex; align-items: center; gap: 10px; transition: all 150ms; }
+.btn-ghost { background: transparent; color: #B8B8BD; border: 1px solid rgba(234,234,234,0.1); }
+.btn-ghost:hover, .btn-ghost.hover { color: #EAEAEA; border-color: rgba(234,234,234,0.16); }
+.btn-ghost.pressed { background: rgba(234,234,234,0.03); }
+.btn-ghost.active { color: #F5C21A; border-color: rgba(245,194,26,0.45); }
+.btn-ghost.disabled { color: #6A6A6F; border-color: rgba(234,234,234,0.06); cursor: not-allowed; }
+</style></head>
+<body>
+<div class="col" style="gap:14px">
+  <div class="eyebrow">Button · Secondary (ghost / outline)</div>
+  <div class="row" style="gap:12px;flex-wrap:wrap">
+    <button class="btn btn-ghost">Default</button>
+    <button class="btn btn-ghost hover">Hover</button>
+    <button class="btn btn-ghost pressed">Pressed</button>
+    <button class="btn btn-ghost active">Active</button>
+    <button class="btn btn-ghost disabled">Disabled</button>
+  </div>
+  <div class="mono" style="color:var(--fg-3)">Use for all non-primary actions. Pair with one primary per view.</div>
+</div>
+</body></html>

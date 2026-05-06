@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none">
+  <g stroke="currentColor" stroke-width="3" stroke-linecap="square" stroke-linejoin="miter" fill="none">
+    <rect x="20" y="18" width="80" height="20"></rect>
+    <rect x="20" y="50" width="80" height="20"></rect>
+    <rect x="20" y="82" width="80" height="20"></rect>
+  </g>
+  <circle cx="60" cy="28" r="3" fill="currentColor"></circle>
+  <circle cx="60" cy="60" r="3" fill="currentColor"></circle>
+  <circle cx="60" cy="92" r="3" fill="currentColor"></circle>
+</svg>
