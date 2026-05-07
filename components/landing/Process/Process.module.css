@@ -38,6 +38,7 @@
 
 .step:hover .illust {
   border-color: var(--line-strong);
+  box-shadow: inset 0 0 60px rgba(245, 194, 26, 0.04);
 }
 
 .head {
@@ -226,6 +227,205 @@
 
 .coordSignal {
   color: var(--ex-gold);
+}
+
+/* ── DiscoverIllust animations ──────────────────────────────────── */
+
+/* Initial hidden state — must be scoped under local class (.illust) for CSS Modules */
+.illust :global(.disc-ch-l),
+.illust :global(.disc-ch-r),
+.illust :global(.disc-ch-t),
+.illust :global(.disc-ch-b),
+.illust :global(.disc-trace),
+.illust :global(.disc-node) {
+  opacity: 0;
+}
+
+.illust :global(.disc-iris) {
+  opacity: 0;
+  d: path('M50 120 C 70 120, 130 120, 150 120 C 130 120, 70 120, 50 120 Z');
+}
+
+.illust :global(.disc-sig) {
+  opacity: 0;
+  clip-path: inset(0 100% 0 0);
+}
+
+.illust :global(.disc-iris-gold) {
+  stroke-dasharray: 88;
+  stroke-dashoffset: 88;
+}
+
+.illust :global(.disc-trace-draw) {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  opacity: 0;
+}
+
+/* Keyframes */
+@keyframes disc-ring-scan {
+  to {
+    stroke-dashoffset: 40;
+  }
+}
+
+@keyframes disc-pulse-gold {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.55;
+  }
+}
+
+@keyframes disc-node-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.65;
+  }
+}
+
+@keyframes disc-ch-in {
+  from {
+    opacity: 0;
+    transform: translate(var(--dx, 0px), var(--dy, 0px));
+  }
+  to {
+    opacity: 1;
+    transform: translate(0, 0);
+  }
+}
+
+@keyframes disc-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 0.6;
+  }
+}
+
+@keyframes disc-node-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes disc-typewriter {
+  from {
+    opacity: 0;
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    opacity: 1;
+    clip-path: inset(0 0% 0 0);
+  }
+}
+
+@keyframes disc-iris-open {
+  from {
+    opacity: 0;
+    d: path('M50 120 C 70 120, 130 120, 150 120 C 130 120, 70 120, 50 120 Z');
+  }
+  to {
+    opacity: 1;
+    d: path('M50 120 C 70 96, 130 96, 150 120 C 130 144, 70 144, 50 120 Z');
+  }
+}
+
+@keyframes disc-iris-gold-draw {
+  from {
+    stroke-dashoffset: 88;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes disc-trace-reveal {
+  0% {
+    stroke-dashoffset: 1;
+    opacity: 1;
+  }
+  80% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 0;
+  }
+}
+
+/* Trigger: .illustIn applied when card enters viewport */
+/* All delays include a 400ms base offset so the user has time to arrive before animations start */
+
+.illustIn :global(.disc-ring-dash) {
+  animation: disc-ring-scan 4s linear 400ms infinite;
+}
+
+.illustIn :global(.disc-pupil) {
+  animation: disc-pulse-gold 2.4s ease-in-out 600ms infinite;
+}
+
+.illustIn :global(.disc-ch-l) {
+  --dx: -4px;
+  --dy: 0px;
+  animation: disc-ch-in 300ms cubic-bezier(0.2, 0.8, 0.2, 1) 400ms both;
+}
+.illustIn :global(.disc-ch-r) {
+  --dx: 4px;
+  --dy: 0px;
+  animation: disc-ch-in 300ms cubic-bezier(0.2, 0.8, 0.2, 1) 480ms both;
+}
+.illustIn :global(.disc-ch-t) {
+  --dx: 0px;
+  --dy: -4px;
+  animation: disc-ch-in 300ms cubic-bezier(0.2, 0.8, 0.2, 1) 560ms both;
+}
+.illustIn :global(.disc-ch-b) {
+  --dx: 0px;
+  --dy: 4px;
+  animation: disc-ch-in 300ms cubic-bezier(0.2, 0.8, 0.2, 1) 640ms both;
+}
+
+.illustIn :global(.disc-iris) {
+  animation: disc-iris-open 700ms cubic-bezier(0.2, 0.8, 0.2, 1) 400ms both;
+}
+
+.illustIn :global(.disc-iris-gold) {
+  animation: disc-iris-gold-draw 700ms cubic-bezier(0.2, 0.8, 0.2, 1) 500ms both;
+}
+
+.illustIn :global(.disc-trace-draw) {
+  animation: disc-trace-reveal 550ms cubic-bezier(0.2, 0.8, 0.2, 1) 750ms both;
+}
+
+.illustIn :global(.disc-trace) {
+  animation: disc-fade-in 300ms ease-out 1250ms both;
+}
+
+.illustIn :global(.disc-node) {
+  animation:
+    disc-node-in 200ms ease-out 900ms both,
+    disc-node-pulse 1.6s ease-in-out 1100ms infinite;
+}
+
+.illustIn :global(.disc-sig) {
+  animation: disc-typewriter 800ms cubic-bezier(0.2, 0.8, 0.2, 1) 800ms both;
+}
+
+/* Hover boost — intensifies gold on Discover card */
+.step:hover .illustIn :global(.disc-pupil),
+.step:hover .illustIn :global(.disc-ring-dash) {
+  animation-play-state: running;
 }
 
 @media (max-width: 1024px) {

@@ -29,6 +29,7 @@ export function DiscoverIllust() {
         strokeWidth="0.8"
       />
       <circle
+        className="disc-ring-dash"
         cx="100"
         cy="120"
         r="52"
@@ -47,12 +48,14 @@ export function DiscoverIllust() {
       />
 
       <path
+        className="disc-iris"
         d="M50 120 C 70 96, 130 96, 150 120 C 130 144, 70 144, 50 120 Z"
         fill="none"
         stroke="rgba(234,234,234,0.55)"
         strokeWidth="1.3"
       />
       <circle
+        className="disc-iris-gold"
         cx="100"
         cy="120"
         r="14"
@@ -60,13 +63,13 @@ export function DiscoverIllust() {
         stroke="#F5C21A"
         strokeWidth="1.3"
       />
-      <circle cx="100" cy="120" r="4" fill="#F5C21A" />
+      <circle className="disc-pupil" cx="100" cy="120" r="4" fill="#F5C21A" />
 
       <g stroke="rgba(234,234,234,0.30)" strokeWidth="0.8">
-        <line x1="20" y1="120" x2="44" y2="120" />
-        <line x1="156" y1="120" x2="180" y2="120" />
-        <line x1="100" y1="40" x2="100" y2="64" />
-        <line x1="100" y1="176" x2="100" y2="200" />
+        <line className="disc-ch-l" x1="20" y1="120" x2="44" y2="120" />
+        <line className="disc-ch-r" x1="156" y1="120" x2="180" y2="120" />
+        <line className="disc-ch-t" x1="100" y1="40" x2="100" y2="64" />
+        <line className="disc-ch-b" x1="100" y1="176" x2="100" y2="200" />
       </g>
 
       <g fill="rgba(234,234,234,0.40)">
@@ -79,8 +82,18 @@ export function DiscoverIllust() {
         <circle cx="148" cy="196" r="1.6" />
         <circle cx="178" cy="170" r="1.2" />
       </g>
-      <circle cx="160" cy="56" r="3" fill="#F5C21A" />
+      <circle className="disc-node" cx="160" cy="56" r="3" fill="#F5C21A" />
+      <path
+        className="disc-trace-draw"
+        d="M100 120 L160 56"
+        fill="none"
+        stroke="#F5C21A"
+        strokeWidth="1.0"
+        strokeLinecap="round"
+        pathLength="1"
+      />
       <line
+        className="disc-trace"
         x1="100"
         y1="120"
         x2="160"
@@ -97,7 +110,7 @@ export function DiscoverIllust() {
         fill="rgba(234,234,234,0.45)"
         letterSpacing="0.08em"
       >
-        <text x="44" y="232">
+        <text className="disc-sig" x="44" y="232">
           SIG · 0.94
         </text>
         <text x="120" y="232">
