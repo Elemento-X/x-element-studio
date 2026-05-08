@@ -36,9 +36,13 @@
   color: var(--ex-gold);
 }
 
+.step:hover .title {
+  color: var(--ex-gold);
+}
+
 .step:hover .illust {
   border-color: var(--line-strong);
-  box-shadow: inset 0 0 60px rgba(245, 194, 26, 0.04);
+  box-shadow: inset 0 0 20px rgba(245, 194, 26, 0.02);
 }
 
 .head {
@@ -76,6 +80,7 @@
   letter-spacing: 0.04em;
   color: var(--fg-1);
   line-height: 1;
+  transition: color 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 .copy {
@@ -229,9 +234,101 @@
   color: var(--ex-gold);
 }
 
-/* ── DiscoverIllust animations ──────────────────────────────────── */
+/* ── Sequential animation system ───────────────────────────────────
+   Observer fires once on .grid → .gridActive is set.
+   Each step starts immediately after the previous one ends (0ms gap):
+     Step 1 (Discover):  400ms  → ends ~1600ms
+     Step 2 (Architect): 1600ms → ends ~3100ms
+     Step 3 (Build):     3100ms → ends ~3950ms
+     Step 4 (Scale):     3950ms
+   ──────────────────────────────────────────────────────────────── */
 
-/* Initial hidden state — must be scoped under local class (.illust) for CSS Modules */
+/* ── Active state: num + title fade to gold; arrow also ticks on transition ── */
+
+@keyframes step-glow {
+  0% {
+    color: var(--fg-1);
+  }
+  15% {
+    color: var(--ex-gold);
+  }
+  85% {
+    color: var(--ex-gold);
+  }
+  100% {
+    color: var(--fg-1);
+  }
+}
+
+@keyframes step-arrow-tick {
+  0% {
+    transform: translateX(0);
+  }
+  45% {
+    transform: translateX(4px);
+  }
+  55% {
+    transform: translateX(4px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+/* Hover disabled during animation; re-enables when ALL·OK appears (5350ms) */
+@keyframes enable-hover {
+  to {
+    pointer-events: auto;
+  }
+}
+
+.gridActive .step {
+  pointer-events: none;
+  animation: enable-hover 1ms linear 5350ms forwards;
+}
+
+/* Step 1 — tick fires at glow start (400ms), in sync */
+.gridActive .step:nth-child(1) .num,
+.gridActive .step:nth-child(1) .title {
+  animation: step-glow 1200ms cubic-bezier(0.2, 0.8, 0.2, 1) 400ms;
+}
+.gridActive .step:nth-child(1) .arrow {
+  animation:
+    step-glow 1200ms cubic-bezier(0.2, 0.8, 0.2, 1) 400ms,
+    step-arrow-tick 500ms ease-in-out 400ms;
+}
+
+/* Step 2 — tick fires at glow start (1600ms), in sync */
+.gridActive .step:nth-child(2) .num,
+.gridActive .step:nth-child(2) .title {
+  animation: step-glow 1500ms cubic-bezier(0.2, 0.8, 0.2, 1) 1600ms;
+}
+.gridActive .step:nth-child(2) .arrow {
+  animation:
+    step-glow 1500ms cubic-bezier(0.2, 0.8, 0.2, 1) 1600ms,
+    step-arrow-tick 500ms ease-in-out 1600ms;
+}
+
+/* Step 3 — tick fires at glow start (3100ms), in sync */
+.gridActive .step:nth-child(3) .num,
+.gridActive .step:nth-child(3) .title {
+  animation: step-glow 850ms cubic-bezier(0.2, 0.8, 0.2, 1) 3100ms;
+}
+.gridActive .step:nth-child(3) .arrow {
+  animation:
+    step-glow 850ms cubic-bezier(0.2, 0.8, 0.2, 1) 3100ms,
+    step-arrow-tick 500ms ease-in-out 3100ms;
+}
+
+/* Step 4 — glow 3950ms+; no tick (last step) */
+.gridActive .step:nth-child(4) .num,
+.gridActive .step:nth-child(4) .title,
+.gridActive .step:nth-child(4) .arrow {
+  animation: step-glow 1500ms cubic-bezier(0.2, 0.8, 0.2, 1) 3950ms;
+}
+
+/* ── DiscoverIllust ─────────────────────────────────────────────── */
+
 .illust :global(.disc-ch-l),
 .illust :global(.disc-ch-r),
 .illust :global(.disc-ch-t),
@@ -262,13 +359,11 @@
   opacity: 0;
 }
 
-/* Keyframes */
 @keyframes disc-ring-scan {
   to {
     stroke-dashoffset: 40;
   }
 }
-
 @keyframes disc-pulse-gold {
   0%,
   100% {
@@ -278,7 +373,6 @@
     opacity: 0.55;
   }
 }
-
 @keyframes disc-node-pulse {
   0%,
   100% {
@@ -288,7 +382,6 @@
     opacity: 0.65;
   }
 }
-
 @keyframes disc-ch-in {
   from {
     opacity: 0;
@@ -299,7 +392,6 @@
     transform: translate(0, 0);
   }
 }
-
 @keyframes disc-fade-in {
   from {
     opacity: 0;
@@ -308,7 +400,6 @@
     opacity: 0.6;
   }
 }
-
 @keyframes disc-node-in {
   from {
     opacity: 0;
@@ -317,7 +408,6 @@
     opacity: 1;
   }
 }
-
 @keyframes disc-typewriter {
   from {
     opacity: 0;
@@ -328,7 +418,6 @@
     clip-path: inset(0 0% 0 0);
   }
 }
-
 @keyframes disc-iris-open {
   from {
     opacity: 0;
@@ -339,7 +428,6 @@
     d: path('M50 120 C 70 96, 130 96, 150 120 C 130 144, 70 144, 50 120 Z');
   }
 }
-
 @keyframes disc-iris-gold-draw {
   from {
     stroke-dashoffset: 88;
@@ -348,7 +436,6 @@
     stroke-dashoffset: 0;
   }
 }
-
 @keyframes disc-trace-reveal {
   0% {
     stroke-dashoffset: 1;
@@ -364,68 +451,351 @@
   }
 }
 
-/* Trigger: .illustIn applied when card enters viewport */
-/* All delays include a 400ms base offset so the user has time to arrive before animations start */
-
-.illustIn :global(.disc-ring-dash) {
+.gridActive .step:nth-child(1) .illust :global(.disc-ring-dash) {
   animation: disc-ring-scan 4s linear 400ms infinite;
 }
-
-.illustIn :global(.disc-pupil) {
+.gridActive .step:nth-child(1) .illust :global(.disc-pupil) {
   animation: disc-pulse-gold 2.4s ease-in-out 600ms infinite;
 }
-
-.illustIn :global(.disc-ch-l) {
+.gridActive .step:nth-child(1) .illust :global(.disc-ch-l) {
   --dx: -4px;
   --dy: 0px;
   animation: disc-ch-in 300ms cubic-bezier(0.2, 0.8, 0.2, 1) 400ms both;
 }
-.illustIn :global(.disc-ch-r) {
+.gridActive .step:nth-child(1) .illust :global(.disc-ch-r) {
   --dx: 4px;
   --dy: 0px;
   animation: disc-ch-in 300ms cubic-bezier(0.2, 0.8, 0.2, 1) 480ms both;
 }
-.illustIn :global(.disc-ch-t) {
+.gridActive .step:nth-child(1) .illust :global(.disc-ch-t) {
   --dx: 0px;
   --dy: -4px;
   animation: disc-ch-in 300ms cubic-bezier(0.2, 0.8, 0.2, 1) 560ms both;
 }
-.illustIn :global(.disc-ch-b) {
+.gridActive .step:nth-child(1) .illust :global(.disc-ch-b) {
   --dx: 0px;
   --dy: 4px;
   animation: disc-ch-in 300ms cubic-bezier(0.2, 0.8, 0.2, 1) 640ms both;
 }
-
-.illustIn :global(.disc-iris) {
+.gridActive .step:nth-child(1) .illust :global(.disc-iris) {
   animation: disc-iris-open 700ms cubic-bezier(0.2, 0.8, 0.2, 1) 400ms both;
 }
-
-.illustIn :global(.disc-iris-gold) {
+.gridActive .step:nth-child(1) .illust :global(.disc-iris-gold) {
   animation: disc-iris-gold-draw 700ms cubic-bezier(0.2, 0.8, 0.2, 1) 500ms both;
 }
-
-.illustIn :global(.disc-trace-draw) {
+.gridActive .step:nth-child(1) .illust :global(.disc-trace-draw) {
   animation: disc-trace-reveal 550ms cubic-bezier(0.2, 0.8, 0.2, 1) 750ms both;
 }
-
-.illustIn :global(.disc-trace) {
+.gridActive .step:nth-child(1) .illust :global(.disc-trace) {
   animation: disc-fade-in 300ms ease-out 1250ms both;
 }
-
-.illustIn :global(.disc-node) {
+.gridActive .step:nth-child(1) .illust :global(.disc-node) {
   animation:
     disc-node-in 200ms ease-out 900ms both,
     disc-node-pulse 1.6s ease-in-out 1100ms infinite;
 }
-
-.illustIn :global(.disc-sig) {
+.gridActive .step:nth-child(1) .illust :global(.disc-sig) {
   animation: disc-typewriter 800ms cubic-bezier(0.2, 0.8, 0.2, 1) 800ms both;
 }
 
-/* Hover boost — intensifies gold on Discover card */
-.step:hover .illustIn :global(.disc-pupil),
-.step:hover .illustIn :global(.disc-ring-dash) {
-  animation-play-state: running;
+/* ── ArchitectIllust ────────────────────────────────────────────── */
+/* Starts at 1600ms. Layers appear L1→L2→L3→L4, 300ms stagger.      */
+/* L2 stays gold naturally (inline SVG stroke="#F5C21A").            */
+
+.illust :global(.arch-l4),
+.illust :global(.arch-l3),
+.illust :global(.arch-l2),
+.illust :global(.arch-l1) {
+  opacity: 0;
+}
+.illust :global(.arch-connector),
+.illust :global(.arch-labels) {
+  opacity: 0;
+}
+
+@keyframes arch-activate {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes arch-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.gridActive .step:nth-child(2) .illust :global(.arch-labels) {
+  animation: arch-fade 300ms ease 1600ms both;
+}
+.gridActive .step:nth-child(2) .illust :global(.arch-l1) {
+  animation: arch-activate 400ms cubic-bezier(0.2, 0.8, 0.2, 1) 1600ms both;
+}
+.gridActive .step:nth-child(2) .illust :global(.arch-l2) {
+  animation: arch-activate 400ms cubic-bezier(0.2, 0.8, 0.2, 1) 1900ms both;
+}
+.gridActive .step:nth-child(2) .illust :global(.arch-l3) {
+  animation: arch-activate 400ms cubic-bezier(0.2, 0.8, 0.2, 1) 2200ms both;
+}
+.gridActive .step:nth-child(2) .illust :global(.arch-l4) {
+  animation: arch-activate 400ms cubic-bezier(0.2, 0.8, 0.2, 1) 2500ms both;
+}
+.gridActive .step:nth-child(2) .illust :global(.arch-connector) {
+  animation: arch-fade 500ms ease 2600ms both;
+}
+
+/* Hover: L2 (gold layer) intensifies */
+.step:hover .illust :global(.arch-l2) {
+  filter: brightness(1.2);
+  transition: filter 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* ── BuildIllust ────────────────────────────────────────────────── */
+/* Starts at 3100ms (0ms gap after Architect ends ~3100ms)           */
+
+.illust :global(.build-col-1),
+.illust :global(.build-col-2),
+.illust :global(.build-col-3),
+.illust :global(.build-col-4),
+.illust :global(.build-col-5),
+.illust :global(.build-pipeline),
+.illust :global(.build-dot-gold),
+.illust :global(.build-arrow) {
+  opacity: 0;
+}
+
+@keyframes build-col-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes build-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes build-dot-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+@keyframes build-arrow-tick {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(2px);
+  }
+}
+
+/* Columns reveal left→right, stagger 70ms */
+.gridActive .step:nth-child(3) .illust :global(.build-col-1) {
+  animation: build-col-in 480ms cubic-bezier(0.2, 0.8, 0.2, 1) 3100ms both;
+}
+.gridActive .step:nth-child(3) .illust :global(.build-col-2) {
+  animation: build-col-in 480ms cubic-bezier(0.2, 0.8, 0.2, 1) 3170ms both;
+}
+.gridActive .step:nth-child(3) .illust :global(.build-col-3) {
+  animation: build-col-in 480ms cubic-bezier(0.2, 0.8, 0.2, 1) 3240ms both;
+}
+.gridActive .step:nth-child(3) .illust :global(.build-col-4) {
+  animation: build-col-in 480ms cubic-bezier(0.2, 0.8, 0.2, 1) 3310ms both;
+}
+.gridActive .step:nth-child(3) .illust :global(.build-col-5) {
+  animation: build-col-in 480ms cubic-bezier(0.2, 0.8, 0.2, 1) 3380ms both;
+}
+.gridActive .step:nth-child(3) .illust :global(.build-pipeline) {
+  animation: build-fade 300ms ease 3600ms both;
+}
+.gridActive .step:nth-child(3) .illust :global(.build-dot-gold) {
+  animation:
+    build-fade 200ms ease 3700ms both,
+    build-dot-pulse 1.8s ease-in-out 3900ms infinite;
+}
+.gridActive .step:nth-child(3) .illust :global(.build-arrow) {
+  animation:
+    build-fade 200ms ease 3750ms both,
+    build-arrow-tick 2s ease-in-out 3950ms infinite;
+}
+
+/* Hover: non-gold columns dim */
+.step:hover .illust :global(.build-col-1),
+.step:hover .illust :global(.build-col-2),
+.step:hover .illust :global(.build-col-3),
+.step:hover .illust :global(.build-col-5) {
+  opacity: 0.35;
+  transition: opacity 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* ── ScaleIllust ────────────────────────────────────────────────── */
+/* Starts at 3950ms (0ms gap after Build ends ~3950ms)              */
+
+.illust :global(.scale-core),
+.illust :global(.scale-center),
+.illust :global(.scale-n-0),
+.illust :global(.scale-n-1),
+.illust :global(.scale-n-2),
+.illust :global(.scale-gold-node),
+.illust :global(.scale-n-3),
+.illust :global(.scale-n-4),
+.illust :global(.scale-trace),
+.illust :global(.scale-target),
+.illust :global(.scale-allok) {
+  opacity: 0;
+}
+
+@keyframes scale-ring-scan {
+  to {
+    stroke-dashoffset: -40;
+  }
+}
+@keyframes scale-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes scale-gold-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+@keyframes scale-typewriter {
+  from {
+    opacity: 0;
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    opacity: 1;
+    clip-path: inset(0 0% 0 0);
+  }
+}
+
+.illust :global(.scale-allok) {
+  clip-path: inset(0 100% 0 0);
+}
+
+.gridActive .step:nth-child(4) .illust :global(.scale-ring-dash) {
+  animation: scale-ring-scan 8s linear 3950ms infinite;
+}
+.gridActive .step:nth-child(4) .illust :global(.scale-core),
+.gridActive .step:nth-child(4) .illust :global(.scale-center) {
+  animation: scale-fade 400ms ease 3950ms both;
+}
+/* 6 nodes stagger 80ms */
+.gridActive .step:nth-child(4) .illust :global(.scale-n-0) {
+  animation: scale-fade 300ms ease 3950ms both;
+}
+.gridActive .step:nth-child(4) .illust :global(.scale-n-1) {
+  animation: scale-fade 300ms ease 4030ms both;
+}
+.gridActive .step:nth-child(4) .illust :global(.scale-n-2) {
+  animation: scale-fade 300ms ease 4110ms both;
+}
+.gridActive .step:nth-child(4) .illust :global(.scale-gold-node) {
+  animation:
+    scale-fade 300ms ease 4190ms both,
+    scale-gold-pulse 2s ease-in-out 4490ms infinite;
+}
+.gridActive .step:nth-child(4) .illust :global(.scale-n-3) {
+  animation: scale-fade 300ms ease 4270ms both;
+}
+.gridActive .step:nth-child(4) .illust :global(.scale-n-4) {
+  animation: scale-fade 300ms ease 4350ms both;
+}
+.gridActive .step:nth-child(4) .illust :global(.scale-trace) {
+  animation: scale-fade 400ms ease 4450ms both;
+}
+.gridActive .step:nth-child(4) .illust :global(.scale-target) {
+  animation: scale-fade 300ms ease 4550ms both;
+}
+.gridActive .step:nth-child(4) .illust :global(.scale-allok) {
+  animation: scale-typewriter 600ms cubic-bezier(0.2, 0.8, 0.2, 1) 4750ms both;
+}
+
+/* Hover: orbital ring accelerates */
+.step:hover .illust :global(.scale-ring-dash) {
+  animation-duration: 4s !important;
+  transition: animation-duration 220ms;
+}
+
+/* ── prefers-reduced-motion ─────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  .gridActive .step:nth-child(1) .illust :global(.disc-ring-dash),
+  .gridActive .step:nth-child(1) .illust :global(.disc-pupil),
+  .gridActive .step:nth-child(1) .illust :global(.disc-ch-l),
+  .gridActive .step:nth-child(1) .illust :global(.disc-ch-r),
+  .gridActive .step:nth-child(1) .illust :global(.disc-ch-t),
+  .gridActive .step:nth-child(1) .illust :global(.disc-ch-b),
+  .gridActive .step:nth-child(1) .illust :global(.disc-iris),
+  .gridActive .step:nth-child(1) .illust :global(.disc-iris-gold),
+  .gridActive .step:nth-child(1) .illust :global(.disc-trace-draw),
+  .gridActive .step:nth-child(1) .illust :global(.disc-trace),
+  .gridActive .step:nth-child(1) .illust :global(.disc-node),
+  .gridActive .step:nth-child(1) .illust :global(.disc-sig),
+  .gridActive .step:nth-child(2) .illust :global(.arch-l1),
+  .gridActive .step:nth-child(2) .illust :global(.arch-l2),
+  .gridActive .step:nth-child(2) .illust :global(.arch-l3),
+  .gridActive .step:nth-child(2) .illust :global(.arch-l4),
+  .gridActive .step:nth-child(2) .illust :global(.arch-labels),
+  .gridActive .step:nth-child(2) .illust :global(.arch-connector),
+  .gridActive .step:nth-child(3) .illust :global(.build-col-1),
+  .gridActive .step:nth-child(3) .illust :global(.build-col-2),
+  .gridActive .step:nth-child(3) .illust :global(.build-col-3),
+  .gridActive .step:nth-child(3) .illust :global(.build-col-4),
+  .gridActive .step:nth-child(3) .illust :global(.build-col-5),
+  .gridActive .step:nth-child(3) .illust :global(.build-pipeline),
+  .gridActive .step:nth-child(3) .illust :global(.build-dot-gold),
+  .gridActive .step:nth-child(3) .illust :global(.build-arrow),
+  .gridActive .step:nth-child(4) .illust :global(.scale-ring-dash),
+  .gridActive .step:nth-child(4) .illust :global(.scale-core),
+  .gridActive .step:nth-child(4) .illust :global(.scale-center),
+  .gridActive .step:nth-child(4) .illust :global(.scale-n-0),
+  .gridActive .step:nth-child(4) .illust :global(.scale-n-1),
+  .gridActive .step:nth-child(4) .illust :global(.scale-n-2),
+  .gridActive .step:nth-child(4) .illust :global(.scale-gold-node),
+  .gridActive .step:nth-child(4) .illust :global(.scale-n-3),
+  .gridActive .step:nth-child(4) .illust :global(.scale-n-4),
+  .gridActive .step:nth-child(4) .illust :global(.scale-trace),
+  .gridActive .step:nth-child(4) .illust :global(.scale-target),
+  .gridActive .step:nth-child(4) .illust :global(.scale-allok),
+  .gridActive .step .num,
+  .gridActive .step .arrow,
+  .gridActive .step .title {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    clip-path: none !important;
+  }
+  .gridActive .step {
+    animation: none !important;
+    pointer-events: auto !important;
+  }
 }
 
 @media (max-width: 1024px) {
