@@ -57,8 +57,8 @@ export function Footer() {
           </div>
 
           {COLS.map((c) => (
-            <div key={c.title} className={styles.col}>
-              <h4>{c.title}</h4>
+            <nav key={c.title} className={styles.col} aria-label={c.title}>
+              <h3>{c.title}</h3>
               <ul>
                 {c.links.map((l) => (
                   <li key={l.label}>
@@ -66,7 +66,7 @@ export function Footer() {
                   </li>
                 ))}
               </ul>
-            </div>
+            </nav>
           ))}
         </div>
 
@@ -79,7 +79,9 @@ export function Footer() {
           <div className={styles.right}>
             <Link href="#">Privacy</Link>
             <Link href="#">Terms</Link>
-            <span className={styles.diamond}>◆</span>
+            <span className={styles.diamond} aria-hidden="true">
+              ◆
+            </span>
           </div>
         </div>
       </div>

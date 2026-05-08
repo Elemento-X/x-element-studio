@@ -48,7 +48,7 @@ function CaseCard({
         <span className={styles.client}>{client}</span>
         <span className={styles.status}>Operational</span>
       </div>
-      <div className={`${styles.viz} ${tall ? styles.vizTall : ''}`}>
+      <figure className={`${styles.viz} ${tall ? styles.vizTall : ''}`}>
         <VizGridBg />
         {viz}
         {vizLabels.topLeft && (
@@ -75,7 +75,7 @@ function CaseCard({
             {vizLabels.bottomRight}
           </span>
         )}
-      </div>
+      </figure>
       <h3 className={styles.title}>{title}</h3>
       {copy && <p className={styles.copy}>{copy}</p>}
       <div className={styles.stats}>

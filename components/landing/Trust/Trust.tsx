@@ -34,7 +34,7 @@ const STATS = [
 
 export function Trust() {
   return (
-    <section className={styles.trust}>
+    <section className={styles.trust} aria-label="Positioning">
       <div className="container-wide container">
         <Reveal className={styles.head}>
           <div>
@@ -49,9 +49,9 @@ export function Trust() {
           </div>
         </Reveal>
 
-        <div className={styles.grid}>
+        <ul className={styles.grid} aria-label="Studio metrics">
           {STATS.map((s) => (
-            <Reveal key={s.num} className={styles.cell}>
+            <Reveal key={s.num} as="li" className={styles.cell}>
               <div className={styles.num}>{s.num}</div>
               <div className={styles.stat}>
                 {s.stat}
@@ -60,7 +60,7 @@ export function Trust() {
               <div className={styles.label}>{s.label}</div>
             </Reveal>
           ))}
-        </div>
+        </ul>
       </div>
     </section>
   )

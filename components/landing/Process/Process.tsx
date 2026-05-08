@@ -107,7 +107,7 @@ export function Process() {
 
         <ProcessGrid>
           {STEPS.map((s) => (
-            <Reveal key={s.num} as="article" className={styles.step}>
+            <Reveal key={s.num} as="li" className={styles.step}>
               <div className={styles.head}>
                 <span className={styles.num}>{s.num}</span>
                 <Arrow />

@@ -6,7 +6,7 @@ import styles from './Reveal.module.css'
 
 interface RevealProps {
   children: ReactNode
-  as?: 'div' | 'section' | 'article' | 'span'
+  as?: 'div' | 'section' | 'article' | 'span' | 'li'
   className?: string
   delay?: number
 }

@@ -5,13 +5,13 @@ import { useInViewOnce } from './useInViewOnce'
 import styles from './Process.module.css'
 
 export function ProcessGrid({ children }: { children: ReactNode }) {
-  const [ref, inView] = useInViewOnce<HTMLDivElement>()
+  const [ref, inView] = useInViewOnce<HTMLOListElement>()
   return (
-    <div
+    <ol
       ref={ref}
       className={`${styles.grid} ${inView ? styles.gridActive : ''}`}
     >
       {children}
-    </div>
+    </ol>
   )
 }
