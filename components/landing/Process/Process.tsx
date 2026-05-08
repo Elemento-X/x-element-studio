@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import { Reveal } from '../Reveal/Reveal'
 import { SectionHead } from '../SectionHead/SectionHead'
+import { ProcessGrid } from './ProcessGrid'
 import {
   ArchitectIllust,
   BuildIllust,
@@ -104,7 +105,7 @@ export function Process() {
           copy="Every engagement moves through the same four stages. Each phase produces an artifact the next phase depends on. No slides for slides’ sake."
         />
 
-        <div className={styles.grid}>
+        <ProcessGrid>
           {STEPS.map((s) => (
             <Reveal key={s.num} as="article" className={styles.step}>
               <div className={styles.head}>
@@ -142,7 +143,7 @@ export function Process() {
               </div>
             </Reveal>
           ))}
-        </div>
+        </ProcessGrid>
       </div>
     </section>
   )
