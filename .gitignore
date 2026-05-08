@@ -46,6 +46,7 @@ logs
 
 # claude local
 .claude/settings.local.json
+.mcp.json
 .claude/metrics/pipeline.jsonl
 
 # design handoff — binaries and uploads (reference only, not production)
