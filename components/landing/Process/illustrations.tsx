@@ -126,6 +126,7 @@ export function ArchitectIllust() {
     <svg viewBox="0 0 200 250" preserveAspectRatio="xMidYMid meet">
       <g transform="translate(40 50)">
         <g
+          className="arch-l4"
           transform="translate(0 0)"
           stroke="rgba(234,234,234,0.18)"
           strokeWidth="0.9"
@@ -149,7 +150,9 @@ export function ArchitectIllust() {
             opacity="0.7"
           />
         </g>
+
         <g
+          className="arch-l3"
           transform="translate(0 32)"
           stroke="rgba(234,234,234,0.32)"
           strokeWidth="0.9"
@@ -178,7 +181,9 @@ export function ArchitectIllust() {
             stroke="none"
           />
         </g>
+
         <g
+          className="arch-l2"
           transform="translate(0 64)"
           stroke="#F5C21A"
           strokeWidth="1.1"
@@ -207,7 +212,9 @@ export function ArchitectIllust() {
             opacity="0.7"
           />
         </g>
+
         <g
+          className="arch-l1"
           transform="translate(0 96)"
           stroke="rgba(234,234,234,0.45)"
           strokeWidth="0.9"
@@ -222,6 +229,7 @@ export function ArchitectIllust() {
         </g>
 
         <line
+          className="arch-connector"
           x1="60"
           y1="30"
           x2="60"
@@ -231,30 +239,32 @@ export function ArchitectIllust() {
           strokeDasharray="2 4"
         />
 
-        <g
-          fontFamily="'JetBrains Mono', monospace"
-          fontSize="6"
-          fill="rgba(234,234,234,0.55)"
-          letterSpacing="0.08em"
-        >
-          <text x="-30" y="34">
-            L4
-          </text>
-          <text x="-30" y="66">
-            L3
-          </text>
-          <text x="-30" y="98" fill="#F5C21A">
-            L2
-          </text>
-          <text x="-30" y="130">
-            L1
-          </text>
-        </g>
-        <g stroke="rgba(234,234,234,0.30)" strokeWidth="0.6">
-          <line x1="-22" y1="32" x2="-8" y2="32" />
-          <line x1="-22" y1="64" x2="-8" y2="64" />
-          <line x1="-22" y1="96" x2="-8" y2="96" stroke="#F5C21A" />
-          <line x1="-22" y1="128" x2="-8" y2="128" />
+        <g className="arch-labels">
+          <g
+            fontFamily="'JetBrains Mono', monospace"
+            fontSize="6"
+            fill="rgba(234,234,234,0.55)"
+            letterSpacing="0.08em"
+          >
+            <text x="-30" y="34">
+              L4
+            </text>
+            <text x="-30" y="66">
+              L3
+            </text>
+            <text x="-30" y="98" fill="#F5C21A">
+              L2
+            </text>
+            <text x="-30" y="130">
+              L1
+            </text>
+          </g>
+          <g stroke="rgba(234,234,234,0.30)" strokeWidth="0.6">
+            <line x1="-22" y1="32" x2="-8" y2="32" />
+            <line x1="-22" y1="64" x2="-8" y2="64" />
+            <line x1="-22" y1="96" x2="-8" y2="96" stroke="#F5C21A" />
+            <line x1="-22" y1="128" x2="-8" y2="128" />
+          </g>
         </g>
       </g>
     </svg>
@@ -265,28 +275,74 @@ export function BuildIllust() {
   return (
     <svg viewBox="0 0 200 250" preserveAspectRatio="xMidYMid meet">
       <g transform="translate(28 48)">
-        <g stroke="rgba(234,234,234,0.16)" strokeWidth="0.7">
+        {/* Column 1 */}
+        <g className="build-col-1">
           <rect
             x="0"
             y="20"
             width="22"
             height="120"
             fill="rgba(234,234,234,0.025)"
+            stroke="rgba(234,234,234,0.16)"
+            strokeWidth="0.7"
           />
+          <g stroke="rgba(234,234,234,0.30)" strokeWidth="0.6">
+            <line x1="3" y1="32" x2="19" y2="32" />
+            <line x1="3" y1="48" x2="14" y2="48" />
+            <line x1="3" y1="64" x2="19" y2="64" />
+            <line x1="3" y1="80" x2="11" y2="80" />
+            <line x1="3" y1="96" x2="17" y2="96" />
+            <line x1="3" y1="112" x2="13" y2="112" />
+            <line x1="3" y1="128" x2="19" y2="128" />
+          </g>
+        </g>
+
+        {/* Column 2 */}
+        <g className="build-col-2">
           <rect
             x="30"
             y="0"
             width="22"
             height="140"
             fill="rgba(234,234,234,0.025)"
+            stroke="rgba(234,234,234,0.16)"
+            strokeWidth="0.7"
           />
+          <g stroke="rgba(234,234,234,0.30)" strokeWidth="0.6">
+            <line x1="33" y1="14" x2="49" y2="14" />
+            <line x1="33" y1="30" x2="44" y2="30" />
+            <line x1="33" y1="46" x2="49" y2="46" />
+            <line x1="33" y1="62" x2="40" y2="62" />
+            <line x1="33" y1="78" x2="49" y2="78" />
+            <line x1="33" y1="94" x2="46" y2="94" />
+            <line x1="33" y1="110" x2="49" y2="110" />
+            <line x1="33" y1="126" x2="42" y2="126" />
+          </g>
+        </g>
+
+        {/* Column 3 */}
+        <g className="build-col-3">
           <rect
             x="60"
             y="32"
             width="22"
             height="108"
             fill="rgba(234,234,234,0.025)"
+            stroke="rgba(234,234,234,0.16)"
+            strokeWidth="0.7"
           />
+          <g stroke="rgba(234,234,234,0.30)" strokeWidth="0.6">
+            <line x1="63" y1="44" x2="79" y2="44" />
+            <line x1="63" y1="60" x2="74" y2="60" />
+            <line x1="63" y1="76" x2="79" y2="76" />
+            <line x1="63" y1="92" x2="71" y2="92" />
+            <line x1="63" y1="108" x2="79" y2="108" />
+            <line x1="63" y1="124" x2="76" y2="124" />
+          </g>
+        </g>
+
+        {/* Column 4 — gold signal column */}
+        <g className="build-col-4">
           <rect
             x="90"
             y="14"
@@ -296,86 +352,78 @@ export function BuildIllust() {
             stroke="#F5C21A"
             strokeWidth="1"
           />
+          <g stroke="#F5C21A" strokeWidth="0.8">
+            <line x1="93" y1="26" x2="109" y2="26" />
+            <line x1="93" y1="42" x2="104" y2="42" />
+            <line x1="93" y1="58" x2="109" y2="58" />
+            <line x1="93" y1="74" x2="101" y2="74" />
+            <line x1="93" y1="90" x2="109" y2="90" />
+            <line x1="93" y1="106" x2="106" y2="106" />
+            <line x1="93" y1="122" x2="109" y2="122" />
+          </g>
+        </g>
+
+        {/* Column 5 */}
+        <g className="build-col-5">
           <rect
             x="120"
             y="40"
             width="22"
             height="100"
             fill="rgba(234,234,234,0.025)"
+            stroke="rgba(234,234,234,0.16)"
+            strokeWidth="0.7"
+          />
+          <g stroke="rgba(234,234,234,0.30)" strokeWidth="0.6">
+            <line x1="123" y1="52" x2="139" y2="52" />
+            <line x1="123" y1="68" x2="134" y2="68" />
+            <line x1="123" y1="84" x2="139" y2="84" />
+            <line x1="123" y1="100" x2="131" y2="100" />
+            <line x1="123" y1="116" x2="139" y2="116" />
+            <line x1="123" y1="132" x2="136" y2="132" />
+          </g>
+        </g>
+
+        {/* Pipeline */}
+        <g className="build-pipeline">
+          <line
+            x1="0"
+            y1="156"
+            x2="142"
+            y2="156"
+            stroke="rgba(234,234,234,0.25)"
+            strokeWidth="0.8"
+          />
+          <circle cx="11" cy="156" r="2" fill="rgba(234,234,234,0.50)" />
+          <circle cx="41" cy="156" r="2" fill="rgba(234,234,234,0.50)" />
+          <circle cx="71" cy="156" r="2" fill="rgba(234,234,234,0.50)" />
+          <circle cx="131" cy="156" r="2" fill="rgba(234,234,234,0.50)" />
+        </g>
+
+        <circle
+          className="build-dot-gold"
+          cx="101"
+          cy="156"
+          r="3"
+          fill="#F5C21A"
+        />
+
+        <g className="build-arrow">
+          <line
+            x1="142"
+            y1="156"
+            x2="156"
+            y2="156"
+            stroke="#F5C21A"
+            strokeWidth="0.8"
+          />
+          <path
+            d="M152 152 l4 4 -4 4"
+            fill="none"
+            stroke="#F5C21A"
+            strokeWidth="0.8"
           />
         </g>
-
-        <g stroke="rgba(234,234,234,0.30)" strokeWidth="0.6">
-          <line x1="3" y1="32" x2="19" y2="32" />
-          <line x1="3" y1="48" x2="14" y2="48" />
-          <line x1="3" y1="64" x2="19" y2="64" />
-          <line x1="3" y1="80" x2="11" y2="80" />
-          <line x1="3" y1="96" x2="17" y2="96" />
-          <line x1="3" y1="112" x2="13" y2="112" />
-          <line x1="3" y1="128" x2="19" y2="128" />
-
-          <line x1="33" y1="14" x2="49" y2="14" />
-          <line x1="33" y1="30" x2="44" y2="30" />
-          <line x1="33" y1="46" x2="49" y2="46" />
-          <line x1="33" y1="62" x2="40" y2="62" />
-          <line x1="33" y1="78" x2="49" y2="78" />
-          <line x1="33" y1="94" x2="46" y2="94" />
-          <line x1="33" y1="110" x2="49" y2="110" />
-          <line x1="33" y1="126" x2="42" y2="126" />
-
-          <line x1="63" y1="44" x2="79" y2="44" />
-          <line x1="63" y1="60" x2="74" y2="60" />
-          <line x1="63" y1="76" x2="79" y2="76" />
-          <line x1="63" y1="92" x2="71" y2="92" />
-          <line x1="63" y1="108" x2="79" y2="108" />
-          <line x1="63" y1="124" x2="76" y2="124" />
-
-          <line x1="123" y1="52" x2="139" y2="52" />
-          <line x1="123" y1="68" x2="134" y2="68" />
-          <line x1="123" y1="84" x2="139" y2="84" />
-          <line x1="123" y1="100" x2="131" y2="100" />
-          <line x1="123" y1="116" x2="139" y2="116" />
-          <line x1="123" y1="132" x2="136" y2="132" />
-        </g>
-
-        <g stroke="#F5C21A" strokeWidth="0.8">
-          <line x1="93" y1="26" x2="109" y2="26" />
-          <line x1="93" y1="42" x2="104" y2="42" />
-          <line x1="93" y1="58" x2="109" y2="58" />
-          <line x1="93" y1="74" x2="101" y2="74" />
-          <line x1="93" y1="90" x2="109" y2="90" />
-          <line x1="93" y1="106" x2="106" y2="106" />
-          <line x1="93" y1="122" x2="109" y2="122" />
-        </g>
-
-        <line
-          x1="0"
-          y1="156"
-          x2="142"
-          y2="156"
-          stroke="rgba(234,234,234,0.25)"
-          strokeWidth="0.8"
-        />
-        <circle cx="11" cy="156" r="2" fill="rgba(234,234,234,0.50)" />
-        <circle cx="41" cy="156" r="2" fill="rgba(234,234,234,0.50)" />
-        <circle cx="71" cy="156" r="2" fill="rgba(234,234,234,0.50)" />
-        <circle cx="101" cy="156" r="3" fill="#F5C21A" />
-        <circle cx="131" cy="156" r="2" fill="rgba(234,234,234,0.50)" />
-
-        <line
-          x1="142"
-          y1="156"
-          x2="156"
-          y2="156"
-          stroke="#F5C21A"
-          strokeWidth="0.8"
-        />
-        <path
-          d="M152 152 l4 4 -4 4"
-          fill="none"
-          stroke="#F5C21A"
-          strokeWidth="0.8"
-        />
       </g>
     </svg>
   )
@@ -402,6 +450,7 @@ export function ScaleIllust() {
         strokeWidth="0.7"
       />
       <circle
+        className="scale-ring-dash"
         cx="100"
         cy="125"
         r="58"
@@ -419,23 +468,60 @@ export function ScaleIllust() {
         strokeWidth="0.7"
       />
 
-      <g stroke="#F5C21A" strokeWidth="0.9">
+      <g className="scale-core" stroke="#F5C21A" strokeWidth="0.9">
         <circle cx="100" cy="125" r="14" fill="none" />
         <line x1="80" y1="125" x2="92" y2="125" />
         <line x1="108" y1="125" x2="120" y2="125" />
         <line x1="100" y1="105" x2="100" y2="117" />
         <line x1="100" y1="133" x2="100" y2="145" />
       </g>
-      <circle cx="100" cy="125" r="3" fill="#F5C21A" />
+      <circle className="scale-center" cx="100" cy="125" r="3" fill="#F5C21A" />
 
-      <circle cx="138" cy="125" r="2.4" fill="rgba(234,234,234,0.7)" />
-      <circle cx="100" cy="67" r="2" fill="rgba(234,234,234,0.5)" />
-      <circle cx="62" cy="125" r="2" fill="rgba(234,234,234,0.5)" />
-      <circle cx="100" cy="183" r="2.4" fill="#F5C21A" />
-      <circle cx="158" cy="89" r="1.6" fill="rgba(234,234,234,0.4)" />
-      <circle cx="42" cy="161" r="1.6" fill="rgba(234,234,234,0.4)" />
+      <circle
+        className="scale-n-0"
+        cx="138"
+        cy="125"
+        r="2.4"
+        fill="rgba(234,234,234,0.7)"
+      />
+      <circle
+        className="scale-n-1"
+        cx="100"
+        cy="67"
+        r="2"
+        fill="rgba(234,234,234,0.5)"
+      />
+      <circle
+        className="scale-n-2"
+        cx="62"
+        cy="125"
+        r="2"
+        fill="rgba(234,234,234,0.5)"
+      />
+      <circle
+        className="scale-gold-node"
+        cx="100"
+        cy="183"
+        r="2.4"
+        fill="#F5C21A"
+      />
+      <circle
+        className="scale-n-3"
+        cx="158"
+        cy="89"
+        r="1.6"
+        fill="rgba(234,234,234,0.4)"
+      />
+      <circle
+        className="scale-n-4"
+        cx="42"
+        cy="161"
+        r="1.6"
+        fill="rgba(234,234,234,0.4)"
+      />
 
       <path
+        className="scale-trace"
         d="M100 125 Q 130 100, 158 89"
         fill="none"
         stroke="rgba(234,234,234,0.20)"
@@ -443,7 +529,12 @@ export function ScaleIllust() {
         strokeDasharray="1 3"
       />
 
-      <g stroke="rgba(234,234,234,0.45)" strokeWidth="0.7" fill="none">
+      <g
+        className="scale-target"
+        stroke="rgba(234,234,234,0.45)"
+        strokeWidth="0.7"
+        fill="none"
+      >
         <line x1="178" y1="50" x2="156" y2="72" />
         <path d="M178 50 l -10 1 M178 50 l 1 -10" />
       </g>
@@ -457,7 +548,7 @@ export function ScaleIllust() {
         <text x="44" y="225">
           FLOWS · 128
         </text>
-        <text x="124" y="225" fill="#F5C21A">
+        <text className="scale-allok" x="124" y="225" fill="#F5C21A">
           ALL · OK
         </text>
       </g>
