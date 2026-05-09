@@ -31,6 +31,7 @@ vi.mock('next/link', () => ({
     href: string
     children: ReactNode
   }) => (
+    // eslint-disable-next-line react/jsx-no-target-blank -- jsdom mock; tests assert on attributes directly, defense-in-depth lives in real Link/Button components.
     <a href={href} {...rest}>
       {children}
     </a>
