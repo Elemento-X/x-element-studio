@@ -8,9 +8,9 @@ export function Hero() {
       <div className={styles.grid} aria-hidden="true" />
       <div className={styles.shaft} aria-hidden="true" />
 
-      <figure className={styles.glyph}>
+      <div className={styles.glyph} aria-hidden="true">
         <HeroGlyph />
-      </figure>
+      </div>
 
       <div className={`container-wide container ${styles.content}`}>
         <div className={styles.meta}>
