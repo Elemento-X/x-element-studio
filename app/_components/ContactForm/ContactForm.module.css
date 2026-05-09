@@ -143,6 +143,14 @@
 .select {
   appearance: none;
   -webkit-appearance: none;
+  /* Chevron color is hardcoded #8e8e94 (mirrors --fg-3 / --ex-muted-gray
+     in app/tokens.css). Data URIs can't read CSS variables, and using
+     background-color + mask-image would tint the entire <select> field
+     instead of just the chevron — <select> doesn't support pseudo-
+     elements consistently across browsers, so a wrapper component would
+     be needed for full tokenization (deferred — see Bucket B). If
+     --fg-3 is ever recolored, update the hex value here in tandem
+     (the comment is the contract). */
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8' fill='none' stroke='%238e8e94' stroke-width='1.4'><path d='M1 2l5 5 5-5'/></svg>");
   background-repeat: no-repeat;
   background-position: right 12px center;
