@@ -59,8 +59,29 @@ export function Button(props: ButtonProps) {
     )
   }
 
+  // Defense-in-depth against CWE-1022 (reverse tabnabbing): any caller that
+  // passes target="_blank" gets rel="noreferrer" enforced, regardless of any
+  // explicit rel they provided. Trade-off: callers needing a custom rel
+  // alongside _blank must own both attributes themselves (currently nobody does).
+  const { target, ...anchorRest } = rest as ComponentPropsWithoutRef<'a'>
+
+  if (target === '_blank') {
+    return (
+      <a
+        {...anchorRest}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={classes}
+      >
+        {children}
+        {withArrow && <Arrow />}
+      </a>
+    )
+  }
+
   return (
-    <a {...(rest as ComponentPropsWithoutRef<'a'>)} className={classes}>
+    // eslint-disable-next-line react/jsx-no-target-blank -- _blank handled above; this branch is provably non-blank.
+    <a {...anchorRest} target={target} className={classes}>
       {children}
       {withArrow && <Arrow />}
     </a>
