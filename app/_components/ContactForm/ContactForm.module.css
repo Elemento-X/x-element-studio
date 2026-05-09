@@ -22,6 +22,31 @@
   gap: var(--s-2);
 }
 
+/* Mount-time enter for the conditional "Specify type" field. Stays
+   inside the brand motion budget: opacity + translateY (-2px → 0),
+   150ms, brand easing. No scale/rotate. Suppressed for users with
+   reduced-motion preference. */
+.fieldEnter {
+  animation: fieldEnter 150ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@keyframes fieldEnter {
+  from {
+    opacity: 0;
+    transform: translateY(-2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fieldEnter {
+    animation: none;
+  }
+}
+
 .label {
   font-family: var(--font-mono);
   font-size: 11px;

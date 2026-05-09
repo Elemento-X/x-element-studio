@@ -51,7 +51,7 @@ function EngagementOtherField({
   const engagement = useWatch({ control, name: 'engagement' })
   if (engagement !== 'other') return null
   return (
-    <div className={styles.field}>
+    <div className={`${styles.field} ${styles.fieldEnter}`}>
       <label htmlFor="contact-other" className={styles.label}>
         Specify type
       </label>
