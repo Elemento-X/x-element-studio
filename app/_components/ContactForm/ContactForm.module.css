@@ -163,7 +163,13 @@
   flex-direction: column;
   gap: var(--s-3);
   padding: var(--s-6);
-  border: 1px solid var(--line-gold);
+  /* Border is neutral; the single gold of the viewport migrates from
+     the (now-hidden) .card::before to the success card's top edge —
+     1px hairline of `--ex-gold` inherits the role as confirmation
+     marker. Spec: @designer (FinalCta gold-budget) — keeps "1 gold
+     per primary viewport" with continuity from the form state. */
+  border: 1px solid var(--line-strong);
+  border-top: 1px solid var(--ex-gold);
   border-radius: var(--r-2);
   background: var(--bg-input);
 }
@@ -174,7 +180,7 @@
   font-weight: 500;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--ex-gold);
+  color: var(--fg-1);
 }
 
 .successBody {
