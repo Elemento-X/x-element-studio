@@ -16,6 +16,12 @@ export const ENGAGEMENT_OPTIONS = [
 
 export type EngagementValue = (typeof ENGAGEMENT_OPTIONS)[number]['value']
 
+// value → label lookup. Single source for persist.ts (Notion select name)
+// and notify.ts (email subject + body). Don't redefine in either consumer.
+export const ENGAGEMENT_LABELS = Object.fromEntries(
+  ENGAGEMENT_OPTIONS.map((o) => [o.value, o.label]),
+) as Record<EngagementValue, string>
+
 const engagementValues = ENGAGEMENT_OPTIONS.map((o) => o.value) as [
   EngagementValue,
   ...EngagementValue[],

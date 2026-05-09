@@ -1,7 +1,7 @@
 import 'server-only'
 import { Resend } from 'resend'
 import { env } from '@/config/env'
-import type { ContactOutput, EngagementValue } from './schema'
+import { ENGAGEMENT_LABELS, type ContactOutput } from './schema'
 
 /**
  * Email notification on a new contact submission.
@@ -25,13 +25,6 @@ import type { ContactOutput, EngagementValue } from './schema'
 // the user-perceived response (notify happens before the final 200, but
 // in best-effort mode we don't fail the route on notify timeout).
 const NOTIFY_TIMEOUT_MS = 8000
-
-const ENGAGEMENT_LABELS: Record<EngagementValue, string> = {
-  'new-project': 'New project',
-  diagnostic: 'Diagnostic',
-  partnership: 'Partnership',
-  other: 'Other',
-}
 
 async function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
   let timer: ReturnType<typeof setTimeout> | undefined

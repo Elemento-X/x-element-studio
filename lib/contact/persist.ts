@@ -1,7 +1,7 @@
 import 'server-only'
 import { Client, isNotionClientError } from '@notionhq/client'
 import { env } from '@/config/env'
-import type { ContactOutput, EngagementValue } from './schema'
+import { ENGAGEMENT_LABELS, type ContactOutput } from './schema'
 
 /**
  * Persist a contact submission to Notion DB.
@@ -35,13 +35,6 @@ import type { ContactOutput, EngagementValue } from './schema'
 const MAX_RETRIES = 2
 const BASE_DELAY_MS = 200
 const BACKOFF_FACTOR = 2
-
-const ENGAGEMENT_LABELS: Record<EngagementValue, string> = {
-  'new-project': 'New project',
-  diagnostic: 'Diagnostic',
-  partnership: 'Partnership',
-  other: 'Other',
-}
 
 export interface PersistResult {
   ok: boolean
