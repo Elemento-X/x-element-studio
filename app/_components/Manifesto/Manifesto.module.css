@@ -1,0 +1,126 @@
+.manifesto {
+  padding: 160px 0;
+  position: relative;
+  overflow: hidden;
+  border-top: 1px solid var(--line-hairline);
+  border-bottom: 1px solid var(--line-hairline);
+  text-align: center;
+}
+
+.bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.shaft {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2px;
+  height: 100%;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(245, 194, 26, 0.35) 30%,
+    rgba(245, 194, 26, 0.18) 70%,
+    transparent 100%
+  );
+}
+
+.glow {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 500px;
+  height: 100%;
+  background: radial-gradient(
+    ellipse 45% 45% at 50% 50%,
+    rgba(245, 194, 26, 0.1),
+    transparent 70%
+  );
+}
+
+.floor {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 40%;
+  background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.6));
+}
+
+.content {
+  position: relative;
+  z-index: 2;
+  max-width: 920px;
+  margin: 0 auto;
+}
+
+.flask {
+  width: 96px;
+  height: 96px;
+  margin: 0 auto 56px;
+  display: grid;
+  place-items: center;
+  background: var(--ex-gold);
+  border-radius: var(--r-3);
+  overflow: hidden;
+  box-shadow:
+    0 0 0 1px rgba(245, 194, 26, 0.4),
+    0 0 60px rgba(245, 194, 26, 0.18);
+}
+
+.flask :global(img) {
+  width: 72%;
+  height: auto;
+  object-fit: contain;
+  display: block;
+}
+
+.lines {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+}
+
+.line {
+  font-family: var(--font-display);
+  font-weight: 400;
+  text-transform: uppercase;
+  font-size: clamp(28px, 4vw, 52px);
+  line-height: 1.1;
+  letter-spacing: 0.04em;
+  color: var(--fg-1);
+  margin: 0;
+}
+
+.gold {
+  color: var(--ex-gold);
+  font-weight: 600;
+}
+
+.body {
+  max-width: 52ch;
+  margin: 56px auto 0;
+  color: var(--fg-2);
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+.sig {
+  margin-top: 56px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--fg-3);
+}
+
+.sig cite {
+  font-style: normal;
+}

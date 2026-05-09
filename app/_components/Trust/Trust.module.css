@@ -1,0 +1,120 @@
+.trust {
+  padding: 48px 0 64px;
+  border-top: 1px solid var(--line-hairline);
+  border-bottom: 1px solid var(--line-hairline);
+  background: linear-gradient(
+    180deg,
+    rgba(26, 26, 30, 0.3),
+    rgba(13, 13, 15, 0) 70%
+  );
+}
+
+.head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 40px;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.eyebrow {
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 11px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--fg-3);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.eyebrow::before {
+  content: '';
+  display: inline-block;
+  width: 14px;
+  height: 1px;
+  background: var(--ex-gold);
+}
+
+.headCopy {
+  max-width: 42ch;
+  color: var(--fg-2);
+  font-size: 15px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  border-top: 1px solid var(--line-hairline);
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.cell {
+  padding: 28px 24px 20px;
+  border-right: 1px solid var(--line-hairline);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  position: relative;
+}
+
+.cell:last-child {
+  border-right: none;
+}
+
+.num {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--ex-gold);
+  letter-spacing: 0.08em;
+}
+
+.stat {
+  font-family: var(--font-mono);
+  font-size: 38px;
+  font-weight: 500;
+  color: var(--fg-1);
+  letter-spacing: -0.02em;
+  line-height: 1;
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.unit {
+  font-size: 18px;
+  color: var(--fg-3);
+  font-weight: 400;
+}
+
+.label {
+  font-size: 13px;
+  color: var(--fg-2);
+  line-height: 1.45;
+}
+
+@media (max-width: 1024px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .cell {
+    border-bottom: 1px solid var(--line-hairline);
+  }
+  .cell:nth-child(2n) {
+    border-right: none;
+  }
+}
+
+@media (max-width: 720px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+  .cell {
+    border-right: none;
+  }
+}
