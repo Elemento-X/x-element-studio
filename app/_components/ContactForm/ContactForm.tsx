@@ -2,7 +2,13 @@
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState } from 'react'
-import { useForm } from 'react-hook-form'
+import {
+  type Control,
+  type FieldError,
+  type UseFormRegister,
+  useForm,
+  useWatch,
+} from 'react-hook-form'
 import {
   type ContactInput,
   contactSchema,
@@ -24,13 +30,56 @@ const ERROR_DISABLED = 'Form is paused. Email contact@elemento-x.com.'
 const ERROR_GENERIC =
   'Submit failed. Try again — or email contact@elemento-x.com.'
 
+// Isolated subcomponent for the conditional "Engagement detail" field.
+// Calling useWatch here (instead of `watch()` in the parent) keeps the
+// invalidation scoped to this subtree — the parent's render output
+// stays memoizable by the React Compiler. Lint warning
+// (react-hooks/incompatible-library) goes away as a side effect.
+interface EngagementOtherFieldProps {
+  control: Control<ContactInput>
+  register: UseFormRegister<ContactInput>
+  error?: FieldError
+  disabled: boolean
+}
+
+function EngagementOtherField({
+  control,
+  register,
+  error,
+  disabled,
+}: EngagementOtherFieldProps) {
+  const engagement = useWatch({ control, name: 'engagement' })
+  if (engagement !== 'other') return null
+  return (
+    <div className={styles.field}>
+      <label htmlFor="contact-other" className={styles.label}>
+        Specify type
+      </label>
+      <input
+        id="contact-other"
+        type="text"
+        className={styles.input}
+        aria-invalid={error ? 'true' : 'false'}
+        aria-describedby={error ? 'contact-other-error' : undefined}
+        disabled={disabled}
+        {...register('engagementOther')}
+      />
+      {error && (
+        <span id="contact-other-error" className={styles.error}>
+          {error.message}
+        </span>
+      )}
+    </div>
+  )
+}
+
 export function ContactForm() {
   const [state, setState] = useState<SubmitState>({ status: 'idle' })
 
   const {
     register,
     handleSubmit,
-    watch,
+    control,
     reset,
     formState: { errors, isSubmitting },
   } = useForm<ContactInput>({
@@ -45,8 +94,6 @@ export function ContactForm() {
       honeypot: '',
     },
   })
-
-  const engagement = watch('engagement')
 
   const onSubmit = async (data: ContactInput) => {
     setState({ status: 'submitting' })
@@ -211,29 +258,12 @@ export function ContactForm() {
         )}
       </div>
 
-      {engagement === 'other' && (
-        <div className={styles.field}>
-          <label htmlFor="contact-other" className={styles.label}>
-            Specify type
-          </label>
-          <input
-            id="contact-other"
-            type="text"
-            className={styles.input}
-            aria-invalid={errors.engagementOther ? 'true' : 'false'}
-            aria-describedby={
-              errors.engagementOther ? 'contact-other-error' : undefined
-            }
-            disabled={isSubmitting}
-            {...register('engagementOther')}
-          />
-          {errors.engagementOther && (
-            <span id="contact-other-error" className={styles.error}>
-              {errors.engagementOther.message}
-            </span>
-          )}
-        </div>
-      )}
+      <EngagementOtherField
+        control={control}
+        register={register}
+        error={errors.engagementOther}
+        disabled={isSubmitting}
+      />
 
       <div className={styles.field}>
         <label htmlFor="contact-message" className={styles.label}>
