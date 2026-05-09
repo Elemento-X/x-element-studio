@@ -50,6 +50,9 @@ export function Reveal({
 
   const style = delay ? { transitionDelay: `${delay}ms` } : undefined
 
+  // Polymorphic ref via `as never`: required because the discriminated union of
+  // accepted tags makes the ref type mutually incompatible. NEVER add void
+  // elements (img, hr, br, input) to the `as` union — they don't accept children.
   return (
     <Tag ref={ref as never} className={classes} style={style}>
       {children}
