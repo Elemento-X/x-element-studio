@@ -3,7 +3,7 @@ import { Reveal } from '../Reveal/Reveal'
 import styles from './FinalCta.module.css'
 
 const BRIEF_ROWS = [
-  { k: 'Availability', v: 'Q2 · 2026', signal: true },
+  { k: 'Availability', v: 'Q3 · 2026', signal: true },
   { k: 'Response', v: '< 24 hours' },
   { k: 'Engagements', v: '3 active / 2 open' },
   { k: 'Diagnostic', v: '14 days' },
@@ -21,15 +21,13 @@ export function FinalCta() {
               Initiate contact &nbsp;·&nbsp; 006
             </span>
             <h2 className={styles.title}>
-              Book a
+              Send the
               <br />
-              <span className={styles.gold}>discovery call.</span>
+              <span className={styles.gold}>brief.</span>
             </h2>
             <p className={styles.body}>
-              30 minutes. One call. We listen first. If there&rsquo;s a fit, we
-              scope a two-week diagnostic and send a written thesis within five
-              business days. If there isn&rsquo;t, we say so &mdash; and point
-              you somewhere better.
+              One page. The system you want fixed. A measurable outcome. We
+              answer in 24 hours &mdash; yes, no, or how.
             </p>
             <div className={styles.cta}>
               <Button
@@ -37,10 +35,10 @@ export function FinalCta() {
                 variant="primary"
                 withArrow
               >
-                Start a project
+                Send brief
               </Button>
               <Button href="mailto:contact@elemento-x.com" variant="ghost">
-                contact@elemento-x.com
+                Talk to founders
               </Button>
             </div>
           </Reveal>
@@ -60,9 +58,9 @@ export function FinalCta() {
               ))}
             </dl>
             <div className={styles.disclaimer}>
-              Engagements are admitted in cohorts. We only onboard a partnership
-              when we believe we can make a measurable, defensible difference to
-              the system.
+              We partner with a select number of teams each quarter. Selection
+              is by fit &mdash; measured by whether we can make the system
+              measurably better, not whether the deal closes.
             </div>
           </Reveal>
         </div>
