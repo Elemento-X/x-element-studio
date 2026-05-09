@@ -1,4 +1,10 @@
 {
   "extends": ["next/core-web-vitals", "@rocketseat/eslint-config/next"],
-  "ignorePatterns": ["src/docs/**", ".next/**", "node_modules/**"]
+  "ignorePatterns": ["docs/**", ".next/**", "node_modules/**"],
+  "rules": {
+    "react/jsx-no-target-blank": [
+      "error",
+      { "enforceDynamicLinks": "always", "warnOnSpreadAttributes": true }
+    ]
+  }
 }
