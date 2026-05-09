@@ -83,7 +83,7 @@ export function ContactForm() {
   if (state.status === 'success') {
     return (
       <div className={styles.success} role="status" aria-live="polite">
-        <span className={styles.successEyebrow}>Received</span>
+        <span className={styles.successEyebrow}>Brief received</span>
         <p className={styles.successBody}>
           Brief in. Response within 24 hours — yes, no, or how.
         </p>
@@ -159,7 +159,7 @@ export function ContactForm() {
 
       <div className={styles.field}>
         <label htmlFor="contact-company" className={styles.label}>
-          Company <span className={styles.optional}>— optional</span>
+          Company <span className={styles.optional}>(optional)</span>
         </label>
         <input
           id="contact-company"
@@ -196,7 +196,7 @@ export function ContactForm() {
           {...register('engagement')}
         >
           <option value="" disabled>
-            Select engagement type…
+            Choose engagement
           </option>
           {ENGAGEMENT_OPTIONS.map((o) => (
             <option key={o.value} value={o.value}>
@@ -214,7 +214,7 @@ export function ContactForm() {
       {engagement === 'other' && (
         <div className={styles.field}>
           <label htmlFor="contact-other" className={styles.label}>
-            Specify
+            Specify type
           </label>
           <input
             id="contact-other"
