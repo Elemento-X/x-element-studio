@@ -34,13 +34,32 @@ export const runtime = 'nodejs'
 const MAX_BODY_SIZE = 16 * 1024
 
 function getClientIp(req: NextRequest): string {
-  const xff = req.headers.get('x-forwarded-for')
-  if (xff) {
-    const first = xff.split(',')[0]?.trim()
-    if (first) return first
+  // Vercel injects x-vercel-forwarded-for with the verified client IP
+  // (header is sanitized at the edge — clients can't spoof it). Plain
+  // x-forwarded-for is client-controlled and lets attackers reset the
+  // rate-limit bucket by mutating one header.
+  const vercel = req.headers.get('x-vercel-forwarded-for')
+  if (vercel) {
+    const ip = vercel.split(',')[0]?.trim()
+    if (ip) return ip
   }
+  // Outside Vercel, x-real-ip is typically set by the platform proxy
+  // (also non-spoofable in those setups).
   const real = req.headers.get('x-real-ip')
   if (real) return real.trim()
+  // Last resort: x-forwarded-for. We take the LAST hop (closest to our
+  // server, hardest to spoof) instead of the first. Attackers can still
+  // prepend, but the last entry is the IP injected by the most recent
+  // trusted proxy on the chain.
+  const xff = req.headers.get('x-forwarded-for')
+  if (xff) {
+    const hops = xff
+      .split(',')
+      .map((h) => h.trim())
+      .filter(Boolean)
+    const last = hops[hops.length - 1]
+    if (last) return last
+  }
   return 'unknown'
 }
 
