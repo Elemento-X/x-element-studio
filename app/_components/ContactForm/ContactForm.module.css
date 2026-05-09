@@ -158,6 +158,31 @@
   padding-left: var(--s-3);
 }
 
+/* Submit override: bone-on-black instead of gold-on-black, scoped to
+   the contact form so the rest of the site's primary buttons keep
+   their gold treatment. The form-active FinalCta has its single gold
+   on the .card::before hairline (designer spec); a gold submit on top
+   would push the count over budget.
+   Specificity bump (.submitBone.submitBone) beats Button's :hover by
+   matching the same class twice on one element — avoids adding a
+   global 'bone' variant to the Button component. */
+.submitBone.submitBone {
+  background: var(--fg-1);
+  color: var(--ex-deep-black);
+}
+.submitBone.submitBone:hover {
+  background: var(--fg-1);
+  opacity: 0.92;
+}
+.submitBone.submitBone:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.submitBone.submitBone:disabled:hover {
+  background: var(--fg-1);
+  opacity: 0.5;
+}
+
 .success {
   display: flex;
   flex-direction: column;

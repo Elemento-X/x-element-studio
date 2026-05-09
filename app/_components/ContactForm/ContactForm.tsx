@@ -297,6 +297,7 @@ export function ContactForm() {
           variant="primary"
           withArrow
           disabled={isSubmitting}
+          className={styles.submitBone}
         >
           {isSubmitting ? 'Sending…' : 'Send brief'}
         </Button>
