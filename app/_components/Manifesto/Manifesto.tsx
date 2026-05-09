@@ -27,8 +27,7 @@ export function Manifesto() {
         <p className={styles.body}>
           We are the team called when the system has to work. When downtime is
           expensive. When the people closest to the problem need{' '}
-          <strong className={styles.gold}>leverage</strong>, not another
-          meeting.
+          <strong>leverage</strong>, not another meeting.
         </p>
 
         <footer className={styles.sig}>
