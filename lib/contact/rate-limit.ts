@@ -123,7 +123,22 @@ export async function rateLimitContact(ip: string): Promise<RateLimitResult> {
   const limit = env.CONTACT_RATE_LIMIT_PER_HOUR
 
   if (env.UPSTASH_REDIS_REST_URL && env.UPSTASH_REDIS_REST_TOKEN) {
-    return upstashRateLimit(key, limit, bucket)
+    try {
+      return await upstashRateLimit(key, limit, bucket)
+    } catch (err) {
+      // Fail-open: if Upstash is unreachable, degrade to the per-process
+      // memory adapter rather than 503'ing every submit. The threat
+      // model (5/h contact form, no PII to exfil, no financial action)
+      // does not justify failing closed; an attacker would need to
+      // coincide with an Upstash outage AND only gets to spam.
+      // The global cap (added in a follow-up commit) backstops the
+      // degradation window. The warn log is the on-call signal.
+      const errType = err instanceof Error ? err.name : 'unknown'
+      console.warn(
+        `[contact:ratelimit] upstash_unavailable error=${errType} fallback=memory`,
+      )
+      return memoryRateLimit(key, limit)
+    }
   }
   return memoryRateLimit(key, limit)
 }
