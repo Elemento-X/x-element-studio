@@ -5,6 +5,10 @@ on:
     branches: [main, dev]
   pull_request:
     branches: [main, dev]
+  # Weekly proactive scan — catches advisories published after merge that
+  # Dependabot might not have raised a PR for yet.
+  schedule:
+    - cron: '0 6 * * 1' # Mondays 06:00 UTC
 
 permissions:
   contents: read
@@ -108,4 +112,6 @@ jobs:
         run: npm ci
 
       - name: Audit dependencies
-        run: npm audit --audit-level=critical
+        # security.md requires high+ to block deploy. critical alone lets
+        # high CVEs through (e.g. SSRF, RCE marked HIGH not CRITICAL).
+        run: npm audit --audit-level=high
