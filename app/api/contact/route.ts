@@ -30,7 +30,6 @@ import { contactSchema } from '@/lib/contact/schema'
  */
 
 export const runtime = 'nodejs'
-export const dynamic = 'force-dynamic'
 
 const MAX_BODY_SIZE = 16 * 1024
 
