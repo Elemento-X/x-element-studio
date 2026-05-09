@@ -6,7 +6,7 @@ export default defineConfig({
   plugins: [react()],
   test: {
     environment: 'jsdom',
-    setupFiles: ['./vitest.setup.ts'],
+    setupFiles: ['./vitest.setup.tsx'],
     globals: true,
     css: true,
     include: ['**/*.{test,spec}.{ts,tsx}'],
@@ -14,7 +14,7 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       reporter: ['text', 'html', 'json'],
-      include: ['app/**', 'components/**'],
+      include: ['app/**'],
       exclude: [
         'node_modules/**',
         '.next/**',
