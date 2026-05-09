@@ -78,9 +78,8 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install chromium --with-deps
 
-      - name: Build application
-        run: npx next build
-
+      # webServer in playwright.config.ts builds + starts the production
+      # server in CI (avoids Turbopack dev-server stale manifests).
       - name: Run E2E tests
         run: npx playwright test --project=chromium
 
