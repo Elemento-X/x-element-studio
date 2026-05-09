@@ -16,18 +16,29 @@ const BRIEF_ROWS = [
 export function FinalCta() {
   const formEnabled = env.NEXT_PUBLIC_CONTACT_FORM_ENABLED
 
+  // Brand rule: 1 gold per primary viewport. With the form active, the
+  // single gold of the FinalCta is the .card::before hairline (designer
+  // spec). The intro eyebrow's gold modifier and the h2's gold word both
+  // cede so they don't compete; lexical emphasis on "brief." comes from
+  // line-break + last-word position. In the dormant (mailto) state the
+  // gold modifier still applies, since the card is the only other gold.
+  const eyebrowClassName = formEnabled
+    ? styles.eyebrow
+    : `${styles.eyebrow} ${styles.signal}`
+  const briefClassName = formEnabled ? undefined : styles.gold
+
   return (
     <section className={styles.section} id="contact">
       <div className="container-wide container">
         <div className={styles.inner}>
           <Reveal>
-            <span className={`${styles.eyebrow} ${styles.signal}`}>
+            <span className={eyebrowClassName}>
               Initiate contact &nbsp;·&nbsp; 006
             </span>
             <h2 className={styles.title}>
               Send the
               <br />
-              <span className={styles.gold}>brief.</span>
+              <span className={briefClassName}>brief.</span>
             </h2>
             <p className={styles.body}>
               One page. The system you want fixed. A measurable outcome. We
