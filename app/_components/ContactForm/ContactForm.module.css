@@ -47,13 +47,17 @@
 .textarea {
   width: 100%;
   font-family: var(--font-body);
-  font-size: 14px;
+  /* 16px floor: iOS Safari triggers zoom-on-focus when font-size < 16px
+     on text inputs. The previous 14px triggered the zoom and broke layout
+     on touch. Padding adjusted in tandem so visual height grows by ~6px
+     net (38→48), comfortably above the 44px touch-target floor. */
+  font-size: 16px;
   line-height: 1.5;
   color: var(--fg-1);
   background: var(--bg-input);
   border: 1px solid var(--line-subtle);
   border-radius: var(--r-2);
-  padding: 10px 12px;
+  padding: 12px 14px;
   transition:
     border-color 150ms cubic-bezier(0.2, 0.8, 0.2, 1),
     background-color 150ms cubic-bezier(0.2, 0.8, 0.2, 1);
