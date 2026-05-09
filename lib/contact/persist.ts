@@ -26,8 +26,15 @@ import type { ContactOutput, EngagementValue } from './schema'
  * a Notion workspace.
  */
 
-const MAX_RETRIES = 3
+// Conservative retry: 2 attempts total, exponential backoff base 2.
+// Worst-case total wait between attempts: 200ms (1→2). Combined with the
+// per-attempt Notion latency (~500-1500ms observed), worst-case end-to-end
+// is ~3.2s — under the LRO threshold (5s) of api-contract.md and well
+// under the Vercel function timeout. The previous 3 retries × 4^N gave
+// 4.2s of pure wait time, pushing user-perceived latency past 5s.
+const MAX_RETRIES = 2
 const BASE_DELAY_MS = 200
+const BACKOFF_FACTOR = 2
 
 const ENGAGEMENT_LABELS: Record<EngagementValue, string> = {
   'new-project': 'New project',
@@ -110,8 +117,12 @@ function classifyError(err: unknown): 'transient' | 'permanent' {
     if (transientCodes.includes(err.code)) return 'transient'
     return 'permanent'
   }
-  // Network errors, fetch failures, unknown — treat as transient (retry once).
-  return 'transient'
+  // Unknown error type — fail fast (permanent). Previously this was
+  // 'transient', which masked programming bugs (TypeError, ReferenceError)
+  // by retrying them N times before surfacing. If the error isn't a
+  // known Notion client error class, retrying is a guess; surfacing
+  // it lets the alert system catch the real problem on attempt 1.
+  return 'permanent'
 }
 
 export async function persistContact(
@@ -144,7 +155,7 @@ export async function persistContact(
       // Transient — backoff + retry.
       const isLast = attempt === MAX_RETRIES
       if (!isLast) {
-        const delay = BASE_DELAY_MS * Math.pow(4, attempt - 1)
+        const delay = BASE_DELAY_MS * Math.pow(BACKOFF_FACTOR, attempt - 1)
         await sleep(delay)
       }
     }
