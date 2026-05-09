@@ -17,13 +17,12 @@ type SubmitState =
   | { status: 'success' }
   | { status: 'error'; message: string }
 
-const ERROR_NETWORK = 'Network error. Check your connection.'
-const ERROR_RATE_LIMIT = 'Too many requests. Try again in an hour.'
-const ERROR_VALIDATION = 'Check the highlighted fields.'
-const ERROR_DISABLED =
-  'Form is currently offline. Email contact@elemento-x.com.'
+const ERROR_NETWORK = 'Connection failed. Try again.'
+const ERROR_RATE_LIMIT = 'Rate limit hit. Wait an hour.'
+const ERROR_VALIDATION = 'Fix the fields marked invalid.'
+const ERROR_DISABLED = 'Form is paused. Email contact@elemento-x.com.'
 const ERROR_GENERIC =
-  'Something went wrong. Try again — or email contact@elemento-x.com directly.'
+  'Submit failed. Try again — or email contact@elemento-x.com.'
 
 export function ContactForm() {
   const [state, setState] = useState<SubmitState>({ status: 'idle' })
