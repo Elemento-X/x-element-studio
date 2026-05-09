@@ -529,6 +529,14 @@
 .illust :global(.arch-labels) {
   opacity: 0;
 }
+/* L2 path fill emerges as the final touch (signal layer "lights up") */
+.illust :global(.arch-l2-fill) {
+  fill-opacity: 0;
+}
+/* Connector line stays undrawn until the layer stack settles */
+.illust :global(.arch-connector) {
+  stroke-dashoffset: 1;
+}
 
 @keyframes arch-activate {
   from {
@@ -543,6 +551,24 @@
     opacity: 0;
   }
   to {
+    opacity: 1;
+  }
+}
+@keyframes arch-l2-glow {
+  from {
+    fill-opacity: 0;
+  }
+  to {
+    fill-opacity: 1;
+  }
+}
+@keyframes arch-connector-draw {
+  from {
+    stroke-dashoffset: 1;
+    opacity: 0;
+  }
+  to {
+    stroke-dashoffset: 0;
     opacity: 1;
   }
 }
@@ -562,8 +588,14 @@
 .gridActive .step:nth-child(2) .illust :global(.arch-l4) {
   animation: arch-activate 400ms cubic-bezier(0.2, 0.8, 0.2, 1) 2500ms both;
 }
+/* L2 fill emerges 400ms after the L2 group fades in (gold "ignites") */
+.gridActive .step:nth-child(2) .illust :global(.arch-l2-fill) {
+  animation: arch-l2-glow 400ms cubic-bezier(0.2, 0.8, 0.2, 1) 2300ms both;
+}
+/* Vertical connector traces top→bottom over 800ms after the stack lands */
 .gridActive .step:nth-child(2) .illust :global(.arch-connector) {
-  animation: arch-fade 500ms ease 2600ms both;
+  animation: arch-connector-draw 800ms cubic-bezier(0.2, 0.8, 0.2, 1) 2900ms
+    both;
 }
 
 /* Hover: L2 (gold layer) intensifies */
@@ -589,6 +621,10 @@
 .illust :global(.build-arrow) {
   opacity: 0;
 }
+/* Pipeline horizontal stays undrawn until columns finish landing */
+.illust :global(.build-pipeline-line) {
+  stroke-dashoffset: 1;
+}
 
 @keyframes build-col-in {
   from {
@@ -606,6 +642,14 @@
   }
   to {
     opacity: 1;
+  }
+}
+@keyframes build-pipeline-trace {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
   }
 }
 @keyframes build-dot-pulse {
@@ -645,6 +689,11 @@
 }
 .gridActive .step:nth-child(3) .illust :global(.build-pipeline) {
   animation: build-fade 300ms ease 3600ms both;
+}
+/* Pipeline horizontal traces L→R 600ms after the last column lands */
+.gridActive .step:nth-child(3) .illust :global(.build-pipeline-line) {
+  animation: build-pipeline-trace 600ms cubic-bezier(0.2, 0.8, 0.2, 1) 3700ms
+    both;
 }
 .gridActive .step:nth-child(3) .illust :global(.build-dot-gold) {
   animation:
@@ -689,6 +738,10 @@
 .illust :global(.scale-allok) {
   opacity: 0;
 }
+/* Trace from gold node to outer target stays undrawn until it can lead */
+.illust :global(.scale-trace) {
+  stroke-dashoffset: 1;
+}
 
 @keyframes scale-ring-scan {
   to {
@@ -712,6 +765,16 @@
     opacity: 0.7;
   }
 }
+@keyframes scale-trace-draw {
+  from {
+    opacity: 0;
+    stroke-dashoffset: 1;
+  }
+  to {
+    opacity: 1;
+    stroke-dashoffset: 0;
+  }
+}
 @keyframes scale-typewriter {
   from {
     opacity: 0;
@@ -730,9 +793,10 @@
 .gridActive .step:nth-child(4) .illust :global(.scale-ring-dash) {
   animation: scale-ring-scan 8s linear 3950ms infinite;
 }
+/* Crosshair lights up in sync with the gold pulse start (4490ms) */
 .gridActive .step:nth-child(4) .illust :global(.scale-core),
 .gridActive .step:nth-child(4) .illust :global(.scale-center) {
-  animation: scale-fade 400ms ease 3950ms both;
+  animation: scale-fade 400ms ease 4490ms both;
 }
 /* 6 nodes stagger 80ms */
 .gridActive .step:nth-child(4) .illust :global(.scale-n-0) {
@@ -755,8 +819,10 @@
 .gridActive .step:nth-child(4) .illust :global(.scale-n-4) {
   animation: scale-fade 300ms ease 4350ms both;
 }
+/* Trace draws gold-node → outer target right after the gold pulse begins;
+   stays before "ALL · OK" so the typewriter remains the last beat. */
 .gridActive .step:nth-child(4) .illust :global(.scale-trace) {
-  animation: scale-fade 400ms ease 4450ms both;
+  animation: scale-trace-draw 800ms cubic-bezier(0.2, 0.8, 0.2, 1) 4500ms both;
 }
 .gridActive .step:nth-child(4) .illust :global(.scale-target) {
   animation: scale-fade 300ms ease 4550ms both;
@@ -791,6 +857,7 @@
   .gridActive .step:nth-child(2) .illust :global(.arch-l2),
   .gridActive .step:nth-child(2) .illust :global(.arch-l3),
   .gridActive .step:nth-child(2) .illust :global(.arch-l4),
+  .gridActive .step:nth-child(2) .illust :global(.arch-l2-fill),
   .gridActive .step:nth-child(2) .illust :global(.arch-labels),
   .gridActive .step:nth-child(2) .illust :global(.arch-connector),
   .gridActive .step:nth-child(3) .illust :global(.build-col-1),
@@ -799,6 +866,7 @@
   .gridActive .step:nth-child(3) .illust :global(.build-col-4),
   .gridActive .step:nth-child(3) .illust :global(.build-col-5),
   .gridActive .step:nth-child(3) .illust :global(.build-pipeline),
+  .gridActive .step:nth-child(3) .illust :global(.build-pipeline-line),
   .gridActive .step:nth-child(3) .illust :global(.build-dot-gold),
   .gridActive .step:nth-child(3) .illust :global(.build-arrow),
   .gridActive .step:nth-child(4) .illust :global(.scale-ring-dash),
@@ -820,6 +888,8 @@
     opacity: 1 !important;
     transform: none !important;
     clip-path: none !important;
+    stroke-dashoffset: 0 !important;
+    fill-opacity: 1 !important;
   }
   .gridActive .step {
     animation: none !important;
