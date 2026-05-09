@@ -1,46 +1,47 @@
 import type { Metadata } from 'next'
 import localFont from 'next/font/local'
+import { Exo_2, JetBrains_Mono } from 'next/font/google'
 import './globals.css'
 
 const inter = localFont({
   src: [
     {
-      path: '../public/fonts/Inter_18pt-Regular.ttf',
-      weight: '400',
-      style: 'normal',
-    },
-    {
-      path: '../public/fonts/Inter_18pt-Italic.ttf',
-      weight: '400',
-      style: 'italic',
-    },
-    {
-      path: '../public/fonts/Inter_18pt-Light.ttf',
+      path: '../public/fonts/Inter_18pt-Light.woff2',
       weight: '300',
       style: 'normal',
     },
     {
-      path: '../public/fonts/Inter_18pt-Medium.ttf',
+      path: '../public/fonts/Inter_18pt-Regular.woff2',
+      weight: '400',
+      style: 'normal',
+    },
+    {
+      path: '../public/fonts/Inter_18pt-Medium.woff2',
       weight: '500',
       style: 'normal',
     },
     {
-      path: '../public/fonts/Inter_18pt-SemiBold.ttf',
+      path: '../public/fonts/Inter_18pt-SemiBold.woff2',
       weight: '600',
       style: 'normal',
     },
-    {
-      path: '../public/fonts/Inter_18pt-Bold.ttf',
-      weight: '700',
-      style: 'normal',
-    },
-    {
-      path: '../public/fonts/Inter_18pt-BoldItalic.ttf',
-      weight: '700',
-      style: 'italic',
-    },
   ],
   variable: '--font-inter',
+  display: 'swap',
+})
+
+const exo2 = Exo_2({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600'],
+  style: ['normal', 'italic'],
+  variable: '--font-exo',
+  display: 'swap',
+})
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ['latin'],
+  weight: ['400', '500'],
+  variable: '--font-jetbrains',
   display: 'swap',
 })
 
@@ -85,8 +86,9 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
+  const fontVars = `${inter.variable} ${exo2.variable} ${jetbrainsMono.variable}`
   return (
-    <html lang="en" className={inter.variable}>
+    <html lang="en" className={fontVars}>
       <body data-atmosphere="signal" data-density="standard" data-accent="gold">
         {children}
       </body>
