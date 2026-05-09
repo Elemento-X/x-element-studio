@@ -1,0 +1,188 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-5);
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--s-4);
+}
+
+@media (max-width: 640px) {
+  .row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+}
+
+.label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fg-3);
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-2);
+}
+
+.optional {
+  color: var(--fg-3);
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 11px;
+  opacity: 0.7;
+}
+
+.input,
+.select,
+.textarea {
+  width: 100%;
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--fg-1);
+  background: var(--bg-input);
+  border: 1px solid var(--line-subtle);
+  border-radius: var(--r-2);
+  padding: 10px 12px;
+  transition:
+    border-color 150ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    background-color 150ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  /* Disable browser autofill yellow tint */
+  -webkit-text-fill-color: var(--fg-1);
+}
+
+.input::placeholder,
+.textarea::placeholder {
+  color: var(--fg-3);
+}
+
+.input:hover,
+.select:hover,
+.textarea:hover {
+  border-color: var(--line-strong);
+}
+
+.input:focus,
+.select:focus,
+.textarea:focus {
+  outline: none;
+  border-color: var(--line-gold);
+}
+
+.input:disabled,
+.select:disabled,
+.textarea:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.input[aria-invalid='true'],
+.select[aria-invalid='true'],
+.textarea[aria-invalid='true'] {
+  border-color: var(--line-strong);
+  border-width: 1px;
+  /* Inset shadow on the left edge — subtle directional hint without
+     introducing a non-brand color. */
+  box-shadow: inset 2px 0 0 var(--fg-1);
+}
+
+.textarea {
+  resize: vertical;
+  min-height: 140px;
+  font-family: var(--font-body);
+}
+
+.select {
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8' fill='none' stroke='%238e8e94' stroke-width='1.4'><path d='M1 2l5 5 5-5'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 12px 8px;
+  padding-right: 36px;
+  cursor: pointer;
+}
+
+.error {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--fg-1);
+  letter-spacing: 0.01em;
+}
+
+.help {
+  font-family: var(--font-body);
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--fg-3);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--s-4);
+  margin-top: var(--s-2);
+}
+
+.errorBanner {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.01em;
+  color: var(--fg-1);
+  border-left: 2px solid var(--fg-1);
+  padding-left: var(--s-3);
+}
+
+.success {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+  padding: var(--s-6);
+  border: 1px solid var(--line-gold);
+  border-radius: var(--r-2);
+  background: var(--bg-input);
+}
+
+.successEyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ex-gold);
+}
+
+.successBody {
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--fg-1);
+  margin: 0;
+}
+
+/* Honeypot — visually hidden, off-screen, not focusable, not announced. */
+.honeypot {
+  position: absolute;
+  left: -10000px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.honeypot input {
+  pointer-events: none;
+}

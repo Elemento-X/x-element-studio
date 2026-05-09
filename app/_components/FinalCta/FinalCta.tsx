@@ -1,4 +1,6 @@
+import { env } from '@/config/env'
 import { Button } from '../Button/Button'
+import { ContactForm } from '../ContactForm/ContactForm'
 import { Reveal } from '../Reveal/Reveal'
 import styles from './FinalCta.module.css'
 
@@ -12,6 +14,8 @@ const BRIEF_ROWS = [
 ]
 
 export function FinalCta() {
+  const formEnabled = env.NEXT_PUBLIC_CONTACT_FORM_ENABLED
+
   return (
     <section className={styles.section} id="contact">
       <div className="container-wide container">
@@ -29,39 +33,50 @@ export function FinalCta() {
               One page. The system you want fixed. A measurable outcome. We
               answer in 24 hours &mdash; yes, no, or how.
             </p>
-            <div className={styles.cta}>
-              <Button
-                href="mailto:contact@elemento-x.com"
-                variant="primary"
-                withArrow
-              >
-                Send brief
-              </Button>
-              <Button href="mailto:contact@elemento-x.com" variant="ghost">
-                Talk to founders
-              </Button>
-            </div>
+            {!formEnabled && (
+              <div className={styles.cta}>
+                <Button
+                  href="mailto:contact@elemento-x.com"
+                  variant="primary"
+                  withArrow
+                >
+                  Send brief
+                </Button>
+                <Button href="mailto:contact@elemento-x.com" variant="ghost">
+                  Talk to founders
+                </Button>
+              </div>
+            )}
           </Reveal>
 
           <Reveal className={styles.card}>
-            <span className={styles.eyebrow}>Engagement brief</span>
-            <dl className={styles.brief}>
-              {BRIEF_ROWS.map((r) => (
-                <div key={r.k} className={styles.row}>
-                  <dt className={styles.k}>{r.k}</dt>
-                  <dd
-                    className={`${styles.v} ${r.signal ? styles.vSignal : ''}`}
-                  >
-                    {r.v}
-                  </dd>
+            {formEnabled ? (
+              <>
+                <span className={styles.eyebrow}>Engagement brief</span>
+                <ContactForm />
+              </>
+            ) : (
+              <>
+                <span className={styles.eyebrow}>Engagement brief</span>
+                <dl className={styles.brief}>
+                  {BRIEF_ROWS.map((r) => (
+                    <div key={r.k} className={styles.row}>
+                      <dt className={styles.k}>{r.k}</dt>
+                      <dd
+                        className={`${styles.v} ${r.signal ? styles.vSignal : ''}`}
+                      >
+                        {r.v}
+                      </dd>
+                    </div>
+                  ))}
+                </dl>
+                <div className={styles.disclaimer}>
+                  We partner with a select number of teams each quarter.
+                  Selection is by fit &mdash; measured by whether we can make
+                  the system measurably better, not whether the deal closes.
                 </div>
-              ))}
-            </dl>
-            <div className={styles.disclaimer}>
-              We partner with a select number of teams each quarter. Selection
-              is by fit &mdash; measured by whether we can make the system
-              measurably better, not whether the deal closes.
-            </div>
+              </>
+            )}
           </Reveal>
         </div>
       </div>
