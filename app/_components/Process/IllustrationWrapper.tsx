@@ -4,7 +4,7 @@ import type { ReactNode } from 'react'
 import { useInViewOnce } from './useInViewOnce'
 import styles from './Process.module.css'
 
-export function IllustWrapper({ children }: { children: ReactNode }) {
+export function IllustrationWrapper({ children }: { children: ReactNode }) {
   const [ref, inView] = useInViewOnce<HTMLDivElement>()
   return (
     <div

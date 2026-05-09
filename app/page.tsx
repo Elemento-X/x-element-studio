@@ -1,12 +1,12 @@
-import { Capabilities } from '@/components/landing/Capabilities/Capabilities'
-import { FinalCta } from '@/components/landing/FinalCta/FinalCta'
-import { Footer } from '@/components/landing/Footer/Footer'
-import { Hero } from '@/components/landing/Hero/Hero'
-import { Manifesto } from '@/components/landing/Manifesto/Manifesto'
-import { Nav } from '@/components/landing/Nav/Nav'
-import { Process } from '@/components/landing/Process/Process'
-import { Trust } from '@/components/landing/Trust/Trust'
-import { Work } from '@/components/landing/Work/Work'
+import { Capabilities } from './_components/Capabilities/Capabilities'
+import { FinalCta } from './_components/FinalCta/FinalCta'
+import { Footer } from './_components/Footer/Footer'
+import { Hero } from './_components/Hero/Hero'
+import { Manifesto } from './_components/Manifesto/Manifesto'
+import { Nav } from './_components/Nav/Nav'
+import { Process } from './_components/Process/Process'
+import { Trust } from './_components/Trust/Trust'
+import { Work } from './_components/Work/Work'
 
 export default function Home() {
   return (
