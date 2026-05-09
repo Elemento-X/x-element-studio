@@ -4,7 +4,7 @@ import styles from './Manifesto.module.css'
 
 export function Manifesto() {
   return (
-    <section className={styles.manifesto} aria-label="Manifesto">
+    <section id="manifesto" className={styles.manifesto} aria-label="Manifesto">
       <div className={styles.bg} aria-hidden="true">
         <div className={styles.glow} />
         <div className={styles.shaft} />

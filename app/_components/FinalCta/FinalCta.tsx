@@ -32,7 +32,11 @@ export function FinalCta() {
               you somewhere better.
             </p>
             <div className={styles.cta}>
-              <Button href="#" variant="primary" withArrow>
+              <Button
+                href="mailto:contact@elemento-x.com"
+                variant="primary"
+                withArrow
+              >
                 Start a project
               </Button>
               <Button href="mailto:contact@elemento-x.com" variant="ghost">
