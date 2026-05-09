@@ -42,33 +42,32 @@ const memoryStore = new Map<string, { count: number; expiresAt: number }>()
 
 function memoryRateLimit(key: string, limit: number): RateLimitResult {
   const now = Date.now()
-  const entry = memoryStore.get(key)
+  let entry = memoryStore.get(key)
 
+  // Increment-first, compare-after — same shape as upstashRateLimit so
+  // both adapters share identical reading semantics. Effective behaviour
+  // was already equivalent (5 ok, 6th blocks for limit=5), but the old
+  // adapters used `count >= limit` vs `count > limit` after different
+  // increment timings — confusing for readers and a footgun for any
+  // future change.
   if (!entry || entry.expiresAt <= now) {
-    memoryStore.set(key, {
-      count: 1,
-      expiresAt: now + WINDOW_SECONDS * 1000,
-    })
-    return {
-      ok: true,
-      remaining: limit - 1,
-      retryAfterSeconds: WINDOW_SECONDS,
-    }
-  }
-
-  if (entry.count >= limit) {
-    return {
-      ok: false,
-      remaining: 0,
-      retryAfterSeconds: Math.max(1, Math.ceil((entry.expiresAt - now) / 1000)),
-    }
+    entry = { count: 0, expiresAt: now + WINDOW_SECONDS * 1000 }
+    memoryStore.set(key, entry)
   }
 
   entry.count += 1
+  const retryAfterSeconds = Math.max(
+    1,
+    Math.ceil((entry.expiresAt - now) / 1000),
+  )
+
+  if (entry.count > limit) {
+    return { ok: false, remaining: 0, retryAfterSeconds }
+  }
   return {
     ok: true,
-    remaining: limit - entry.count,
-    retryAfterSeconds: Math.max(1, Math.ceil((entry.expiresAt - now) / 1000)),
+    remaining: Math.max(0, limit - entry.count),
+    retryAfterSeconds,
   }
 }
 
