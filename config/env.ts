@@ -51,6 +51,17 @@ const envSchema = z
       .max(100000)
       .default(200),
 
+    // Per-email cap (F2). Catches attackers who rotate IPs but reuse a
+    // single submitter email (e.g. targeted spam to a specific address).
+    // Default 2/h is conservative — legitimate users rarely submit twice
+    // in an hour with the same address.
+    CONTACT_EMAIL_LIMIT_PER_HOUR: z.coerce
+      .number()
+      .int()
+      .positive()
+      .max(1000)
+      .default(2),
+
     // Email — Resend (F2). FROM_EMAIL/NOTIFY_EMAIL have no defaults so
     // the operator must declare them explicitly per environment. The
     // dev defaults that used to live here were dangerous in prod (sandbox

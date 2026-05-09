@@ -3,7 +3,10 @@ import { type NextRequest, NextResponse } from 'next/server'
 import { env } from '@/config/env'
 import { notifyContact } from '@/lib/contact/notify'
 import { persistContact } from '@/lib/contact/persist'
-import { rateLimitContact } from '@/lib/contact/rate-limit'
+import {
+  rateLimitContact,
+  rateLimitContactEmail,
+} from '@/lib/contact/rate-limit'
 import { contactSchema } from '@/lib/contact/schema'
 
 /**
@@ -247,6 +250,21 @@ export async function POST(req: NextRequest) {
   if (data.honeypot) {
     console.info(`[contact] honeypot_hit rid=${requestId}`)
     return okResponse(requestId)
+  }
+
+  // Per-email cap (after parse, before persist) — catches the "single
+  // email, rotating IPs" pattern that the per-IP cap can't see.
+  const emailRl = await rateLimitContactEmail(data.email)
+  if (!emailRl.ok) {
+    return errorResponse(
+      429,
+      { code: 'RATE_LIMITED', message: 'Too many requests.' },
+      requestId,
+      {
+        'Retry-After': String(emailRl.retryAfterSeconds),
+        'X-RateLimit-Remaining': '0',
+      },
+    )
   }
 
   const persistResult = await persistContact(data)

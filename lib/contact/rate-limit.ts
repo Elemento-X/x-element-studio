@@ -34,6 +34,16 @@ function hashIp(ip: string): string {
   return createHash('sha256').update(ip).digest('hex').slice(0, 16)
 }
 
+function hashEmail(email: string): string {
+  // Lowercase for canonicalization (gmail/etc are case-insensitive on the
+  // local-part for delivery; treating "Foo@x" and "foo@x" as different
+  // buckets would let attackers trivially bypass per-email limits).
+  return createHash('sha256')
+    .update(email.toLowerCase())
+    .digest('hex')
+    .slice(0, 16)
+}
+
 function currentHourBucket(): number {
   return Math.floor(Date.now() / (WINDOW_SECONDS * 1000))
 }
@@ -176,4 +186,27 @@ export async function rateLimitContact(ip: string): Promise<RateLimitResult> {
   // the *individual caller* still has — that's what's useful to the
   // client. The global cap is a hidden backstop.
   return ipResult
+}
+
+// Per-email rate-limit. Called *after* the schema parse, since we need
+// the email out of the body. Defends against attackers who rotate IPs
+// but reuse a single submitter email (e.g. targeted spam to a specific
+// address). Email is SHA-256'd before keying — plaintext never hits Redis.
+export async function rateLimitContactEmail(
+  email: string,
+): Promise<RateLimitResult> {
+  const bucket = currentHourBucket()
+  const hashed = hashEmail(email)
+  const key = `ratelimit:contact:email:${hashed}:${bucket}`
+  const result = await checkBucket(
+    key,
+    env.CONTACT_EMAIL_LIMIT_PER_HOUR,
+    bucket,
+  )
+  if (!result.ok) {
+    console.warn(
+      `[contact:ratelimit] email_cap_hit limit=${env.CONTACT_EMAIL_LIMIT_PER_HOUR}`,
+    )
+  }
+  return result
 }
