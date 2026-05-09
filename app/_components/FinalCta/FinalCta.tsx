@@ -1,6 +1,6 @@
 import { env } from '@/config/env'
 import { Button } from '../Button/Button'
-import { ContactForm } from '../ContactForm/ContactForm'
+import { ContactForm } from '../ContactForm/ContactFormLazy'
 import { Reveal } from '../Reveal/Reveal'
 import styles from './FinalCta.module.css'
 
