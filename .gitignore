@@ -13,6 +13,9 @@
 /playwright-report
 /test-results
 /playwright/.cache
+.lighthouse-report.json
+lighthouse-*.json
+lighthouse-*.html
 
 # next.js
 /.next/
