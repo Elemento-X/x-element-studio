@@ -17,11 +17,34 @@ import type { ContactOutput, EngagementValue } from './schema'
  * pipeline run end-to-end in dev without a Resend account.
  */
 
+// Hard cap on time spent inside Resend's send call. Resend doesn't expose
+// a timeout option on the SDK; without this, a stuck network can hold the
+// entire route for the Vercel function's max duration. 8s is generous
+// against typical Resend latency (200-500ms) but tight enough that the
+// total route stays well under api-contract.md's 5s LRO threshold for
+// the user-perceived response (notify happens before the final 200, but
+// in best-effort mode we don't fail the route on notify timeout).
+const NOTIFY_TIMEOUT_MS = 8000
+
 const ENGAGEMENT_LABELS: Record<EngagementValue, string> = {
   'new-project': 'New project',
   diagnostic: 'Diagnostic',
   partnership: 'Partnership',
   other: 'Other',
+}
+
+async function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
+  let timer: ReturnType<typeof setTimeout> | undefined
+  try {
+    return await Promise.race([
+      promise,
+      new Promise<never>((_, reject) => {
+        timer = setTimeout(() => reject(new Error('notify_timeout')), ms)
+      }),
+    ])
+  } finally {
+    if (timer) clearTimeout(timer)
+  }
 }
 
 export interface NotifyResult {
@@ -106,14 +129,17 @@ export async function notifyContact(
   const start = Date.now()
   try {
     const resend = getResend()
-    const { error } = await resend.emails.send({
-      from: env.FROM_EMAIL,
-      to: env.NOTIFY_EMAIL,
-      replyTo: input.email,
-      subject: buildSubject(input),
-      text: buildText(input),
-      html: buildHtml(input),
-    })
+    const { error } = await withTimeout(
+      resend.emails.send({
+        from: env.FROM_EMAIL,
+        to: env.NOTIFY_EMAIL,
+        replyTo: input.email,
+        subject: buildSubject(input),
+        text: buildText(input),
+        html: buildHtml(input),
+      }),
+      NOTIFY_TIMEOUT_MS,
+    )
 
     if (error) {
       console.error(
