@@ -22,6 +22,7 @@ export function Reveal({
 
   useEffect(() => {
     if (typeof IntersectionObserver === 'undefined') {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- One-shot fallback for environments without IntersectionObserver (SSR/jsdom tests). The effect exits immediately after; no cascading renders.
       setShown(true)
       return
     }
