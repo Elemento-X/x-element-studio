@@ -64,11 +64,14 @@ export function ContactForm() {
         return
       }
 
-      const body = (await res.json().catch(() => ({}))) as { error?: string }
+      const body = (await res.json().catch(() => ({}))) as {
+        error?: { code?: string }
+      }
+      const code = body.error?.code
 
       let message: string = ERROR_GENERIC
       if (res.status === 429) message = ERROR_RATE_LIMIT
-      else if (res.status === 400 && body.error === 'validation')
+      else if (res.status === 400 && code === 'VALIDATION_ERROR')
         message = ERROR_VALIDATION
       else if (res.status === 503) message = ERROR_DISABLED
 

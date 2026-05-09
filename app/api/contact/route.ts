@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto'
 import { type NextRequest, NextResponse } from 'next/server'
 import { env } from '@/config/env'
 import { notifyContact } from '@/lib/contact/notify'
@@ -13,25 +14,93 @@ import { contactSchema } from '@/lib/contact/schema'
  *   schema validation → honeypot → persist (Notion) → notify (Resend) →
  *   200 OK.
  *
- * Failure semantics:
- *  - 400  invalid JSON or schema validation error (with field map)
- *  - 403  cross-origin request in production
- *  - 405  non-POST method
- *  - 413  body exceeds 16 KB (form payload is normally < 4 KB)
- *  - 415  Content-Type not application/json
- *  - 429  rate limit hit (Retry-After header)
- *  - 500  persistence failure (Notion error class != transient)
- *  - 503  feature flag off
+ * Response envelope (api-contract.md):
+ *  - Success: { "data": { ... } }
+ *  - Error:   { "error": { "code": "<STABLE_CODE>", "message": "...", "fields"?: {...} } }
+ *
+ * `code` is the stable discriminator (SCREAMING_SNAKE_CASE). `message` is
+ * human-readable and may change without versioning. `fields` only on
+ * VALIDATION_ERROR.
+ *
+ * All responses include:
+ *  - `X-Request-Id` (echoed from client header if valid, otherwise UUID v4).
+ *  - `Cache-Control: no-store` (form responses must not be cached).
+ *
+ * Status codes:
+ *  - 200  OK
+ *  - 400  INVALID_JSON | VALIDATION_ERROR
+ *  - 403  FORBIDDEN (cross-origin in prod)
+ *  - 405  METHOD_NOT_ALLOWED
+ *  - 413  PAYLOAD_TOO_LARGE
+ *  - 415  UNSUPPORTED_MEDIA_TYPE
+ *  - 429  RATE_LIMITED (with Retry-After)
+ *  - 500  PERSISTENCE_ERROR
+ *  - 503  DISABLED (kill-switch)
  *
  * Honeypot: silent 200 — never signal to bots that they were caught.
  *
  * Logging policy: never log PII (name, email, company, message). Only
- * operation, IP class (hashed by rate-limit), latency, outcome.
+ * operation, IP class (hashed by rate-limit), latency, outcome, requestId.
  */
 
 export const runtime = 'nodejs'
 
 const MAX_BODY_SIZE = 16 * 1024
+
+// Echo client X-Request-Id when it looks safe (alnum + dashes, 8-128 chars
+// to block CRLF header injection); otherwise mint a fresh UUID v4.
+const REQUEST_ID_PATTERN = /^[A-Za-z0-9-]{8,128}$/
+
+function getOrCreateRequestId(req: NextRequest): string {
+  const fromClient = req.headers.get('x-request-id')
+  if (fromClient && REQUEST_ID_PATTERN.test(fromClient)) return fromClient
+  return randomUUID()
+}
+
+interface JsonResponseInit {
+  status: number
+  requestId: string
+  headers?: Record<string, string>
+}
+
+function jsonResponse(body: unknown, init: JsonResponseInit): NextResponse {
+  return NextResponse.json(body, {
+    status: init.status,
+    headers: {
+      'Cache-Control': 'no-store',
+      'X-Request-Id': init.requestId,
+      ...init.headers,
+    },
+  })
+}
+
+interface ErrorPayload {
+  code: string
+  message: string
+  fields?: Record<string, string>
+}
+
+function errorResponse(
+  status: number,
+  payload: ErrorPayload,
+  requestId: string,
+  extraHeaders?: Record<string, string>,
+): NextResponse {
+  return jsonResponse(
+    { error: payload },
+    { status, requestId, headers: extraHeaders },
+  )
+}
+
+function okResponse(
+  requestId: string,
+  extraHeaders?: Record<string, string>,
+): NextResponse {
+  return jsonResponse(
+    { data: { ok: true } },
+    { status: 200, requestId, headers: extraHeaders },
+  )
+}
 
 function getClientIp(req: NextRequest): string {
   // Vercel injects x-vercel-forwarded-for with the verified client IP
@@ -91,33 +160,46 @@ function isOriginAllowed(req: NextRequest): boolean {
 }
 
 export async function POST(req: NextRequest) {
+  const requestId = getOrCreateRequestId(req)
+
   if (!env.NEXT_PUBLIC_CONTACT_FORM_ENABLED) {
-    return NextResponse.json({ ok: false, error: 'disabled' }, { status: 503 })
+    return errorResponse(
+      503,
+      { code: 'DISABLED', message: 'Contact form is currently disabled.' },
+      requestId,
+    )
   }
 
   if (!isOriginAllowed(req)) {
-    return NextResponse.json({ ok: false, error: 'forbidden' }, { status: 403 })
+    return errorResponse(
+      403,
+      { code: 'FORBIDDEN', message: 'Origin not allowed.' },
+      requestId,
+    )
   }
 
   const contentType = (req.headers.get('content-type') ?? '').toLowerCase()
   if (!contentType.startsWith('application/json')) {
-    return NextResponse.json(
-      { ok: false, error: 'unsupported_media_type' },
-      { status: 415 },
+    return errorResponse(
+      415,
+      {
+        code: 'UNSUPPORTED_MEDIA_TYPE',
+        message: 'Content-Type must be application/json.',
+      },
+      requestId,
     )
   }
 
   const ip = getClientIp(req)
   const rl = await rateLimitContact(ip)
   if (!rl.ok) {
-    return NextResponse.json(
-      { ok: false, error: 'rate_limited' },
+    return errorResponse(
+      429,
+      { code: 'RATE_LIMITED', message: 'Too many requests.' },
+      requestId,
       {
-        status: 429,
-        headers: {
-          'Retry-After': String(rl.retryAfterSeconds),
-          'X-RateLimit-Remaining': '0',
-        },
+        'Retry-After': String(rl.retryAfterSeconds),
+        'X-RateLimit-Remaining': '0',
       },
     )
   }
@@ -126,16 +208,18 @@ export async function POST(req: NextRequest) {
   try {
     const text = await req.text()
     if (text.length > MAX_BODY_SIZE) {
-      return NextResponse.json(
-        { ok: false, error: 'payload_too_large' },
-        { status: 413 },
+      return errorResponse(
+        413,
+        { code: 'PAYLOAD_TOO_LARGE', message: 'Body exceeds 16 KB.' },
+        requestId,
       )
     }
     raw = JSON.parse(text)
   } catch {
-    return NextResponse.json(
-      { ok: false, error: 'invalid_json' },
-      { status: 400 },
+    return errorResponse(
+      400,
+      { code: 'INVALID_JSON', message: 'Body is not valid JSON.' },
+      requestId,
     )
   }
 
@@ -146,9 +230,14 @@ export async function POST(req: NextRequest) {
       const key = issue.path.join('.') || '_root'
       if (!fields[key]) fields[key] = issue.message
     }
-    return NextResponse.json(
-      { ok: false, error: 'validation', fields },
-      { status: 400 },
+    return errorResponse(
+      400,
+      {
+        code: 'VALIDATION_ERROR',
+        message: 'One or more fields failed validation.',
+        fields,
+      },
+      requestId,
     )
   }
 
@@ -156,16 +245,19 @@ export async function POST(req: NextRequest) {
 
   // Honeypot trip: silent 200. Don't tell bots they were caught.
   if (data.honeypot) {
-    console.info('[contact] honeypot_hit')
-    return NextResponse.json({ ok: true })
+    console.info(`[contact] honeypot_hit rid=${requestId}`)
+    return okResponse(requestId)
   }
 
   const persistResult = await persistContact(data)
   if (!persistResult.ok) {
-    console.error(`[contact] persist_failed error=${persistResult.error}`)
-    return NextResponse.json(
-      { ok: false, error: 'persistence' },
-      { status: 500 },
+    console.error(
+      `[contact] persist_failed error=${persistResult.error} rid=${requestId}`,
+    )
+    return errorResponse(
+      500,
+      { code: 'PERSISTENCE_ERROR', message: 'Could not persist submission.' },
+      requestId,
     )
   }
 
@@ -173,20 +265,17 @@ export async function POST(req: NextRequest) {
   // but ignore failures — Notion is the source of truth.
   await notifyContact(data)
 
-  return NextResponse.json(
-    { ok: true },
-    {
-      status: 200,
-      headers: {
-        'X-RateLimit-Remaining': String(rl.remaining),
-      },
-    },
-  )
+  return okResponse(requestId, {
+    'X-RateLimit-Remaining': String(rl.remaining),
+  })
 }
 
-export async function GET() {
-  return NextResponse.json(
-    { ok: false, error: 'method_not_allowed' },
-    { status: 405, headers: { Allow: 'POST' } },
+export async function GET(req: NextRequest) {
+  const requestId = getOrCreateRequestId(req)
+  return errorResponse(
+    405,
+    { code: 'METHOD_NOT_ALLOWED', message: 'Use POST.' },
+    requestId,
+    { Allow: 'POST' },
   )
 }
