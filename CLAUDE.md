@@ -39,10 +39,10 @@ app/
   page.tsx            # Landing — composes section components in order
   globals.css         # Reset + .container utility + reduced-motion
   tokens.css          # All design tokens + atmosphere/accent mode overrides
-components/landing/
-  <Section>/
-    <Section>.tsx           # Component (server by default; "use client" only when needed)
-    <Section>.module.css    # Co-located styles
+  _components/        # App Router private folder (underscore = no route generated)
+    <Section>/
+      <Section>.tsx           # Component (server by default; "use client" only when needed)
+      <Section>.module.css    # Co-located styles
 public/
   fonts/              # Inter 18/24/28pt — only the weights we ship are present
   assets/             # Brand SVG/PNG (logo flask, wordmarks, motif icons)
@@ -59,7 +59,7 @@ src/docs/             # Claude Design handoff bundles (READ-ONLY reference)
 
 ### Section composition (Landing)
 
-`app/page.tsx` mounts: `Nav → Hero → Trust → Capabilities → Process → Work → Manifesto → FinalCta → Footer`. Each is independently importable from `@/components/landing/<Section>/`.
+`app/page.tsx` mounts: `Nav → Hero → Trust → Capabilities → Process → Work → Manifesto → FinalCta → Footer`. Each is co-located in `app/_components/<Section>/` and imported from `./_components/<Section>/<Section>` (relative) or `@/app/_components/<Section>/<Section>` (cross-route).
 
 Shared primitives:
 
