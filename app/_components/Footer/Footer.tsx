@@ -9,7 +9,7 @@ const COLS = [
       { label: 'Capabilities', href: '#capabilities' },
       { label: 'Process', href: '#process' },
       { label: 'Signal', href: '#work' },
-      { label: 'Manifesto', href: '#' },
+      { label: 'Manifesto', href: '#manifesto' },
     ],
   },
   {
@@ -19,18 +19,18 @@ const COLS = [
         label: 'contact@elemento-x.com',
         href: 'mailto:contact@elemento-x.com',
       },
-      { label: 'Book discovery', href: '#' },
-      { label: 'Press / brand', href: '#' },
-      { label: 'Careers', href: '#' },
+      { label: 'Book discovery', href: 'mailto:contact@elemento-x.com' },
+      { label: 'Press / brand', href: 'mailto:contact@elemento-x.com' },
+      { label: 'Careers', href: 'mailto:contact@elemento-x.com' },
     ],
   },
   {
     title: 'Signal',
     links: [
-      { label: 'LinkedIn', href: '#' },
-      { label: 'GitHub', href: '#' },
-      { label: 'X / Twitter', href: '#' },
-      { label: 'Dribbble', href: '#' },
+      { label: 'LinkedIn', href: 'mailto:contact@elemento-x.com' },
+      { label: 'GitHub', href: 'mailto:contact@elemento-x.com' },
+      { label: 'X / Twitter', href: 'mailto:contact@elemento-x.com' },
+      { label: 'Dribbble', href: 'mailto:contact@elemento-x.com' },
     ],
   },
 ]
@@ -77,8 +77,8 @@ export function Footer() {
             <span>EX-CORE-01 · OPERATIONAL</span>
           </div>
           <div className={styles.right}>
-            <Link href="#">Privacy</Link>
-            <Link href="#">Terms</Link>
+            <Link href="mailto:contact@elemento-x.com">Privacy</Link>
+            <Link href="mailto:contact@elemento-x.com">Terms</Link>
             <span className={styles.diamond} aria-hidden="true">
               ◆
             </span>

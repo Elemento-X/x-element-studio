@@ -26,9 +26,9 @@ A landing está visualmente entregue mas inerte: Process tem 4 SVGs estáticos p
 - `app/page.tsx` — composição linear das 9 seções
 - `app/layout.tsx` — Inter local, metadata base, sem GA, sem hreflang, `lang="en"` hardcoded
 - `app/tokens.css` — tokens sólidos; **Exo 2 e JetBrains Mono via Google Fonts CDN @import** (risco LCP)
-- `components/landing/Process/illustrations.tsx` — SVGs puros, paths/circles/lines addressable via class/id
-- `components/landing/Reveal/Reveal.tsx` — IntersectionObserver one-shot (unobserve após primeira intersecção)
-- `components/landing/FinalCta/FinalCta.tsx` — Button `href="#"`, sem form, sem state
+- `app/_components/Process/illustrations.tsx` — SVGs puros, paths/circles/lines addressable via class/id
+- `app/_components/Reveal/Reveal.tsx` — IntersectionObserver one-shot (unobserve após primeira intersecção)
+- `app/_components/FinalCta/FinalCta.tsx` — Button `href="#"`, sem form, sem state
 - `package.json` — **zero deps** de motion/forms/email/i18n/analytics
 
 **Débito no caminho:**
