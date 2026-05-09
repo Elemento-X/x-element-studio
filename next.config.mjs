@@ -38,8 +38,14 @@ const nextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
   compiler: {
+    // Keep info/warn/error in prod: lib/contact uses console.info for
+    // structured operational logs ([contact:persist] ok, [contact:notify] ok,
+    // [contact] honeypot_hit). Stripping them blinds the operator to
+    // throughput in prod. Only debug/log/trace get removed.
     removeConsole:
-      process.env.NODE_ENV === 'production' ? { exclude: ['error'] } : false,
+      process.env.NODE_ENV === 'production'
+        ? { exclude: ['error', 'warn', 'info'] }
+        : false,
   },
   async headers() {
     return [{ source: '/:path*', headers: SECURITY_HEADERS }]
