@@ -116,23 +116,24 @@ async function upstashRateLimit(
   }
 }
 
-export async function rateLimitContact(ip: string): Promise<RateLimitResult> {
-  const hashed = hashIp(ip || 'unknown')
-  const bucket = currentHourBucket()
-  const key = `ratelimit:contact:${hashed}:${bucket}`
-  const limit = env.CONTACT_RATE_LIMIT_PER_HOUR
-
+// One bucket check (Upstash with memory fallback). Extracted from
+// rateLimitContact so we can compose multiple checks (per-IP, global,
+// per-email) cleanly in the public function.
+async function checkBucket(
+  key: string,
+  limit: number,
+  bucket: number,
+): Promise<RateLimitResult> {
   if (env.UPSTASH_REDIS_REST_URL && env.UPSTASH_REDIS_REST_TOKEN) {
     try {
       return await upstashRateLimit(key, limit, bucket)
     } catch (err) {
       // Fail-open: if Upstash is unreachable, degrade to the per-process
-      // memory adapter rather than 503'ing every submit. The threat
-      // model (5/h contact form, no PII to exfil, no financial action)
-      // does not justify failing closed; an attacker would need to
-      // coincide with an Upstash outage AND only gets to spam.
-      // The global cap (added in a follow-up commit) backstops the
-      // degradation window. The warn log is the on-call signal.
+      // memory adapter rather than 503'ing every submit. Threat model
+      // (form contact, no PII to exfil, no financial action) doesn't
+      // justify failing closed; an attacker would need to coincide with
+      // an Upstash outage AND only gets to spam. The global cap is the
+      // backstop during the degradation window.
       const errType = err instanceof Error ? err.name : 'unknown'
       console.warn(
         `[contact:ratelimit] upstash_unavailable error=${errType} fallback=memory`,
@@ -141,4 +142,38 @@ export async function rateLimitContact(ip: string): Promise<RateLimitResult> {
     }
   }
   return memoryRateLimit(key, limit)
+}
+
+export async function rateLimitContact(ip: string): Promise<RateLimitResult> {
+  const bucket = currentHourBucket()
+
+  // Per-IP cap. The "main" check most submits will succeed against.
+  const hashed = hashIp(ip || 'unknown')
+  const ipKey = `ratelimit:contact:ip:${hashed}:${bucket}`
+  const ipResult = await checkBucket(
+    ipKey,
+    env.CONTACT_RATE_LIMIT_PER_HOUR,
+    bucket,
+  )
+  if (!ipResult.ok) return ipResult
+
+  // Global cap. Defends against IPv6 /64 rotation that would otherwise
+  // bypass per-IP limits. Single shared bucket per hour across all IPs.
+  const globalKey = `ratelimit:contact:global:${bucket}`
+  const globalResult = await checkBucket(
+    globalKey,
+    env.CONTACT_GLOBAL_LIMIT_PER_HOUR,
+    bucket,
+  )
+  if (!globalResult.ok) {
+    console.warn(
+      `[contact:ratelimit] global_cap_hit limit=${env.CONTACT_GLOBAL_LIMIT_PER_HOUR}`,
+    )
+    return globalResult
+  }
+
+  // Return the IP result so X-RateLimit-Remaining reflects the headroom
+  // the *individual caller* still has — that's what's useful to the
+  // client. The global cap is a hidden backstop.
+  return ipResult
 }

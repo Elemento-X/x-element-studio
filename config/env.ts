@@ -31,13 +31,25 @@ const envSchema = z
       .default('false')
       .transform((v) => v === 'true'),
 
-    // Rate limit (F2). 5 req/h default — ajustável via env sem rebuild.
+    // Rate limit per IP (F2). 5 req/h default — ajustável via env sem rebuild.
     CONTACT_RATE_LIMIT_PER_HOUR: z.coerce
       .number()
       .int()
       .positive()
       .max(1000)
       .default(5),
+
+    // Global cap (F2). All submits across all IPs count against this single
+    // bucket per hour. Defends against IPv6 /64 rotation that bypasses the
+    // per-IP cap — attacker needs ~40 IPs to drain a 200/h cap; with 200/h
+    // they can also drain Resend free tier (100/day) before this triggers,
+    // so tune in tandem with the email provider's quota.
+    CONTACT_GLOBAL_LIMIT_PER_HOUR: z.coerce
+      .number()
+      .int()
+      .positive()
+      .max(100000)
+      .default(200),
 
     // Email — Resend (F2). FROM_EMAIL/NOTIFY_EMAIL have no defaults so
     // the operator must declare them explicitly per environment. The
