@@ -39,11 +39,14 @@ const envSchema = z
       .max(1000)
       .default(5),
 
-    // Email — Resend (F2)
+    // Email — Resend (F2). FROM_EMAIL/NOTIFY_EMAIL have no defaults so
+    // the operator must declare them explicitly per environment. The
+    // dev defaults that used to live here were dangerous in prod (sandbox
+    // sender = silent reject; gmail.com = personal inbox leak).
     EMAIL_PROVIDER: z.enum(['resend']).default('resend'),
     RESEND_API_KEY: z.string().optional(),
-    FROM_EMAIL: z.string().default('Elemento-X <noreply@elemento-x.com>'),
-    NOTIFY_EMAIL: z.string().email().default('xelementcontact@gmail.com'),
+    FROM_EMAIL: z.string(),
+    NOTIFY_EMAIL: z.string().email(),
 
     // Persistence — Notion (F2)
     NOTION_API_KEY: z.string().optional(),
@@ -150,6 +153,27 @@ const envSchema = z
             path: ['UPSTASH_REDIS_REST_TOKEN'],
             message:
               'UPSTASH_REDIS_REST_TOKEN é obrigatório em produção quando NEXT_PUBLIC_CONTACT_FORM_ENABLED=true (rate limiting).',
+          })
+        }
+
+        // Reject dev placeholders in prod. Resend sandbox sender silently
+        // fails in prod (notify is best-effort → operator gets nothing,
+        // leads pile up in Notion only). Personal Gmail as NOTIFY_EMAIL
+        // is data-leak risk + never the right operator inbox in prod.
+        if (/@resend\.dev\b/i.test(data.FROM_EMAIL)) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            path: ['FROM_EMAIL'],
+            message:
+              'FROM_EMAIL não pode usar @resend.dev em produção (sandbox sender). Verifique um domínio próprio no Resend.',
+          })
+        }
+        if (data.NOTIFY_EMAIL === 'xelementcontact@gmail.com') {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            path: ['NOTIFY_EMAIL'],
+            message:
+              'NOTIFY_EMAIL é o default de DEV (Gmail pessoal). Em produção, configure inbox da equipe.',
           })
         }
       }
