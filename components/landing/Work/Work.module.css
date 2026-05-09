@@ -80,6 +80,10 @@
   margin: 0;
 }
 
+.vizLabels {
+  display: contents;
+}
+
 .vizTall {
   height: 260px;
 }
