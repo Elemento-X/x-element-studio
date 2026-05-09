@@ -63,7 +63,9 @@ export function FinalCta() {
           <Reveal className={styles.card}>
             {formEnabled ? (
               <>
-                <span className={styles.eyebrow}>Engagement brief</span>
+                <span className={`${styles.eyebrow} ${styles.eyebrowMuted}`}>
+                  Engagement brief
+                </span>
                 <ContactForm />
               </>
             ) : (
