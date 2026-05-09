@@ -43,16 +43,18 @@ export function FinalCta() {
 
           <Reveal className={styles.card}>
             <span className={styles.eyebrow}>Engagement brief</span>
-            {BRIEF_ROWS.map((r) => (
-              <div key={r.k} className={styles.row}>
-                <span className={styles.k}>{r.k}</span>
-                <span
-                  className={`${styles.v} ${r.signal ? styles.vSignal : ''}`}
-                >
-                  {r.v}
-                </span>
-              </div>
-            ))}
+            <dl className={styles.brief}>
+              {BRIEF_ROWS.map((r) => (
+                <div key={r.k} className={styles.row}>
+                  <dt className={styles.k}>{r.k}</dt>
+                  <dd
+                    className={`${styles.v} ${r.signal ? styles.vSignal : ''}`}
+                  >
+                    {r.v}
+                  </dd>
+                </div>
+              ))}
+            </dl>
             <div className={styles.disclaimer}>
               Engagements are admitted in cohorts. We only onboard a partnership
               when we believe we can make a measurable, defensible difference to

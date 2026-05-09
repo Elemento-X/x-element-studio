@@ -10,6 +10,9 @@
 
 # testing
 /coverage
+/playwright-report
+/test-results
+/playwright/.cache
 
 # next.js
 /.next/
@@ -48,7 +51,3 @@ logs
 .claude/settings.local.json
 .mcp.json
 .claude/metrics/pipeline.jsonl
-
-# design handoff — binaries and uploads (reference only, not production)
-src/docs/*/project/fonts/
-src/docs/*/project/uploads/

@@ -48,34 +48,36 @@ function CaseCard({
         <span className={styles.client}>{client}</span>
         <span className={styles.status}>Operational</span>
       </div>
-      <div className={`${styles.viz} ${tall ? styles.vizTall : ''}`}>
+      <figure className={`${styles.viz} ${tall ? styles.vizTall : ''}`}>
         <VizGridBg />
         {viz}
-        {vizLabels.topLeft && (
-          <span className={`${styles.label} ${styles.topLeft}`}>
-            {vizLabels.topLeft}
-          </span>
-        )}
-        {vizLabels.topRight && (
-          <span
-            className={`${styles.label} ${styles.topRight} ${styles.signal}`}
-          >
-            {vizLabels.topRight}
-          </span>
-        )}
-        {vizLabels.bottomLeft && (
-          <span className={`${styles.label} ${styles.bottomLeft}`}>
-            {vizLabels.bottomLeft}
-          </span>
-        )}
-        {vizLabels.bottomRight && (
-          <span
-            className={`${styles.label} ${styles.bottomRight} ${styles.signal}`}
-          >
-            {vizLabels.bottomRight}
-          </span>
-        )}
-      </div>
+        <figcaption className={styles.vizLabels}>
+          {vizLabels.topLeft && (
+            <span className={`${styles.label} ${styles.topLeft}`}>
+              {vizLabels.topLeft}
+            </span>
+          )}
+          {vizLabels.topRight && (
+            <span
+              className={`${styles.label} ${styles.topRight} ${styles.signal}`}
+            >
+              {vizLabels.topRight}
+            </span>
+          )}
+          {vizLabels.bottomLeft && (
+            <span className={`${styles.label} ${styles.bottomLeft}`}>
+              {vizLabels.bottomLeft}
+            </span>
+          )}
+          {vizLabels.bottomRight && (
+            <span
+              className={`${styles.label} ${styles.bottomRight} ${styles.signal}`}
+            >
+              {vizLabels.bottomRight}
+            </span>
+          )}
+        </figcaption>
+      </figure>
       <h3 className={styles.title}>{title}</h3>
       {copy && <p className={styles.copy}>{copy}</p>}
       <div className={styles.stats}>

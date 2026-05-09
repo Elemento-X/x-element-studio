@@ -10,7 +10,14 @@ parseInput().then(({ filePath }) => {
   const normalized = filePath.replace(/\\/g, '/')
 
   // Skip config/hook files
-  if (!normalized.includes('/src/') && !normalized.includes('/app/') && !normalized.includes('/lib/')) {
+  if (
+    !normalized.includes('/src/') &&
+    !normalized.includes('/app/') &&
+    !normalized.includes('/lib/') &&
+    !normalized.includes('/components/') &&
+    !normalized.includes('/hooks/') &&
+    !normalized.includes('/utils/')
+  ) {
     process.exit(0)
   }
 
@@ -19,21 +26,28 @@ parseInput().then(({ filePath }) => {
       // Only run if eslint is locally installed; skip otherwise (avoids npx
       // pulling latest ESLint v10 which requires flat config).
       const { existsSync } = require('fs')
-      if (!existsSync('node_modules/.bin/eslint') && !existsSync('node_modules/.bin/eslint.cmd')) {
+      if (
+        !existsSync('node_modules/.bin/eslint') &&
+        !existsSync('node_modules/.bin/eslint.cmd')
+      ) {
         process.exit(0)
       }
       try {
         const result = execSync(
           `npx --no-install eslint --no-error-on-unmatched-pattern ${JSON.stringify(filePath)} 2>&1`,
-          { encoding: 'utf8', timeout: 15000 }
+          { encoding: 'utf8', timeout: 15000 },
         )
         if (result.trim()) {
-          process.stderr.write(`Lint warnings em ${filePath}:\n${result.trim()}`)
+          process.stderr.write(
+            `Lint warnings em ${filePath}:\n${result.trim()}`,
+          )
         }
       } catch (err) {
         const output = (err.stdout || '').trim()
         if (output) {
-          process.stderr.write(`Lint errors em ${filePath}:\n${output}\n\nCorrija antes de continuar.`)
+          process.stderr.write(
+            `Lint errors em ${filePath}:\n${output}\n\nCorrija antes de continuar.`,
+          )
           process.exit(2)
         }
       }
@@ -54,14 +68,21 @@ parseInput().then(({ filePath }) => {
 
       if (lintCmd) {
         try {
-          const result = execSync(`${lintCmd} 2>&1`, { encoding: 'utf8', timeout: 15000 })
+          const result = execSync(`${lintCmd} 2>&1`, {
+            encoding: 'utf8',
+            timeout: 15000,
+          })
           if (result.trim()) {
-            process.stderr.write(`Lint warnings em ${filePath}:\n${result.trim()}`)
+            process.stderr.write(
+              `Lint warnings em ${filePath}:\n${result.trim()}`,
+            )
           }
         } catch (err) {
           const output = (err.stdout || err.stderr || '').trim()
           if (output) {
-            process.stderr.write(`Lint errors em ${filePath}:\n${output}\n\nCorrija antes de continuar.`)
+            process.stderr.write(
+              `Lint errors em ${filePath}:\n${output}\n\nCorrija antes de continuar.`,
+            )
             process.exit(2)
           }
         }

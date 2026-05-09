@@ -35,7 +35,7 @@ export function Nav() {
   const time = useUtcClock()
 
   return (
-    <nav className={styles.nav}>
+    <header className={styles.nav}>
       <div className={`container-wide container ${styles.inner}`}>
         <Link href="/" className={styles.brand} aria-label="Elemento-X home">
           <span className={styles.logoChip} aria-hidden="true">
@@ -44,14 +44,18 @@ export function Nav() {
           <span className={styles.wordmark}>Elemento&#8209;X</span>
         </Link>
 
-        <div className={styles.links}>
-          {NAV_LINKS.map((link) => (
-            <Link key={link.href} href={link.href}>
-              <span className={styles.num}>{link.num}</span>
-              {link.label}
-            </Link>
-          ))}
-        </div>
+        <nav aria-label="Primary">
+          <ul className={styles.links}>
+            {NAV_LINKS.map((link) => (
+              <li key={link.href}>
+                <Link href={link.href}>
+                  <span className={styles.num}>{link.num}</span>
+                  {link.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
 
         <div className={styles.cta}>
           <div className={styles.status} suppressHydrationWarning>
@@ -63,6 +67,6 @@ export function Nav() {
           </Button>
         </div>
       </div>
-    </nav>
+    </header>
   )
 }

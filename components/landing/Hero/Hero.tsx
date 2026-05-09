@@ -8,7 +8,7 @@ export function Hero() {
       <div className={styles.grid} aria-hidden="true" />
       <div className={styles.shaft} aria-hidden="true" />
 
-      <div className={styles.glyph}>
+      <div className={styles.glyph} aria-hidden="true">
         <HeroGlyph />
       </div>
 

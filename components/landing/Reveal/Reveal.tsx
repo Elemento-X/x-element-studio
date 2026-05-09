@@ -6,7 +6,7 @@ import styles from './Reveal.module.css'
 
 interface RevealProps {
   children: ReactNode
-  as?: 'div' | 'section' | 'article' | 'span'
+  as?: 'div' | 'section' | 'article' | 'span' | 'li'
   className?: string
   delay?: number
 }
@@ -22,6 +22,7 @@ export function Reveal({
 
   useEffect(() => {
     if (typeof IntersectionObserver === 'undefined') {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- One-shot fallback for environments without IntersectionObserver (SSR/jsdom tests). The effect exits immediately after; no cascading renders.
       setShown(true)
       return
     }
@@ -50,6 +51,9 @@ export function Reveal({
 
   const style = delay ? { transitionDelay: `${delay}ms` } : undefined
 
+  // Polymorphic ref via `as never`: required because the discriminated union of
+  // accepted tags makes the ref type mutually incompatible. NEVER add void
+  // elements (img, hr, br, input) to the `as` union — they don't accept children.
   return (
     <Tag ref={ref as never} className={classes} style={style}>
       {children}

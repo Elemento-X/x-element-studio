@@ -49,6 +49,9 @@
   grid-template-columns: repeat(4, 1fr);
   gap: 0;
   border-top: 1px solid var(--line-hairline);
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
 .cell {
