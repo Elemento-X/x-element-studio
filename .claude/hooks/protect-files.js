@@ -10,11 +10,14 @@ parseInput().then(({ filePath }) => {
   // por default no Next.js, e Claude precisa organizar/validar o arquivo
   // durante setup de credenciais. .env (sem .local) e os outros perfis
   // continuam bloqueados — esses sim podem vazar em commit acidental.
+  // .mcp.json gitignored mas bloqueado aqui como defesa em profundidade —
+  // configs project-scoped podem conter tokens em alguns setups.
   const blockedFiles = [
     '.env',
     '.env.production',
     '.env.development',
     '.env.staging',
+    '.mcp.json',
     'package-lock.json',
     'yarn.lock',
     'pnpm-lock.yaml',
