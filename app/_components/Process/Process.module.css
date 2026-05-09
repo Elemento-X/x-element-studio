@@ -30,22 +30,24 @@
   border-right: none;
 }
 
-.step:hover .arrow {
-  color: var(--ex-gold);
-  transform: translateX(4px);
-}
+@media (hover: hover) and (pointer: fine) {
+  .step:hover .arrow {
+    color: var(--ex-gold);
+    transform: translateX(4px);
+  }
 
-.step:hover .num {
-  color: var(--ex-gold);
-}
+  .step:hover .num {
+    color: var(--ex-gold);
+  }
 
-.step:hover .title {
-  color: var(--ex-gold);
-}
+  .step:hover .title {
+    color: var(--ex-gold);
+  }
 
-.step:hover .illust {
-  border-color: var(--line-strong);
-  box-shadow: inset 0 0 20px rgba(245, 194, 26, 0.02);
+  .step:hover .illust {
+    border-color: var(--line-strong);
+    box-shadow: inset 0 0 20px rgba(245, 194, 26, 0.02);
+  }
 }
 
 .head {
@@ -501,6 +503,18 @@
   animation: disc-typewriter 800ms cubic-bezier(0.2, 0.8, 0.2, 1) 800ms both;
 }
 
+/* Hover: pupil + active node intensify (gold pops). */
+@media (hover: hover) and (pointer: fine) {
+  .step:nth-child(1) .illust :global(.disc-pupil),
+  .step:nth-child(1) .illust :global(.disc-node) {
+    transition: filter var(--t-modal);
+  }
+  .step:nth-child(1):hover .illust :global(.disc-pupil),
+  .step:nth-child(1):hover .illust :global(.disc-node) {
+    filter: brightness(1.25);
+  }
+}
+
 /* ── ArchitectIllust ────────────────────────────────────────────── */
 /* Starts at 1600ms. Layers appear L1→L2→L3→L4, 300ms stagger.      */
 /* L2 stays gold naturally (inline SVG stroke="#F5C21A").            */
@@ -553,9 +567,13 @@
 }
 
 /* Hover: L2 (gold layer) intensifies */
-.step:hover .illust :global(.arch-l2) {
-  filter: brightness(1.2);
-  transition: filter 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
+@media (hover: hover) and (pointer: fine) {
+  .step:nth-child(2) .illust :global(.arch-l2) {
+    transition: filter var(--t-modal);
+  }
+  .step:nth-child(2):hover .illust :global(.arch-l2) {
+    filter: brightness(1.2);
+  }
 }
 
 /* ── BuildIllust ────────────────────────────────────────────────── */
@@ -640,12 +658,19 @@
 }
 
 /* Hover: non-gold columns dim */
-.step:hover .illust :global(.build-col-1),
-.step:hover .illust :global(.build-col-2),
-.step:hover .illust :global(.build-col-3),
-.step:hover .illust :global(.build-col-5) {
-  opacity: 0.35;
-  transition: opacity 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
+@media (hover: hover) and (pointer: fine) {
+  .step:nth-child(3) .illust :global(.build-col-1),
+  .step:nth-child(3) .illust :global(.build-col-2),
+  .step:nth-child(3) .illust :global(.build-col-3),
+  .step:nth-child(3) .illust :global(.build-col-5) {
+    transition: opacity var(--t-modal);
+  }
+  .step:nth-child(3):hover .illust :global(.build-col-1),
+  .step:nth-child(3):hover .illust :global(.build-col-2),
+  .step:nth-child(3):hover .illust :global(.build-col-3),
+  .step:nth-child(3):hover .illust :global(.build-col-5) {
+    opacity: 0.35;
+  }
 }
 
 /* ── ScaleIllust ────────────────────────────────────────────────── */
@@ -741,9 +766,10 @@
 }
 
 /* Hover: orbital ring accelerates */
-.step:hover .illust :global(.scale-ring-dash) {
-  animation-duration: 4s !important;
-  transition: animation-duration 220ms;
+@media (hover: hover) and (pointer: fine) {
+  .step:nth-child(4):hover .illust :global(.scale-ring-dash) {
+    animation-duration: 4s;
+  }
 }
 
 /* ── prefers-reduced-motion ─────────────────────────────────────── */
