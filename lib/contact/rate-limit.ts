@@ -88,23 +88,31 @@ function getRedis(): Redis {
 async function upstashRateLimit(
   key: string,
   limit: number,
+  bucket: number,
 ): Promise<RateLimitResult> {
   const redis = getRedis()
-  // INCR is atomic; EXPIRE is idempotent. Resetting TTL on every hit
-  // doesn't matter because the key embeds the hour bucket — the next
-  // bucket uses a new key. Auto-expiry just keeps Redis tidy.
-  const count = await redis.incr(key)
-  await redis.expire(key, WINDOW_SECONDS)
-  const ttl = await redis.ttl(key)
-  const retryAfter = ttl > 0 ? ttl : WINDOW_SECONDS
+
+  // retryAfter is deterministic from the bucket + now: the bucket ends at
+  // (bucket+1)*WINDOW. No need to ask Redis for TTL — saves one round-trip.
+  const nowSec = Math.floor(Date.now() / 1000)
+  const bucketEndSec = (bucket + 1) * WINDOW_SECONDS
+  const retryAfterSeconds = Math.max(1, bucketEndSec - nowSec)
+
+  // Single pipelined round-trip: INCR is atomic; EXPIRE NX sets the TTL
+  // only when the key didn't have one (first hit of the bucket). Subsequent
+  // hits in the same bucket skip the EXPIRE work.
+  const pipe = redis.pipeline()
+  pipe.incr(key)
+  pipe.expire(key, WINDOW_SECONDS, 'NX')
+  const [count] = (await pipe.exec()) as [number, unknown]
 
   if (count > limit) {
-    return { ok: false, remaining: 0, retryAfterSeconds: retryAfter }
+    return { ok: false, remaining: 0, retryAfterSeconds }
   }
   return {
     ok: true,
     remaining: Math.max(0, limit - count),
-    retryAfterSeconds: retryAfter,
+    retryAfterSeconds,
   }
 }
 
@@ -115,7 +123,7 @@ export async function rateLimitContact(ip: string): Promise<RateLimitResult> {
   const limit = env.CONTACT_RATE_LIMIT_PER_HOUR
 
   if (env.UPSTASH_REDIS_REST_URL && env.UPSTASH_REDIS_REST_TOKEN) {
-    return upstashRateLimit(key, limit)
+    return upstashRateLimit(key, limit, bucket)
   }
   return memoryRateLimit(key, limit)
 }
