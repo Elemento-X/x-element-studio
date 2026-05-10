@@ -95,7 +95,14 @@ function buildReportOnlyCsp(nonce: string): string {
     "base-uri 'self'",
     "form-action 'self'",
     "object-src 'none'",
-    'upgrade-insecure-requests',
+    // NOTE: `upgrade-insecure-requests` is intentionally OMITTED here.
+    // It is an enforce-only directive — browsers log a console error
+    // ("directive ignored when delivered in a report-only policy")
+    // every time it appears in CSP-Report-Only, which the smoke E2E
+    // surfaces as a regression. The active enforced CSP still carries
+    // it; the shadow policy is purely about catching script-src/etc
+    // violations, where this directive plays no role anyway.
+    //
     // Modern Reporting API — paired with `Reporting-Endpoints` below.
     'report-to csp-endpoint',
     // Legacy fallback for browsers that still honor `report-uri`.
