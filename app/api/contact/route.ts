@@ -4,6 +4,7 @@ import { env } from '@/config/env'
 import { notifyContact } from '@/lib/contact/notify'
 import { persistContact } from '@/lib/contact/persist'
 import {
+  hashIp,
   rateLimitContact,
   rateLimitContactEmail,
 } from '@/lib/contact/rate-limit'
@@ -271,7 +272,10 @@ export async function POST(req: NextRequest) {
     )
   }
 
-  const persistResult = await persistContact(data)
+  const persistResult = await persistContact(data, {
+    ipHash: hashIp(ip || 'unknown'),
+    source: 'landing-form',
+  })
   if (!persistResult.ok) {
     console.error(
       `[contact] persist_failed error=${persistResult.error} rid=${requestId}`,

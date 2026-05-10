@@ -54,6 +54,10 @@ const {
 vi.mock('@/lib/contact/rate-limit', () => ({
   rateLimitContact: mockRateLimitContact,
   rateLimitContactEmail: mockRateLimitContactEmail,
+  // hashIp is also imported by route.ts to tag persisted submissions.
+  // Use a deterministic stub so test assertions on the metadata
+  // (Notion `IP hash` property) stay stable across runs.
+  hashIp: (ip: string) => `hashed:${ip}`,
 }))
 vi.mock('@/lib/contact/persist', () => ({ persistContact: mockPersist }))
 vi.mock('@/lib/contact/notify', () => ({ notifyContact: mockNotify }))

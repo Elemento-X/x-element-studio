@@ -61,7 +61,19 @@ type CreatePageProperties = Parameters<
   Client['pages']['create']
 >[0]['properties']
 
-function buildProperties(input: ContactOutput): CreatePageProperties {
+// Submission metadata persisted alongside the user-provided fields.
+// `ipHash` is the same SHA-256 prefix used by the rate-limiter (no
+// plaintext IP ever reaches Notion). `source` identifies the entry
+// point — 'landing-form' for now; future entry points get their own tag.
+export interface PersistMeta {
+  ipHash: string
+  source: string
+}
+
+function buildProperties(
+  input: ContactOutput,
+  meta: PersistMeta,
+): CreatePageProperties {
   const props: CreatePageProperties = {
     Name: {
       title: [{ text: { content: input.name } }],
@@ -72,6 +84,10 @@ function buildProperties(input: ContactOutput): CreatePageProperties {
       rich_text: [{ text: { content: input.message } }],
     },
     Status: { select: { name: 'New' } },
+    'IP hash': {
+      rich_text: [{ text: { content: meta.ipHash } }],
+    },
+    Source: { select: { name: meta.source } },
   }
 
   if (input.company) {
@@ -88,11 +104,14 @@ function buildProperties(input: ContactOutput): CreatePageProperties {
   return props
 }
 
-async function createNotionPage(input: ContactOutput): Promise<string> {
+async function createNotionPage(
+  input: ContactOutput,
+  meta: PersistMeta,
+): Promise<string> {
   const notion = getNotion()
   const page = await notion.pages.create({
     parent: { database_id: env.NOTION_DATABASE_ID as string },
-    properties: buildProperties(input),
+    properties: buildProperties(input, meta),
   })
   return page.id
 }
@@ -120,6 +139,7 @@ function classifyError(err: unknown): 'transient' | 'permanent' {
 
 export async function persistContact(
   input: ContactOutput,
+  meta: PersistMeta,
 ): Promise<PersistResult> {
   if (!env.NOTION_API_KEY || !env.NOTION_DATABASE_ID) {
     console.info('[contact:persist] stub-mode (Notion env vars missing)')
@@ -131,7 +151,7 @@ export async function persistContact(
 
   for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
     try {
-      const pageId = await createNotionPage(input)
+      const pageId = await createNotionPage(input, meta)
       console.info(
         `[contact:persist] ok attempt=${attempt} latency_ms=${Date.now() - start}`,
       )

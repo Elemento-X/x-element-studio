@@ -35,7 +35,10 @@ export interface RateLimitResult {
 
 const WINDOW_SECONDS = 3600
 
-function hashIp(ip: string): string {
+// Exported so other modules (persist.ts) reuse the exact same hash for
+// per-submission metadata — keeps the rate-limit bucket key and the
+// Notion `IP hash` property identical for cross-referencing.
+export function hashIp(ip: string): string {
   return createHash('sha256').update(ip).digest('hex').slice(0, 16)
 }
 

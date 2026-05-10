@@ -36,6 +36,9 @@ import {
 } from 'vitest'
 import type { ContactOutput } from './schema'
 
+// Default metadata for tests that don't care about it.
+const META = { ipHash: 'a1b2c3d4e5f60718', source: 'landing-form' } as const
+
 // Hoisted mock factory so vi.mock can use it.
 const { mockCreate, NotionAPIErrorMock } = vi.hoisted(() => {
   // Minimal stand-in for APIResponseError. The real `isNotionClientError`
@@ -101,7 +104,7 @@ afterEach(() => {
 describe('persistContact — stub mode', () => {
   it('returns { ok:true, pageId:"stub" } when NOTION_* envs are missing', async () => {
     const { persistContact } = await import('./persist')
-    const r = await persistContact(validInput)
+    const r = await persistContact(validInput, META)
 
     expect(r).toEqual({ ok: true, pageId: 'stub' })
     expect(mockCreate).not.toHaveBeenCalled()
@@ -117,7 +120,7 @@ describe('persistContact — happy path', () => {
     mockCreate.mockResolvedValueOnce({ id: 'page_abc' })
 
     const { persistContact } = await import('./persist')
-    const r = await persistContact(validInput)
+    const r = await persistContact(validInput, META)
 
     expect(r).toEqual({ ok: true, pageId: 'page_abc' })
     expect(mockCreate).toHaveBeenCalledTimes(1)
@@ -131,12 +134,15 @@ describe('persistContact — happy path', () => {
     mockCreate.mockResolvedValueOnce({ id: 'page_xyz' })
 
     const { persistContact } = await import('./persist')
-    await persistContact({
-      ...validInput,
-      engagement: 'other',
-      engagementOther: 'Audit',
-      company: 'Acme',
-    })
+    await persistContact(
+      {
+        ...validInput,
+        engagement: 'other',
+        engagementOther: 'Audit',
+        company: 'Acme',
+      },
+      META,
+    )
 
     expect(mockCreate).toHaveBeenCalledTimes(1)
     const call = mockCreate.mock.calls[0]?.[0] as {
@@ -158,7 +164,7 @@ describe('persistContact — happy path', () => {
     mockCreate.mockResolvedValueOnce({ id: 'page_clean' })
 
     const { persistContact } = await import('./persist')
-    await persistContact(validInput)
+    await persistContact(validInput, META)
 
     const call = mockCreate.mock.calls[0]?.[0] as {
       properties: Record<string, unknown>
@@ -179,7 +185,7 @@ describe('persistContact — retry on transient', () => {
       .mockResolvedValueOnce({ id: 'page_after_retry' })
 
     const { persistContact } = await import('./persist')
-    const promise = persistContact(validInput)
+    const promise = persistContact(validInput, META)
 
     // BASE=200ms backoff between attempt 1 → 2
     await vi.runAllTimersAsync()
@@ -199,7 +205,7 @@ describe('persistContact — retry on transient', () => {
       .mockRejectedValueOnce(new NotionAPIErrorMock('service_unavailable', 503))
 
     const { persistContact } = await import('./persist')
-    const promise = persistContact(validInput)
+    const promise = persistContact(validInput, META)
     await vi.runAllTimersAsync()
     const r = await promise
 
@@ -219,7 +225,7 @@ describe('persistContact — permanent failures', () => {
     )
 
     const { persistContact } = await import('./persist')
-    const r = await persistContact(validInput)
+    const r = await persistContact(validInput, META)
 
     expect(r).toEqual({ ok: false, error: 'permanent' })
     expect(mockCreate).toHaveBeenCalledTimes(1)
@@ -235,7 +241,7 @@ describe('persistContact — permanent failures', () => {
     mockCreate.mockRejectedValueOnce(new TypeError('boom'))
 
     const { persistContact } = await import('./persist')
-    const r = await persistContact(validInput)
+    const r = await persistContact(validInput, META)
 
     expect(r).toEqual({ ok: false, error: 'permanent' })
     expect(mockCreate).toHaveBeenCalledTimes(1)
@@ -260,7 +266,7 @@ describe('persistContact — logging policy', () => {
     }
 
     const { persistContact } = await import('./persist')
-    await persistContact(piiInput)
+    await persistContact(piiInput, META)
 
     const allLogged = [
       ...infoSpy.mock.calls.flat(),
