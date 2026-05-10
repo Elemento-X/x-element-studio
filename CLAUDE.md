@@ -12,9 +12,9 @@ The full project context (brand, tokens, sections, design rules) lives in `.clau
 
 ## Stack
 
-- **Next.js 14 (App Router)** + **React 18** + **TypeScript** (strict, `noUncheckedIndexedAccess`)
+- **Next.js 16 (App Router)** + **React 19** + **TypeScript** (strict, `noUncheckedIndexedAccess`)
 - **CSS Modules** + design tokens in `app/tokens.css` (no Tailwind by design — the system is token-first, not utility-first)
-- **`next/font/local`** for Inter (shipped from `public/fonts/`); **Exo 2** + **JetBrains Mono** via Google Fonts in `tokens.css`
+- **`next/font/local`** for Inter (WOFF2 from `public/fonts/`, weights 300/400/500/600 only); **Exo 2** + **JetBrains Mono** via `next/font/google` (self-hosted at build time, zero render-blocking external requests)
 - **lucide-react** for functional UI icons (brand motifs are bespoke SVG in `public/assets/`)
 
 ## Commands
@@ -44,7 +44,7 @@ app/
       <Section>.tsx           # Component (server by default; "use client" only when needed)
       <Section>.module.css    # Co-located styles
 public/
-  fonts/              # Inter 18/24/28pt — only the weights we ship are present
+  fonts/              # Inter 18pt WOFF2 (300/400/500/600 only) — Exo 2 + JetBrains via next/font/google
   assets/             # Brand SVG/PNG (logo flask, wordmarks, motif icons)
 src/docs/             # Claude Design handoff bundles (READ-ONLY reference)
   elemento-x/                 # Landing page source-of-truth (HTML/CSS prototype)
@@ -97,5 +97,5 @@ Code delivery: `(@tester + @security) → @reviewer`. Extended path-matrix trigg
 
 - The HTML in `src/docs/` is **prototype**, not production. Recreate visually, do not transliterate structure.
 - Do not render the prototype HTML in a browser to "check" — read the source. Dimensions and rules are spelled out.
-- Inter is shipped locally and must stay that way (cinematic typography is part of brand identity, no FOUT). Exo 2 and JetBrains Mono can stay on Google Fonts CDN.
+- Inter ships locally as WOFF2 (rsms/inter 18pt optical, weights 300/400/500/600) — cinematic typography is brand identity. Exo 2 + JetBrains Mono come via `next/font/google`, which self-hosts the WOFF2 at build time (no Google CDN at runtime, no render-blocking `@import`).
 - The `tweaks-panel.jsx` and `Landing Page-print.html` `<script>` tags from the design bundle are **not** ported. We replicate the visual states only.

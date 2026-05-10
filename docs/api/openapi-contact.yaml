@@ -1,0 +1,228 @@
+openapi: 3.1.0
+info:
+  title: Elemento-X Studio Contact API
+  version: 1.0.0
+  description: |
+    Public contact form endpoint. Validates input, persists to Notion,
+    notifies the operator inbox via Resend. Rate-limited per-IP, per-email,
+    and globally (Upstash Redis). Honeypot-protected.
+
+    Source-of-truth for the implementation lives in app/api/contact/route.ts,
+    lib/contact/, and config/env.ts. If this spec disagrees with the code,
+    the code wins.
+
+    Response envelope follows .claude/rules/api-contract.md.
+  contact:
+    name: Elemento-X Studio
+    email: contact@elemento-x.com
+
+servers:
+  - url: https://elemento-x.com
+    description: Production
+  - url: http://localhost:3000
+    description: Local dev
+
+tags:
+  - name: contact
+    description: Contact form submission
+
+paths:
+  /api/contact:
+    post:
+      operationId: submitContact
+      summary: Submit a contact form entry
+      tags: [contact]
+      description: |
+        Pipeline:
+          1. Feature gate (NEXT_PUBLIC_CONTACT_FORM_ENABLED).
+          2. Origin check (must match NEXT_PUBLIC_SITE_URL in prod).
+          3. Content-Type must be application/json.
+          4. Rate limit (per-IP), then body parse and schema validation.
+          5. Per-email rate limit.
+          6. Persist to Notion.
+          7. Notify operator (best-effort; failure does NOT fail the route).
+      parameters:
+        - in: header
+          name: X-Request-Id
+          schema:
+            type: string
+            pattern: '^[A-Za-z0-9-]{8,128}$'
+          required: false
+          description: |
+            Echoed back if it matches the pattern; otherwise server mints
+            a UUID v4. Used for log correlation (rid= field in Vercel logs).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ContactRequest'
+      responses:
+        '200':
+          description: Submission accepted (and persisted, unless honeypot tripped silently).
+          headers:
+            X-Request-Id:
+              schema: { type: string }
+            X-RateLimit-Remaining:
+              schema: { type: string }
+              description: Per-IP requests remaining in the current hour bucket.
+            Cache-Control:
+              schema: { type: string }
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          description: Invalid JSON or schema violation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Origin not allowed (cross-origin in prod).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '405':
+          description: Method not POST.
+          headers:
+            Allow:
+              schema: { type: string }
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '413':
+          description: Body exceeds 16 KB.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '415':
+          description: Content-Type is not application/json.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '429':
+          description: Rate limit hit (per-IP, per-email, or global).
+          headers:
+            Retry-After:
+              schema: { type: string }
+              description: Seconds until the bucket resets.
+            X-RateLimit-Remaining:
+              schema: { type: string }
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Persist (Notion) failed permanently.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '503':
+          description: Form is disabled via NEXT_PUBLIC_CONTACT_FORM_ENABLED.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    get:
+      operationId: contactMethodNotAllowed
+      summary: Returns 405 (method discoverability)
+      tags: [contact]
+      responses:
+        '405':
+          description: Always.
+          headers:
+            Allow:
+              schema: { type: string }
+
+components:
+  schemas:
+    ContactRequest:
+      type: object
+      additionalProperties: false
+      required: [name, email, engagement, message]
+      properties:
+        name:
+          type: string
+          minLength: 2
+          maxLength: 80
+        email:
+          type: string
+          format: email
+          maxLength: 254
+        company:
+          type: string
+          maxLength: 120
+          nullable: true
+          description: Optional. Empty string is treated as omitted.
+        engagement:
+          type: string
+          enum: [new-project, diagnostic, partnership, other]
+        engagementOther:
+          type: string
+          minLength: 4
+          maxLength: 120
+          description: Required only when engagement = "other".
+        message:
+          type: string
+          minLength: 20
+          maxLength: 2000
+        honeypot:
+          type: string
+          maxLength: 0
+          description: |
+            Hidden anti-bot field. Must be empty. Bots fill it; humans don't.
+            A non-empty value triggers a silent 200 (no signal to the bot).
+
+    SuccessResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          type: object
+          required: [ok]
+          properties:
+            ok:
+              type: boolean
+              enum: [true]
+
+    ErrorResponse:
+      type: object
+      required: [error]
+      properties:
+        error:
+          $ref: '#/components/schemas/ErrorPayload'
+
+    ErrorPayload:
+      type: object
+      required: [code, message]
+      properties:
+        code:
+          $ref: '#/components/schemas/ErrorCode'
+        message:
+          type: string
+          description: Human-readable. Not part of the contract — may change without versioning.
+        fields:
+          type: object
+          additionalProperties: { type: string }
+          description: Only present when code = VALIDATION_ERROR.
+
+    ErrorCode:
+      type: string
+      enum:
+        - INVALID_JSON
+        - VALIDATION_ERROR
+        - FORBIDDEN
+        - METHOD_NOT_ALLOWED
+        - PAYLOAD_TOO_LARGE
+        - UNSUPPORTED_MEDIA_TYPE
+        - RATE_LIMITED
+        - PERSISTENCE_ERROR
+        - DISABLED
+      description: |
+        Stable discriminator. Client switches on this value, NOT on `message`.

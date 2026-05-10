@@ -2,10 +2,12 @@
    Elemento-X — Design tokens
    Darkness as default. Gold as signal.
    Source of truth: src/docs/elemento-x-design-system/project/colors_and_type.css
-   ============================================================ */
 
-/* Display + mono (body Inter via next/font) */
-@import url('https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+   Fonts: all three families self-hosted via next/font (see app/layout.tsx).
+   Inter (body) is local WOFF2 from rsms/inter; Exo 2 (display) and
+   JetBrains Mono (mono) come from next/font/google, which self-hosts at
+   build time — zero render-blocking external requests.
+   ============================================================ */
 
 :root {
   /* Surface — 90% dark */
@@ -65,10 +67,12 @@
   --glow-gold:
     0 0 0 1px rgba(245, 194, 26, 0.35), 0 0 24px rgba(245, 194, 26, 0.1);
 
-  /* Type families — body = Inter (next/font), display = Exo 2, mono = JetBrains */
-  --font-display: 'Exo 2', var(--font-inter), system-ui, sans-serif;
+  /* Type families — all self-hosted via next/font (zero render-blocking) */
+  --font-display: var(--font-exo), 'Exo 2', system-ui, sans-serif;
   --font-body: var(--font-inter), 'Söhne', system-ui, -apple-system, sans-serif;
-  --font-mono: 'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace;
+  --font-mono:
+    var(--font-jetbrains), 'JetBrains Mono', 'IBM Plex Mono', ui-monospace,
+    monospace;
 
   /* Type scale */
   --h-display-size: 72px;

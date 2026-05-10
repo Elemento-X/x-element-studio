@@ -25,10 +25,9 @@ export function Manifesto() {
         </blockquote>
 
         <p className={styles.body}>
-          We are not a marketing engine. We are the team that gets called when a
-          system has to work — when downtime is unacceptable, when ambiguity is
-          expensive, and when the people closest to the problem need leverage,
-          not ceremony.
+          We are the team called when the system has to work. When downtime is
+          expensive. When the people closest to the problem need{' '}
+          <strong>leverage</strong>, not another meeting.
         </p>
 
         <footer className={styles.sig}>

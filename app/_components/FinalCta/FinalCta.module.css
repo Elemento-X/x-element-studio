@@ -36,6 +36,14 @@
   color: var(--ex-gold);
 }
 
+/* Card eyebrow ("Engagement brief") cedes its gold hairline when the
+   form is active — the .card::before is already the single gold of the
+   viewport (designer's spec). The text color stays --fg-3 either way;
+   only the ::before background swaps. */
+.eyebrowMuted::before {
+  background: var(--line-strong);
+}
+
 .title {
   font-family: var(--font-display);
   font-weight: 600;

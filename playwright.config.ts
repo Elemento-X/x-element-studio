@@ -16,10 +16,17 @@ export default defineConfig({
     { name: 'firefox', use: { ...devices['Desktop Firefox'] } },
     { name: 'webkit', use: { ...devices['Desktop Safari'] } },
   ],
+  // CI runs against a production build (`next start`) to avoid the dev-server
+  // (Turbopack) intermittently serving stale chunk manifests during HMR.
+  // Locally, default to `npm run dev` for fast iteration; pass PW_PROD=1 to
+  // exercise the production path before pushing.
   webServer: {
-    command: 'npm run dev',
+    command:
+      process.env.CI || process.env.PW_PROD
+        ? 'npm run build && npx next start'
+        : 'npm run dev',
     url: 'http://localhost:3000',
     reuseExistingServer: !process.env.CI,
-    timeout: 120_000,
+    timeout: 180_000,
   },
 })

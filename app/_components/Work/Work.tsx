@@ -108,35 +108,36 @@ export function Work() {
               impact
             </>
           }
-          copy="A partial record. Specifics intentionally understated. Most of what we build is, by design, invisible to end users — measured by what stops breaking, not by what gets announced."
+          copy="A partial record. Specifics intentionally understated. Most of what we ship is invisible to end users — measured by what stops breaking, not by what gets announced."
         />
 
         <div className={styles.grid}>
           <CaseCard
-            client="EX-2049 · Fintech SaaS"
-            title="Reconciliation moved from 14 hours a week to a 9-minute background job."
-            copy="We replaced a spreadsheet-driven month-end close with an event-sourced ledger, automated exception routing, and a compact audit console for the finance team."
+            client="EX-2049 · Internal media operations"
+            title="190 hours a year, recovered from a media operations team."
+            copy="A daily multi-tool process — manual exports, spreadsheet stitching, Slack approvals — replaced by an event-driven pipeline with a single audit surface. The team got their week back."
             stats={[
-              { k: 'Ops time', v: '—88%', signal: true },
-              { k: 'Close cycle', v: '9d → 1d' },
-              { k: 'Accuracy', v: '99.98%' },
+              { k: 'Hours / year', v: '+190', signal: true },
+              { k: 'Manual steps', v: '12 → 1' },
+              { k: 'Error rate', v: 'near zero' },
             ]}
             viz={<ChartViz />}
             vizLabels={{
               topLeft: 'MANUAL OPS · HRS/WK',
               bottomLeft: 'Q1 — Q4',
-              topRight: 'SIGNAL ↓ 88%',
+              topRight: 'SIGNAL ↑ 190H/Y',
             }}
             tall
           />
 
           <CaseCard
-            client="EX-2112 · Internal AI"
+            client="EX-2112 · Operations team (NDA)"
             title="A private knowledge agent for a 200-person operations team."
-            copy="Retrieval over internal docs, structured evals, and role-scoped access — without exposing vendor APIs to customer data."
+            copy="Retrieval over internal documents, structured evals, role-scoped access. Vendor APIs never touch customer data. Answers in seconds replaced threads in days."
             stats={[
               { k: 'Queries / day', v: '4.2k' },
               { k: 'Eval score', v: '94%', signal: true },
+              { k: 'Time-to-answer', v: '2d → 4s' },
             ]}
             viz={<OrbitViz />}
             vizLabels={{
@@ -148,11 +149,12 @@ export function Work() {
 
         <div className={styles.row}>
           <CaseCard
-            client="EX-1984 · Logistics"
-            title="Dispatch throughput multiplied without adding headcount."
+            client="EX-1984 · Logistics (NDA)"
+            title="Dispatch throughput tripled, with the same team."
             stats={[
               { k: 'Throughput', v: '3.2×', signal: true },
-              { k: 'Errors', v: '—41%' },
+              { k: 'Errors', v: '−41%' },
+              { k: 'Headcount', v: 'unchanged' },
             ]}
             viz={<BarsViz />}
             vizLabels={{
@@ -162,11 +164,12 @@ export function Work() {
           />
 
           <CaseCard
-            client="EX-2277 · Design System"
-            title="Cross-team UI consolidated into one tokenized system."
+            client="EX-2277 · Multi-product platform (NDA)"
+            title="Five product surfaces, one tokenized system."
             stats={[
               { k: 'Components', v: '147' },
-              { k: 'Release time', v: '—62%', signal: true },
+              { k: 'Release time', v: '−62%', signal: true },
+              { k: 'Visual drift', v: 'closed' },
             ]}
             viz={<LayersViz />}
             vizLabels={{
@@ -176,11 +179,12 @@ export function Work() {
           />
 
           <CaseCard
-            client="EX-2318 · Ops Console"
-            title="A single console replaced seven internal tabs for the ops team."
+            client="EX-2318 · Finance ops (NDA)"
+            title="Seven tabs collapsed into one operations console."
             stats={[
-              { k: 'Context switches', v: '—74%', signal: true },
-              { k: 'Resolution', v: '12m avg' },
+              { k: 'Context switches', v: '−74%', signal: true },
+              { k: 'Resolution time', v: '12m avg' },
+              { k: 'Tickets / month', v: '−48%' },
             ]}
             viz={<CrosshairViz />}
             vizLabels={{

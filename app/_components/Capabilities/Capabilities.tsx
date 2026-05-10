@@ -6,51 +6,51 @@ import styles from './Capabilities.module.css'
 const SERVICES = [
   {
     num: '01 / 07',
-    title: 'Product Strategy',
-    copy: 'We translate business outcomes into system architecture. Roadmaps with teeth. Scope with a reason.',
-    meta: 'Discovery · Thesis · Roadmap',
-    duration: '14d',
-  },
-  {
-    num: '02 / 07',
-    title: 'UI · UX Design',
-    copy: 'Interfaces engineered for decisions. Dense where it needs to be, silent everywhere else.',
-    meta: 'Research · Flows · Fidelity',
-    duration: '4–8w',
-  },
-  {
-    num: '03 / 07',
-    title: 'Design Systems',
-    copy: 'Tokenized primitives and component libraries that compound across teams and years.',
-    meta: 'Tokens · Components · Docs',
-    duration: '6–10w',
-  },
-  {
-    num: '04 / 07',
-    title: 'Full Stack Development',
-    copy: 'Typed end-to-end. Observable by default. Built to survive the next three rewrites.',
+    title: 'Full-stack engineering',
+    copy: 'Typed end-to-end. Observable on day one. Built to survive three rewrites without anyone calling for help.',
     meta: 'Web · API · Infra',
     duration: 'ongoing',
   },
   {
-    num: '05 / 07',
-    title: 'AI Engineering',
-    copy: 'Model selection, evals, retrieval, and guardrails. Quiet inference that actually ships.',
+    num: '02 / 07',
+    title: 'AI engineering',
+    copy: 'Model selection, retrieval, evaluation, guardrails. Inference that ships in production — not in a demo notebook.',
     meta: 'LLM · RAG · Evals',
     duration: '3–12w',
   },
   {
-    num: '06 / 07',
-    title: 'Automation Workflows',
-    copy: 'Event-driven pipelines that eliminate manual work between systems, people, and time zones.',
+    num: '03 / 07',
+    title: 'Automation pipelines',
+    copy: 'Event-driven workflows that remove the human from the seam between two systems, two timezones, or two spreadsheets.',
     meta: 'Pipelines · Agents · Webhooks',
     duration: '2–6w',
   },
   {
-    num: '07 / 07',
-    title: 'Internal Tools',
-    copy: 'Ops consoles, admin surfaces, and dashboards your team will actually open every morning.',
+    num: '04 / 07',
+    title: 'Internal tools',
+    copy: 'Operations consoles your team opens before email. Dashboards that surface the number that actually moves.',
     meta: 'Admin · Ops · Analytics',
+    duration: '4–8w',
+  },
+  {
+    num: '05 / 07',
+    title: 'Product strategy',
+    copy: 'Roadmaps with teeth. Scope tied to a measurable outcome — and the scope that gets cut for the same reason.',
+    meta: 'Discovery · Thesis · Roadmap',
+    duration: '14d',
+  },
+  {
+    num: '06 / 07',
+    title: 'Design systems',
+    copy: 'Tokenized primitives and component libraries that compound across teams, products, and the next three years of hiring.',
+    meta: 'Tokens · Components · Docs',
+    duration: '6–10w',
+  },
+  {
+    num: '07 / 07',
+    title: 'Interface design',
+    copy: 'Interfaces engineered for decisions. Dense where density helps, silent everywhere else. No screen exists without a reason.',
+    meta: 'Research · Flows · Fidelity',
     duration: '4–8w',
   },
 ]
@@ -76,7 +76,7 @@ export function Capabilities() {
           eyebrow="Capabilities"
           number="003 · CORE"
           title="What we build"
-          copy="Seven disciplines, operated by one team. Every engagement draws the minimum necessary — nothing ceremonial, nothing performative. We come in to architect, ship, and quietly hand over systems that keep working after we leave."
+          copy="Seven disciplines. One team. Each engagement uses the minimum that solves the system — nothing ceremonial, nothing for the wall. We come in to architect, ship, and hand over operations that keep running after we leave."
         />
 
         <ul className={styles.grid}>
@@ -99,12 +99,12 @@ export function Capabilities() {
             <div className={styles.taglineCopy}>
               <div className={styles.taglineEyebrow}>Engagement model</div>
               <div className={styles.taglineLine}>
-                Sprint. Retainer. Or embed. We scope the partnership to the
-                system, not the calendar.
+                Sprint, retainer, or embed. We scope the partnership to the
+                system &mdash; not to the calendar.
               </div>
             </div>
             <Button href="#contact" variant="ghost" withArrow>
-              Start a project
+              Send brief
             </Button>
           </Reveal>
         </ul>
