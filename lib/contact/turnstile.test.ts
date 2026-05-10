@@ -101,12 +101,13 @@ describe('verifyTurnstile', () => {
     expect(fetchSpy).not.toHaveBeenCalled()
   })
 
-  it('returns ok=true when secret missing (graceful degrade)', async () => {
+  it('throws when secret missing (fail-closed — caller must gate)', async () => {
     vi.stubEnv('TURNSTILE_SECRET_KEY', '')
     vi.resetModules()
     const { verifyTurnstile } = await import('./turnstile')
-    const r = await verifyTurnstile('whatever')
-    expect(r.ok).toBe(true)
+    await expect(verifyTurnstile('whatever')).rejects.toThrow(
+      /caller must check isTurnstileEnabled/i,
+    )
     expect(fetchSpy).not.toHaveBeenCalled()
   })
 

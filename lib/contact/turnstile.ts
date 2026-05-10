@@ -33,11 +33,14 @@ export async function verifyTurnstile(
   token: string,
   remoteip?: string,
 ): Promise<TurnstileResult> {
+  // Fail-closed: callers MUST gate on isTurnstileEnabled() first. A
+  // refactor that drops the gate would otherwise silently bypass
+  // the bot challenge — we'd rather surface that as a TypeError in
+  // tests/dev than ship a regression in defense-in-depth.
   if (!env.TURNSTILE_SECRET_KEY) {
-    // Disabled — caller should have checked isTurnstileEnabled() first;
-    // returning ok=true here lets the route proceed instead of failing
-    // closed when the operator hasn't configured Turnstile yet.
-    return { ok: true }
+    throw new Error(
+      'verifyTurnstile called without TURNSTILE_SECRET_KEY — caller must check isTurnstileEnabled() first.',
+    )
   }
 
   if (!token) {
