@@ -173,9 +173,13 @@ describe('contactSchema — message', () => {
 })
 
 describe('contactSchema — honeypot & strict mode', () => {
-  it('rejects a non-empty honeypot', () => {
+  it('passes a non-empty honeypot through (silent rejection happens at runtime)', () => {
+    // Schema is permissive on honeypot so the route handler can swallow
+    // bot submits with status 200 (anti-bot signaling). The runtime check
+    // in route.ts:POST is what actually rejects.
     const r = contactSchema.safeParse({ ...baseValid, honeypot: 'gotcha' })
-    expect(r.success).toBe(false)
+    expect(r.success).toBe(true)
+    if (r.success) expect(r.data.honeypot).toBe('gotcha')
   })
 
   it('rejects unknown keys (strict)', () => {

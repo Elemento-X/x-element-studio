@@ -82,8 +82,15 @@ export const contactSchema = z
       .min(20, 'Too short. Aim for 20+ characters.')
       .max(2000, 'Too long. Keep it under 2000 characters.'),
 
-    // Anti-bot. Must be empty. Field is hidden in the rendered form.
-    honeypot: z.string().max(0, 'Invalid submission.').optional(),
+    // Anti-bot. The field is hidden in the rendered form, so a real
+    // user never sets it. Bots that fill it should be silently swallowed
+    // by the route handler (200 OK, no persist, no notify) — that path
+    // requires the schema to PASS the value through. Don't add max(0)
+    // here; otherwise the schema rejects with VALIDATION_ERROR (status
+    // 400) and the bot learns it was caught. Validation is "string,
+    // optional" — anything goes — and the runtime check in route.ts:POST
+    // does the actual rejection silently.
+    honeypot: z.string().optional(),
   })
   .strict()
   .superRefine((data, ctx) => {

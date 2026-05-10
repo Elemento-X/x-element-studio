@@ -285,14 +285,12 @@ describe('POST /api/contact — honeypot', () => {
     const res = await POST(
       makeReq({ body: { ...validBody, honeypot: 'gotcha-bot' } }),
     )
-    // Honeypot rule: schema says max(0). The request is a *bot* — server
-    // policy is silent 200 so we never tip them off. But schema rejects
-    // before the handler can swallow → it surfaces as VALIDATION_ERROR.
-    // Spec in route.ts: silent 200 happens AFTER successful parse when
-    // honeypot is present. Schema's `max(0)` collides — bots get 400 today.
-    // Test the reality: honeypot non-empty triggers VALIDATION_ERROR and
-    // the rest of the pipeline never runs.
-    expect(res.status).toBe(400)
+    // Spec: schema accepts honeypot strings; the route handler is what
+    // rejects them — but with status 200 + no persist/notify, so bots
+    // can't distinguish a successful submit from a caught one.
+    expect(res.status).toBe(200)
+    const body = (await res.json()) as { data?: { ok?: boolean } }
+    expect(body.data?.ok).toBe(true)
     expect(mockPersist).not.toHaveBeenCalled()
     expect(mockNotify).not.toHaveBeenCalled()
   })
