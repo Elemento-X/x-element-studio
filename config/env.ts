@@ -98,6 +98,14 @@ const envSchema = z
       (v) => (v === '' ? undefined : v),
       z.string().optional(),
     ),
+
+    // Observability — Sentry (optional). Lazy-loaded by lib/observability/sentry.ts
+    // when DSN is set; otherwise zero runtime weight. preprocess turns empty
+    // string into undefined so a blank entry in .env does not fail .url().
+    SENTRY_DSN: z.preprocess(
+      (v) => (v === '' ? undefined : v),
+      z.string().url().optional(),
+    ),
   })
   .superRefine((data, ctx) => {
     // FROM_EMAIL: aceita "Nome <email@host>" OU "email@host" puro.
