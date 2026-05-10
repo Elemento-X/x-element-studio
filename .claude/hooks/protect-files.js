@@ -6,45 +6,48 @@ parseInput().then(({ filePath }) => {
   const normalized = filePath.replace(/\\/g, '/')
   const basename = normalized.split('/').pop()
 
+  // .env.local liberado por decisão do operador (2026-05-09): é gitignored
+  // por default no Next.js, e Claude precisa organizar/validar o arquivo
+  // durante setup de credenciais. .env (sem .local) e os outros perfis
+  // continuam bloqueados — esses sim podem vazar em commit acidental.
+  // .mcp.json gitignored mas bloqueado aqui como defesa em profundidade —
+  // configs project-scoped podem conter tokens em alguns setups.
   const blockedFiles = [
     '.env',
-    '.env.local',
     '.env.production',
     '.env.development',
     '.env.staging',
+    '.mcp.json',
     'package-lock.json',
     'yarn.lock',
     'pnpm-lock.yaml',
   ]
 
-  const blockedPaths = [
-    '.git/',
-    'node_modules/',
-  ]
+  const blockedPaths = ['.git/', 'node_modules/']
 
-  const blockedExtensions = [
-    '.pem',
-    '.key',
-    '.p12',
-    '.pfx',
-    '.jks',
-  ]
+  const blockedExtensions = ['.pem', '.key', '.p12', '.pfx', '.jks']
 
   const fileMatch = blockedFiles.find((f) => basename === f)
   if (fileMatch) {
-    process.stderr.write(`BLOQUEADO: ${filePath} é arquivo protegido (${fileMatch}). Edição manual proibida.`)
+    process.stderr.write(
+      `BLOQUEADO: ${filePath} é arquivo protegido (${fileMatch}). Edição manual proibida.`,
+    )
     process.exit(2)
   }
 
   const pathMatch = blockedPaths.find((p) => normalized.includes(p))
   if (pathMatch) {
-    process.stderr.write(`BLOQUEADO: ${filePath} está em diretório protegido (${pathMatch}). Edição manual proibida.`)
+    process.stderr.write(
+      `BLOQUEADO: ${filePath} está em diretório protegido (${pathMatch}). Edição manual proibida.`,
+    )
     process.exit(2)
   }
 
   const extMatch = blockedExtensions.find((ext) => basename.endsWith(ext))
   if (extMatch) {
-    process.stderr.write(`BLOQUEADO: ${filePath} é arquivo sensível (${extMatch}). Nunca editar certificados/chaves diretamente.`)
+    process.stderr.write(
+      `BLOQUEADO: ${filePath} é arquivo sensível (${extMatch}). Nunca editar certificados/chaves diretamente.`,
+    )
     process.exit(2)
   }
 

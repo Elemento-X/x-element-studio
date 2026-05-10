@@ -1,0 +1,227 @@
+import 'server-only'
+import { Client, isNotionClientError } from '@notionhq/client'
+import { env } from '@/config/env'
+import { ENGAGEMENT_LABELS, type ContactOutput } from './schema'
+
+/**
+ * Persist a contact submission to Notion DB.
+ *
+ * Required Notion DB properties (operator-side setup):
+ *  - Name              (title)
+ *  - Email             (email)
+ *  - Company           (rich_text, optional)
+ *  - Engagement        (select: New project | Diagnostic | Partnership | Other)
+ *  - Engagement detail (rich_text, optional — used when Engagement = "Other")
+ *  - Message           (rich_text)
+ *  - Status            (select: New | Contacted | Closed; default "New")
+ *
+ * Submitted At is auto-populated by Notion's `Created time` property.
+ *
+ * Logging policy: NEVER log PII (name, email, company, message). Logs
+ * carry only operation, attempt count, latency, and outcome class.
+ *
+ * Stub mode: if NOTION_API_KEY or NOTION_DATABASE_ID is missing, the
+ * function returns `{ ok: true, pageId: 'stub' }` without calling Notion.
+ * This lets dev environments run the form pipeline end-to-end without
+ * a Notion workspace.
+ */
+
+// Conservative retry: 2 attempts total, exponential backoff base 2.
+// Worst-case total wait between attempts: 200ms (1→2). Combined with the
+// per-attempt Notion latency (~500-1500ms observed), worst-case end-to-end
+// is ~3.2s — under the LRO threshold (5s) of api-contract.md and well
+// under the Vercel function timeout. The previous 3 retries × 4^N gave
+// 4.2s of pure wait time, pushing user-perceived latency past 5s.
+const MAX_RETRIES = 2
+const BASE_DELAY_MS = 200
+const BACKOFF_FACTOR = 2
+
+export interface PersistResult {
+  ok: boolean
+  pageId?: string
+  error?: 'config' | 'transient' | 'permanent'
+}
+
+let _notion: Client | null = null
+function getNotion(): Client {
+  if (!_notion) {
+    if (!env.NOTION_API_KEY) {
+      throw new Error('NOTION_API_KEY not configured.')
+    }
+    _notion = new Client({ auth: env.NOTION_API_KEY })
+  }
+  return _notion
+}
+
+function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms))
+}
+
+type CreatePageProperties = Parameters<
+  Client['pages']['create']
+>[0]['properties']
+
+// Submission metadata persisted alongside the user-provided fields.
+// `ipHash` is the same SHA-256 prefix used by the rate-limiter (no
+// plaintext IP ever reaches Notion). `source` identifies the entry
+// point — 'landing-form' for now; future entry points get their own tag.
+export interface PersistMeta {
+  ipHash: string
+  source: string
+}
+
+function buildCoreProperties(input: ContactOutput): CreatePageProperties {
+  const props: CreatePageProperties = {
+    Name: {
+      title: [{ text: { content: input.name } }],
+    },
+    Email: { email: input.email },
+    Engagement: { select: { name: ENGAGEMENT_LABELS[input.engagement] } },
+    Message: {
+      rich_text: [{ text: { content: input.message } }],
+    },
+    Status: { select: { name: 'New' } },
+  }
+
+  if (input.company) {
+    props.Company = {
+      rich_text: [{ text: { content: input.company } }],
+    }
+  }
+  if (input.engagementOther) {
+    props['Engagement detail'] = {
+      rich_text: [{ text: { content: input.engagementOther } }],
+    }
+  }
+
+  return props
+}
+
+function buildProperties(
+  input: ContactOutput,
+  meta: PersistMeta,
+): CreatePageProperties {
+  return {
+    ...buildCoreProperties(input),
+    'IP hash': {
+      rich_text: [{ text: { content: meta.ipHash } }],
+    },
+    Source: { select: { name: meta.source } },
+  }
+}
+
+// Module-level cache: once we detect that the Notion DB doesn't have the
+// metadata properties (operator hasn't added them yet), every subsequent
+// submit skips them — avoids paying the validation round-trip per call.
+// Reset is a process restart (cheap; the cache is just a perf hint).
+let _skipMetaProps = false
+
+async function createNotionPage(
+  input: ContactOutput,
+  meta: PersistMeta,
+): Promise<string> {
+  const notion = getNotion()
+
+  if (_skipMetaProps) {
+    const page = await notion.pages.create({
+      parent: { database_id: env.NOTION_DATABASE_ID as string },
+      properties: buildCoreProperties(input),
+    })
+    return page.id
+  }
+
+  try {
+    const page = await notion.pages.create({
+      parent: { database_id: env.NOTION_DATABASE_ID as string },
+      properties: buildProperties(input, meta),
+    })
+    return page.id
+  } catch (err) {
+    // The operator may not have added `IP hash` / `Source` to the
+    // Notion DB schema yet. Notion responds with a validation_error
+    // mentioning "is not a property that exists" — recognize that
+    // exact shape and retry with the core properties only. Cache the
+    // outcome so subsequent submits skip the probe.
+    if (
+      isNotionClientError(err) &&
+      err.code === 'validation_error' &&
+      /is not a property that exists/.test(err.message)
+    ) {
+      _skipMetaProps = true
+      console.warn(
+        '[contact:persist] notion_missing_meta_props fallback=core_only ' +
+          '(add `IP hash` and `Source` to the Notion DB to enable per-submission metadata)',
+      )
+      const page = await notion.pages.create({
+        parent: { database_id: env.NOTION_DATABASE_ID as string },
+        properties: buildCoreProperties(input),
+      })
+      return page.id
+    }
+    throw err
+  }
+}
+
+function classifyError(err: unknown): 'transient' | 'permanent' {
+  if (isNotionClientError(err)) {
+    // Rate limit, timeout, server error → retry
+    const transientCodes = [
+      'rate_limited',
+      'request_timeout',
+      'service_unavailable',
+      'internal_server_error',
+      'conflict_error',
+    ]
+    if (transientCodes.includes(err.code)) return 'transient'
+    return 'permanent'
+  }
+  // Unknown error type — fail fast (permanent). Previously this was
+  // 'transient', which masked programming bugs (TypeError, ReferenceError)
+  // by retrying them N times before surfacing. If the error isn't a
+  // known Notion client error class, retrying is a guess; surfacing
+  // it lets the alert system catch the real problem on attempt 1.
+  return 'permanent'
+}
+
+export async function persistContact(
+  input: ContactOutput,
+  meta: PersistMeta,
+): Promise<PersistResult> {
+  if (!env.NOTION_API_KEY || !env.NOTION_DATABASE_ID) {
+    console.info('[contact:persist] stub-mode (Notion env vars missing)')
+    return { ok: true, pageId: 'stub' }
+  }
+
+  const start = Date.now()
+  let lastClass: 'transient' | 'permanent' = 'transient'
+
+  for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+    try {
+      const pageId = await createNotionPage(input, meta)
+      console.info(
+        `[contact:persist] ok attempt=${attempt} latency_ms=${Date.now() - start}`,
+      )
+      return { ok: true, pageId }
+    } catch (err) {
+      lastClass = classifyError(err)
+      // Permanent errors (auth, validation, db not found) — stop retrying.
+      if (lastClass === 'permanent') {
+        console.error(
+          `[contact:persist] permanent_error attempt=${attempt} latency_ms=${Date.now() - start}`,
+        )
+        return { ok: false, error: 'permanent' }
+      }
+      // Transient — backoff + retry.
+      const isLast = attempt === MAX_RETRIES
+      if (!isLast) {
+        const delay = BASE_DELAY_MS * Math.pow(BACKOFF_FACTOR, attempt - 1)
+        await sleep(delay)
+      }
+    }
+  }
+
+  console.error(
+    `[contact:persist] retries_exhausted attempts=${MAX_RETRIES} latency_ms=${Date.now() - start}`,
+  )
+  return { ok: false, error: lastClass }
+}

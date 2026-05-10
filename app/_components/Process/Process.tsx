@@ -29,7 +29,7 @@ const STEPS: Step[] = [
   {
     num: '01',
     title: 'Discover',
-    copy: 'Map the system. Surface the constraints. Identify the one thing actually in the way.',
+    copy: 'We map the system you already run. We surface the constraints nobody writes down. We name the one thing actually in the way — before anyone touches code.',
     artifact: 'Signal brief',
     illust: <DiscoverIllust />,
     coords: [
@@ -42,7 +42,7 @@ const STEPS: Step[] = [
   {
     num: '02',
     title: 'Architect',
-    copy: 'Model the solution before building. Data contracts, interfaces, failure modes — written down.',
+    copy: 'We model the solution before we build it. Data contracts, interfaces, failure modes — written down, reviewed, signed. The build is execution, not discovery.',
     artifact: 'System blueprint',
     illust: <ArchitectIllust />,
     coords: [
@@ -55,7 +55,7 @@ const STEPS: Step[] = [
   {
     num: '03',
     title: 'Build',
-    copy: 'Typed, observable, shipped in production-sized slices. No staging theatre.',
+    copy: 'Typed code, observable from the first commit, shipped in production-sized slices. No staging theatre. No demo branches. The system you see is the system that runs.',
     artifact: 'Shipped surface',
     illust: <BuildIllust />,
     coords: [
@@ -68,7 +68,7 @@ const STEPS: Step[] = [
   {
     num: '04',
     title: 'Scale',
-    copy: 'Harden, document, hand over. The system runs without us. That is the point.',
+    copy: 'We harden it, document it, and hand over the keys. Your team operates the system without us. The engagement ends when the system runs alone — that is the point.',
     artifact: 'Operational handoff',
     illust: <ScaleIllust />,
     coords: [
@@ -102,7 +102,7 @@ export function Process() {
           eyebrow="Process"
           number="004 · METHOD"
           title="Four phases. No ceremony."
-          copy="Every engagement moves through the same four stages. Each phase produces an artifact the next phase depends on. No slides for slides’ sake."
+          copy="Every engagement moves through the same four stages. Each phase produces an artifact the next one needs. No deck for the deck’s sake."
         />
 
         <ProcessGrid>

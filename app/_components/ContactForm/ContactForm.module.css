@@ -1,0 +1,272 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-5);
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--s-4);
+}
+
+@media (max-width: 640px) {
+  .row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+}
+
+/* Mount-time enter for the conditional "Specify type" field. Stays
+   inside the brand motion budget: opacity + translateY (-2px → 0),
+   150ms, brand easing. No scale/rotate. Suppressed for users with
+   reduced-motion preference. */
+.fieldEnter {
+  animation: fieldEnter 150ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@keyframes fieldEnter {
+  from {
+    opacity: 0;
+    transform: translateY(-2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fieldEnter {
+    animation: none;
+  }
+}
+
+.label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fg-3);
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-2);
+}
+
+.optional {
+  color: var(--fg-3);
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 11px;
+  opacity: 0.7;
+}
+
+.input,
+.select,
+.textarea {
+  width: 100%;
+  font-family: var(--font-body);
+  /* 16px floor: iOS Safari triggers zoom-on-focus when font-size < 16px
+     on text inputs. The previous 14px triggered the zoom and broke layout
+     on touch. Padding adjusted in tandem so visual height grows by ~6px
+     net (38→48), comfortably above the 44px touch-target floor. */
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--fg-1);
+  background: var(--bg-input);
+  border: 1px solid var(--line-subtle);
+  border-radius: var(--r-2);
+  padding: 12px 14px;
+  transition:
+    border-color 150ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    background-color 150ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  /* Disable browser autofill yellow tint */
+  -webkit-text-fill-color: var(--fg-1);
+}
+
+.input::placeholder,
+.textarea::placeholder {
+  color: var(--fg-3);
+}
+
+.input:hover,
+.select:hover,
+.textarea:hover {
+  border-color: var(--line-strong);
+}
+
+/* Focus override: brand rule is "1 gold per primary viewport" and the
+   FinalCta with form active already has its single gold elsewhere
+   (card hairline ::before). The page-wide :focus-visible (in
+   globals.css) uses --glow-gold; we override locally to a high-contrast
+   bone outline so focus stays perceptible (~16:1 over --bg-input,
+   well above WCAG 2.4.7's 3:1) without spending the viewport's gold
+   budget on input rings. The override is scoped to the form fields —
+   nav/buttons/links elsewhere keep the gold glow. */
+.input:focus-visible,
+.select:focus-visible,
+.textarea:focus-visible {
+  outline: none;
+  border-color: var(--fg-1);
+  box-shadow: inset 0 0 0 1px var(--fg-1);
+}
+
+.input:disabled,
+.select:disabled,
+.textarea:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.input[aria-invalid='true'],
+.select[aria-invalid='true'],
+.textarea[aria-invalid='true'] {
+  border-color: var(--line-strong);
+  border-width: 1px;
+  /* Inset shadow on the left edge — subtle directional hint without
+     introducing a non-brand color. */
+  box-shadow: inset 2px 0 0 var(--fg-1);
+}
+
+.textarea {
+  resize: vertical;
+  min-height: 140px;
+  font-family: var(--font-body);
+}
+
+.select {
+  appearance: none;
+  -webkit-appearance: none;
+  /* Chevron color is hardcoded #8e8e94 (mirrors --fg-3 / --ex-muted-gray
+     in app/tokens.css). Data URIs can't read CSS variables, and using
+     background-color + mask-image would tint the entire <select> field
+     instead of just the chevron — <select> doesn't support pseudo-
+     elements consistently across browsers, so a wrapper component would
+     be needed for full tokenization (deferred — see Bucket B). If
+     --fg-3 is ever recolored, update the hex value here in tandem
+     (the comment is the contract). */
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8' fill='none' stroke='%238e8e94' stroke-width='1.4'><path d='M1 2l5 5 5-5'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 12px 8px;
+  padding-right: 36px;
+  cursor: pointer;
+}
+
+.error {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--fg-1);
+  letter-spacing: 0.01em;
+}
+
+.help {
+  font-family: var(--font-body);
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--fg-3);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--s-4);
+  margin-top: var(--s-2);
+}
+
+/* Cloudflare Turnstile widget container — sits between Message and the
+   submit row. Cloudflare's widget renders its own iframe and matches
+   the theme via the `theme: 'dark'` option, so we only manage spacing. */
+.turnstile {
+  margin-top: var(--s-2);
+}
+
+.errorBanner {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.01em;
+  color: var(--fg-1);
+  border-left: 2px solid var(--fg-1);
+  padding-left: var(--s-3);
+}
+
+/* Submit override: bone-on-black instead of gold-on-black, scoped to
+   the contact form so the rest of the site's primary buttons keep
+   their gold treatment. The form-active FinalCta has its single gold
+   on the .card::before hairline (designer spec); a gold submit on top
+   would push the count over budget.
+   Specificity bump (.submitBone.submitBone) beats Button's :hover by
+   matching the same class twice on one element — avoids adding a
+   global 'bone' variant to the Button component. */
+.submitBone.submitBone {
+  background: var(--fg-1);
+  color: var(--ex-deep-black);
+}
+.submitBone.submitBone:hover {
+  background: var(--fg-1);
+  opacity: 0.92;
+}
+.submitBone.submitBone:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.submitBone.submitBone:disabled:hover {
+  background: var(--fg-1);
+  opacity: 0.5;
+}
+
+.success {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+  padding: var(--s-6);
+  /* Border is neutral; the single gold of the viewport migrates from
+     the (now-hidden) .card::before to the success card's top edge —
+     1px hairline of `--ex-gold` inherits the role as confirmation
+     marker. Spec: @designer (FinalCta gold-budget) — keeps "1 gold
+     per primary viewport" with continuity from the form state. */
+  border: 1px solid var(--line-strong);
+  border-top: 1px solid var(--ex-gold);
+  border-radius: var(--r-2);
+  background: var(--bg-input);
+}
+
+.successEyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--fg-1);
+}
+
+.successBody {
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--fg-1);
+  margin: 0;
+}
+
+/* Honeypot — visually hidden, off-screen, not focusable, not announced. */
+.honeypot {
+  position: absolute;
+  left: -10000px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.honeypot input {
+  pointer-events: none;
+}

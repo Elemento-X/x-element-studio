@@ -189,7 +189,11 @@ export function ArchitectIllust() {
           strokeWidth="1.1"
           fill="none"
         >
-          <path d="M0 30 L60 0 L120 30 L60 60 Z" fill="rgba(245,194,26,0.06)" />
+          <path
+            className="arch-l2-fill"
+            d="M0 30 L60 0 L120 30 L60 60 Z"
+            fill="rgba(245,194,26,0.06)"
+          />
           <circle cx="60" cy="30" r="3" fill="#F5C21A" stroke="none" />
           <line
             x1="40"
@@ -236,7 +240,8 @@ export function ArchitectIllust() {
           y2="156"
           stroke="rgba(234,234,234,0.18)"
           strokeWidth="0.6"
-          strokeDasharray="2 4"
+          pathLength="1"
+          strokeDasharray="1"
         />
 
         <g className="arch-labels">
@@ -384,15 +389,18 @@ export function BuildIllust() {
           </g>
         </g>
 
-        {/* Pipeline */}
+        {/* Pipeline — line draws L→R, dots fade in with the group */}
         <g className="build-pipeline">
           <line
+            className="build-pipeline-line"
             x1="0"
             y1="156"
             x2="142"
             y2="156"
             stroke="rgba(234,234,234,0.25)"
             strokeWidth="0.8"
+            pathLength="1"
+            strokeDasharray="1"
           />
           <circle cx="11" cy="156" r="2" fill="rgba(234,234,234,0.50)" />
           <circle cx="41" cy="156" r="2" fill="rgba(234,234,234,0.50)" />
@@ -526,7 +534,8 @@ export function ScaleIllust() {
         fill="none"
         stroke="rgba(234,234,234,0.20)"
         strokeWidth="0.5"
-        strokeDasharray="1 3"
+        pathLength="1"
+        strokeDasharray="1"
       />
 
       <g

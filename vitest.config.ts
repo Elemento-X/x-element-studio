@@ -14,7 +14,7 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       reporter: ['text', 'html', 'json'],
-      include: ['app/**'],
+      include: ['app/**', 'lib/**', 'config/**'],
       exclude: [
         'node_modules/**',
         '.next/**',
