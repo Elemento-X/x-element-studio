@@ -21,7 +21,7 @@ Tick every box before clicking deploy. Skipping a box that turns out to matter i
 - [ ] `NEXT_PUBLIC_SITE_URL` matches the domain that will serve traffic (HTTPS, no trailing slash).
 - [ ] `NEXT_PUBLIC_CONTACT_FORM_ENABLED` is `true` (or intentionally `false` if shipping with the form gated).
 - [ ] `FROM_EMAIL` uses a domain verified at Resend. **NOT** `onboarding@resend.dev` (boot validation rejects this; deploy will fail at runtime).
-- [ ] `NOTIFY_EMAIL` is the team inbox, **not** a personal Gmail. Boot validation rejects the dev default `xelementcontact@gmail.com`.
+- [ ] `NOTIFY_EMAIL` is a corporate-domain inbox. Boot validation rejects **any** free-mail provider in prod: gmail, hotmail, outlook, live, yahoo, icloud, proton(mail).
 - [ ] `RESEND_API_KEY`, `NOTION_API_KEY`, `NOTION_DATABASE_ID`, `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN` all present (required when form is on).
 - [ ] Rate-limit envs (`CONTACT_RATE_LIMIT_PER_HOUR`, `CONTACT_GLOBAL_LIMIT_PER_HOUR`, `CONTACT_EMAIL_LIMIT_PER_HOUR`) tuned vs Resend quota. Default 200/h global stays under Resend free tier (100/day) only because submits/h almost never sustain — re-read `docs/runbooks/contact-form-incident.md` Cause D before raising.
 
