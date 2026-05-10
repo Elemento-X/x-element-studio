@@ -196,6 +196,42 @@ describe('/api/csp-report', () => {
     expect(infoSpy).not.toHaveBeenCalled()
   })
 
+  it('buckets IPv6 by /64 prefix — rotation within own /64 cannot bypass the limit', async () => {
+    // Threat: an attacker with a residential IPv6 /64 rotates through
+    // their own 2^64 addresses to bypass per-IP rate limiting. The
+    // limiter must collapse the prefix.
+    const body = JSON.stringify({
+      'csp-report': { 'effective-directive': 'script-src' },
+    })
+    const prefix = '2001:db8:1:1' // /64 prefix the "attacker" owns
+
+    // 60 requests across DIFFERENT addresses inside the same /64 must
+    // all share a bucket: the 61st (any address still within the /64)
+    // gets 429.
+    for (let i = 0; i < 60; i++) {
+      const ip = `${prefix}::${i.toString(16)}`
+      const res = await POST(
+        // @ts-expect-error — Next route handler accepts plain Request in tests
+        makeRequest(body, 'application/csp-report', ip),
+      )
+      expect(res.status).toBe(204)
+    }
+
+    // 61st — different address, same /64
+    const flooded = await POST(
+      // @ts-expect-error — Next route handler accepts plain Request in tests
+      makeRequest(body, 'application/csp-report', `${prefix}::ffff`),
+    )
+    expect(flooded.status).toBe(429)
+
+    // Different /64 (fully separate subscriber) is unaffected
+    const otherPrefix = await POST(
+      // @ts-expect-error — Next route handler accepts plain Request in tests
+      makeRequest(body, 'application/csp-report', '2001:db8:2:2::1'),
+    )
+    expect(otherPrefix.status).toBe(204)
+  })
+
   it('rate-limits flood per IP-hash silently after 60/min (61st returns 429)', async () => {
     const body = JSON.stringify({
       'csp-report': { 'effective-directive': 'script-src' },
