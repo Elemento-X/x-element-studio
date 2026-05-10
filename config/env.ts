@@ -62,14 +62,26 @@ const envSchema = z
       .max(1000)
       .default(2),
 
-    // Email — Resend (F2). FROM_EMAIL/NOTIFY_EMAIL have no defaults so
-    // the operator must declare them explicitly per environment. The
-    // dev defaults that used to live here were dangerous in prod (sandbox
-    // sender = silent reject; gmail.com = personal inbox leak).
+    // Email — Resend (F2). FROM_EMAIL/NOTIFY_EMAIL are required at
+    // runtime (next dev / next start / Vercel) — the operator MUST
+    // declare them explicitly per environment. Dev defaults that used
+    // to live here were dangerous (sandbox sender = silent reject;
+    // gmail.com = personal inbox leak), so we still refuse them.
+    //
+    // The ONLY exception is `next build` in CI without secrets (PR check
+    // on fork, or build-only smoke). During build phase we substitute
+    // inert placeholders so config evaluation passes — they never reach
+    // a real SMTP because notify.ts gates every send on RESEND_API_KEY
+    // (also optional, also absent in CI). Plus the prod-time superRefine
+    // rejects the placeholder explicitly when the form is ON in prod.
     EMAIL_PROVIDER: z.enum(['resend']).default('resend'),
     RESEND_API_KEY: z.string().optional(),
-    FROM_EMAIL: z.string(),
-    NOTIFY_EMAIL: z.string().email(),
+    FROM_EMAIL: isBuildPhase
+      ? z.string().default('build-noop@example.com')
+      : z.string(),
+    NOTIFY_EMAIL: isBuildPhase
+      ? z.string().email().default('build-noop@example.com')
+      : z.string().email(),
 
     // Persistence — Notion (F2)
     NOTION_API_KEY: z.string().optional(),
@@ -200,6 +212,22 @@ const envSchema = z
             path: ['UPSTASH_REDIS_REST_TOKEN'],
             message:
               'UPSTASH_REDIS_REST_TOKEN é obrigatório em produção quando NEXT_PUBLIC_CONTACT_FORM_ENABLED=true (rate limiting).',
+          })
+        }
+
+        // Reject the build-phase placeholder explicitly. If somehow it
+        // reaches a runtime evaluation (e.g. rebuild on Vercel without
+        // promoting the env update), this trips fast instead of silently
+        // sending from a fake address.
+        if (
+          data.FROM_EMAIL === 'build-noop@example.com' ||
+          data.NOTIFY_EMAIL === 'build-noop@example.com'
+        ) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            path: ['FROM_EMAIL'],
+            message:
+              'FROM_EMAIL/NOTIFY_EMAIL não pode usar o placeholder de build em produção. Configure as envs reais no Vercel.',
           })
         }
 

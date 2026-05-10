@@ -201,6 +201,50 @@ describe('config/env — production strict checks', () => {
 
     await expect(import('./env')).rejects.toThrow()
   })
+
+  it('rejects build placeholder FROM_EMAIL/NOTIFY_EMAIL at runtime when form is ON', async () => {
+    // Defense in depth: someone rebuilt on Vercel with placeholders still
+    // in env (forgot to promote real values). At runtime the form is ON,
+    // so we trip fast instead of silently sending from a fake address.
+    vi.stubEnv('NODE_ENV', 'production')
+    vi.stubEnv('NEXT_PUBLIC_SITE_URL', 'https://elemento-x.com')
+    vi.stubEnv('NEXT_PUBLIC_CONTACT_FORM_ENABLED', 'true')
+    vi.stubEnv('FROM_EMAIL', 'build-noop@example.com')
+    vi.stubEnv('NOTIFY_EMAIL', 'build-noop@example.com')
+    vi.stubEnv('RESEND_API_KEY', 're_x')
+    vi.stubEnv('NOTION_API_KEY', 'ntn_x')
+    vi.stubEnv('NOTION_DATABASE_ID', 'db_x')
+    vi.stubEnv('UPSTASH_REDIS_REST_URL', 'https://abc-12345.upstash.io')
+    vi.stubEnv('UPSTASH_REDIS_REST_TOKEN', 'tk_x')
+    delete process.env.NEXT_PHASE
+
+    await expect(import('./env')).rejects.toThrow()
+  })
+})
+
+describe('config/env — build phase (CI without secrets)', () => {
+  it('substitutes inert placeholders for FROM_EMAIL/NOTIFY_EMAIL during next build', async () => {
+    // CI runs `next build` with NODE_ENV=production but NEXT_PHASE=phase-production-build,
+    // and without any project envs. The strict runtime checks must not trip
+    // here — placeholders pass; notify.ts gates every send on RESEND_API_KEY
+    // so the placeholder cannot reach a real SMTP.
+    vi.stubEnv('NODE_ENV', 'production')
+    vi.stubEnv('NEXT_PHASE', 'phase-production-build')
+    delete process.env.FROM_EMAIL
+    delete process.env.NOTIFY_EMAIL
+    delete process.env.NEXT_PUBLIC_SITE_URL
+    delete process.env.NEXT_PUBLIC_CONTACT_FORM_ENABLED
+    delete process.env.RESEND_API_KEY
+    delete process.env.NOTION_API_KEY
+    delete process.env.NOTION_DATABASE_ID
+    delete process.env.UPSTASH_REDIS_REST_URL
+    delete process.env.UPSTASH_REDIS_REST_TOKEN
+
+    const { env } = await import('./env')
+    expect(env.FROM_EMAIL).toBe('build-noop@example.com')
+    expect(env.NOTIFY_EMAIL).toBe('build-noop@example.com')
+    expect(env.NEXT_PUBLIC_CONTACT_FORM_ENABLED).toBe(false)
+  })
 })
 
 describe('config/env — Upstash URL anchoring (anti-SSRF)', () => {
