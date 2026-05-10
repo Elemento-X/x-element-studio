@@ -85,8 +85,8 @@ export function FinalCta() {
                 </dl>
                 <div className={styles.disclaimer}>
                   We partner with a select number of teams each quarter.
-                  Selection is by fit &mdash; measured by whether we can make
-                  the system measurably better, not whether the deal closes.
+                  Selection is by fit &mdash; can we make the system measurably
+                  better. The deal closing is secondary.
                 </div>
               </>
             )}
