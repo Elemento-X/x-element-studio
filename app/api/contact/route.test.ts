@@ -44,11 +44,15 @@ const {
   mockRateLimitContactEmail,
   mockPersist,
   mockNotify,
+  mockVerifyTurnstile,
+  mockIsTurnstileEnabled,
 } = vi.hoisted(() => ({
   mockRateLimitContact: vi.fn(),
   mockRateLimitContactEmail: vi.fn(),
   mockPersist: vi.fn(),
   mockNotify: vi.fn(),
+  mockVerifyTurnstile: vi.fn(),
+  mockIsTurnstileEnabled: vi.fn(),
 }))
 
 vi.mock('@/lib/contact/rate-limit', () => ({
@@ -103,16 +107,23 @@ beforeEach(() => {
   mockRateLimitContactEmail.mockReset()
   mockPersist.mockReset()
   mockNotify.mockReset()
-  // Sane defaults — tests override per branch
+  // Sane defaults — tests override per branch.
+  // RateLimitResult: ok, remaining, limit, retryAfterSeconds, resetAt
+  // (`limit` + `resetAt` flow into X-RateLimit-* headers per
+  //  api-contract.md — Reset is unix seconds, Stripe/GitHub style.)
   mockRateLimitContact.mockResolvedValue({
     ok: true,
     remaining: 4,
+    limit: 5,
     retryAfterSeconds: 3600,
+    resetAt: 1_900_000_000,
   })
   mockRateLimitContactEmail.mockResolvedValue({
     ok: true,
     remaining: 1,
+    limit: 2,
     retryAfterSeconds: 3600,
+    resetAt: 1_900_000_000,
   })
   mockPersist.mockResolvedValue({ ok: true, pageId: 'page_test' })
   mockNotify.mockResolvedValue({ ok: true })
@@ -209,7 +220,9 @@ describe('POST /api/contact — rate limiting', () => {
     mockRateLimitContact.mockResolvedValueOnce({
       ok: false,
       remaining: 0,
+      limit: 5,
       retryAfterSeconds: 1234,
+      resetAt: 1_950_000_000,
     })
 
     const POST = await importPost()
@@ -217,6 +230,9 @@ describe('POST /api/contact — rate limiting', () => {
     expect(res.status).toBe(429)
     expect(res.headers.get('retry-after')).toBe('1234')
     expect(res.headers.get('x-ratelimit-remaining')).toBe('0')
+    // api-contract: Limit + Reset are part of the contract on 429 too.
+    expect(res.headers.get('x-ratelimit-limit')).toBe('5')
+    expect(res.headers.get('x-ratelimit-reset')).toBe('1950000000')
     const body = (await res.json()) as { error: { code: string } }
     expect(body.error.code).toBe('RATE_LIMITED')
     // Body never read on per-IP RL hit
@@ -228,16 +244,79 @@ describe('POST /api/contact — rate limiting', () => {
     mockRateLimitContactEmail.mockResolvedValueOnce({
       ok: false,
       remaining: 0,
+      limit: 2,
       retryAfterSeconds: 60,
+      resetAt: 1_950_000_001,
     })
 
     const POST = await importPost()
     const res = await POST(makeReq({ body: validBody }))
     expect(res.status).toBe(429)
     expect(res.headers.get('retry-after')).toBe('60')
+    expect(res.headers.get('x-ratelimit-limit')).toBe('2')
+    expect(res.headers.get('x-ratelimit-reset')).toBe('1950000001')
     const body = (await res.json()) as { error: { code: string } }
     expect(body.error.code).toBe('RATE_LIMITED')
     expect(mockPersist).not.toHaveBeenCalled()
+  })
+})
+
+describe('POST /api/contact — Turnstile (when enabled)', () => {
+  // Turnstile is only invoked when both NEXT_PUBLIC_TURNSTILE_SITE_KEY
+  // and TURNSTILE_SECRET_KEY are present (graceful degrade in dev).
+  // We mock the verify boundary to drive the `result.ok === false` branch
+  // of the route — the unit tests for verifyTurnstile cover the fetch.
+  beforeEach(() => {
+    vi.doMock('@/lib/contact/turnstile', () => ({
+      verifyTurnstile: mockVerifyTurnstile,
+      isTurnstileEnabled: mockIsTurnstileEnabled,
+    }))
+    mockVerifyTurnstile.mockReset()
+    mockIsTurnstileEnabled.mockReset()
+  })
+
+  afterEach(() => {
+    vi.doUnmock('@/lib/contact/turnstile')
+  })
+
+  it('returns 403 TURNSTILE_FAILED when Cloudflare rejects the token', async () => {
+    mockIsTurnstileEnabled.mockReturnValue(true)
+    mockVerifyTurnstile.mockResolvedValueOnce({
+      ok: false,
+      errorCode: 'invalid-input-response',
+    })
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+
+    const POST = await importPost()
+    const res = await POST(
+      makeReq({ body: { ...validBody, turnstileToken: 'bad-token' } }),
+    )
+    expect(res.status).toBe(403)
+    const body = (await res.json()) as { error: { code: string } }
+    expect(body.error.code).toBe('TURNSTILE_FAILED')
+    // Persist must not run — bot challenge is gate-before-persist.
+    expect(mockPersist).not.toHaveBeenCalled()
+    expect(mockNotify).not.toHaveBeenCalled()
+    // Per-email RL must not run either — turnstile precedes it.
+    expect(mockRateLimitContactEmail).not.toHaveBeenCalled()
+    // No PII in warn (logging policy).
+    const logged = warnSpy.mock.calls.flat().join(' ')
+    expect(logged).not.toContain(validBody.email)
+    expect(logged).not.toContain(validBody.name)
+    expect(logged).toContain('turnstile_failed')
+    warnSpy.mockRestore()
+  })
+
+  it('proceeds normally when Turnstile passes', async () => {
+    mockIsTurnstileEnabled.mockReturnValue(true)
+    mockVerifyTurnstile.mockResolvedValueOnce({ ok: true })
+
+    const POST = await importPost()
+    const res = await POST(
+      makeReq({ body: { ...validBody, turnstileToken: 'good-token' } }),
+    )
+    expect(res.status).toBe(200)
+    expect(mockPersist).toHaveBeenCalledTimes(1)
   })
 })
 
@@ -323,18 +402,23 @@ describe('POST /api/contact — persist & notify', () => {
     expect(mockNotify).toHaveBeenCalledTimes(1)
   })
 
-  it('happy path → 200 with envelope { data: { ok: true } } and X-RateLimit-Remaining', async () => {
+  it('happy path → 200 with envelope { data: { ok: true } } and full X-RateLimit-* trio', async () => {
     mockRateLimitContact.mockResolvedValueOnce({
       ok: true,
       remaining: 3,
+      limit: 5,
       retryAfterSeconds: 3600,
+      resetAt: 1_888_000_000,
     })
 
     const POST = await importPost()
     const res = await POST(makeReq({ body: validBody }))
     expect(res.status).toBe(200)
     expect(res.headers.get('cache-control')).toBe('no-store')
+    // api-contract: Limit + Remaining + Reset is the canonical trio.
     expect(res.headers.get('x-ratelimit-remaining')).toBe('3')
+    expect(res.headers.get('x-ratelimit-limit')).toBe('5')
+    expect(res.headers.get('x-ratelimit-reset')).toBe('1888000000')
     const body = (await res.json()) as { data: { ok: boolean } }
     expect(body).toEqual({ data: { ok: true } })
     expect(mockPersist).toHaveBeenCalledTimes(1)

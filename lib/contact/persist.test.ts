@@ -174,6 +174,66 @@ describe('persistContact — happy path', () => {
   })
 })
 
+describe('persistContact — graceful fallback for missing Notion props', () => {
+  // Operator may not have added `IP hash` / `Source` columns to the
+  // Notion DB yet. Notion responds with a validation_error mentioning
+  // "is not a property that exists" — persist should retry with the
+  // core props only and cache the outcome, so subsequent submits skip
+  // the probe and don't double-call Notion.
+  it('retries with core props when Notion reports missing meta property and caches it', async () => {
+    vi.stubEnv('NOTION_API_KEY', 'secret_test_key')
+    vi.stubEnv('NOTION_DATABASE_ID', 'db_test_123')
+    vi.resetModules()
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+
+    mockCreate
+      // First attempt: full props → Notion rejects "IP hash is not a
+      // property that exists in this database."
+      .mockRejectedValueOnce(
+        new NotionAPIErrorMock(
+          'validation_error',
+          400,
+          '`IP hash` is not a property that exists in this database.',
+        ),
+      )
+      // Fallback retry within the same call: core props only → success.
+      .mockResolvedValueOnce({ id: 'page_core_1' })
+      // Subsequent submit: cache hit → goes straight to core props.
+      .mockResolvedValueOnce({ id: 'page_core_2' })
+
+    const { persistContact } = await import('./persist')
+
+    const r1 = await persistContact(validInput, META)
+    expect(r1).toEqual({ ok: true, pageId: 'page_core_1' })
+    // Two Notion calls within the first persist: full → fallback core.
+    expect(mockCreate).toHaveBeenCalledTimes(2)
+
+    // Warning logged once, no PII.
+    const logged = warnSpy.mock.calls.flat().join(' ')
+    expect(logged).toContain('notion_missing_meta_props')
+    expect(logged).not.toContain(validInput.email)
+    expect(logged).not.toContain(validInput.name)
+
+    // Second submit: cached, skips probe → 1 call only (core).
+    const r2 = await persistContact(validInput, META)
+    expect(r2).toEqual({ ok: true, pageId: 'page_core_2' })
+    expect(mockCreate).toHaveBeenCalledTimes(3)
+
+    // The 3rd call must NOT include `IP hash` / `Source` — fallback path.
+    const thirdCallProps = (
+      mockCreate.mock.calls[2]?.[0] as {
+        properties: Record<string, unknown>
+      }
+    ).properties
+    expect(thirdCallProps['IP hash']).toBeUndefined()
+    expect(thirdCallProps.Source).toBeUndefined()
+    // Core props remain (Name is the title prop).
+    expect(thirdCallProps.Name).toBeDefined()
+
+    warnSpy.mockRestore()
+  })
+})
+
 describe('persistContact — retry on transient', () => {
   it('retries once on rate_limited then succeeds', async () => {
     vi.stubEnv('NOTION_API_KEY', 'secret_test_key')
