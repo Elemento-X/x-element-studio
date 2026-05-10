@@ -26,6 +26,11 @@ export interface RateLimitResult {
   ok: boolean
   remaining: number
   retryAfterSeconds: number
+  // Stripe/GitHub-style rate-limit headers: limit is the bucket cap,
+  // resetAt is the Unix-second timestamp when the current bucket ends.
+  // Emitted as X-RateLimit-Limit and X-RateLimit-Reset on every response.
+  limit: number
+  resetAt: number
 }
 
 const WINDOW_SECONDS = 3600
@@ -70,14 +75,17 @@ function memoryRateLimit(key: string, limit: number): RateLimitResult {
     1,
     Math.ceil((entry.expiresAt - now) / 1000),
   )
+  const resetAt = Math.floor(entry.expiresAt / 1000)
 
   if (entry.count > limit) {
-    return { ok: false, remaining: 0, retryAfterSeconds }
+    return { ok: false, remaining: 0, retryAfterSeconds, limit, resetAt }
   }
   return {
     ok: true,
     remaining: Math.max(0, limit - entry.count),
     retryAfterSeconds,
+    limit,
+    resetAt,
   }
 }
 
@@ -105,8 +113,8 @@ async function upstashRateLimit(
   // retryAfter is deterministic from the bucket + now: the bucket ends at
   // (bucket+1)*WINDOW. No need to ask Redis for TTL — saves one round-trip.
   const nowSec = Math.floor(Date.now() / 1000)
-  const bucketEndSec = (bucket + 1) * WINDOW_SECONDS
-  const retryAfterSeconds = Math.max(1, bucketEndSec - nowSec)
+  const resetAt = (bucket + 1) * WINDOW_SECONDS
+  const retryAfterSeconds = Math.max(1, resetAt - nowSec)
 
   // Single pipelined round-trip: INCR is atomic; EXPIRE NX sets the TTL
   // only when the key didn't have one (first hit of the bucket). Subsequent
@@ -117,12 +125,14 @@ async function upstashRateLimit(
   const [count] = (await pipe.exec()) as [number, unknown]
 
   if (count > limit) {
-    return { ok: false, remaining: 0, retryAfterSeconds }
+    return { ok: false, remaining: 0, retryAfterSeconds, limit, resetAt }
   }
   return {
     ok: true,
     remaining: Math.max(0, limit - count),
     retryAfterSeconds,
+    limit,
+    resetAt,
   }
 }
 

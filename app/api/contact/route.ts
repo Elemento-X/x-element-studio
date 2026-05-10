@@ -202,7 +202,9 @@ export async function POST(req: NextRequest) {
       requestId,
       {
         'Retry-After': String(rl.retryAfterSeconds),
+        'X-RateLimit-Limit': String(rl.limit),
         'X-RateLimit-Remaining': '0',
+        'X-RateLimit-Reset': String(rl.resetAt),
       },
     )
   }
@@ -262,7 +264,9 @@ export async function POST(req: NextRequest) {
       requestId,
       {
         'Retry-After': String(emailRl.retryAfterSeconds),
+        'X-RateLimit-Limit': String(emailRl.limit),
         'X-RateLimit-Remaining': '0',
+        'X-RateLimit-Reset': String(emailRl.resetAt),
       },
     )
   }
@@ -284,7 +288,9 @@ export async function POST(req: NextRequest) {
   await notifyContact(data)
 
   return okResponse(requestId, {
+    'X-RateLimit-Limit': String(rl.limit),
     'X-RateLimit-Remaining': String(rl.remaining),
+    'X-RateLimit-Reset': String(rl.resetAt),
   })
 }
 
