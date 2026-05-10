@@ -1,20 +1,44 @@
 import { NextResponse, type NextRequest } from 'next/server'
 
-// Routing Middleware — generates a per-request CSP nonce and injects a
-// strict Content-Security-Policy in production.
+// Routing Middleware — injects a static Content-Security-Policy in
+// production builds.
 //
-// Why a middleware (and not just next.config.mjs `headers()`):
-//   The static-headers approach can't generate a per-request nonce, so
-//   the CSP had to fall back to `'unsafe-inline'` + `'unsafe-eval'` in
-//   script-src (any XSS would amplify into full RCE-equivalent). With a
-//   middleware we can mint a nonce, propagate it to Next so internal
-//   inline scripts inherit it, and lock the CSP to nonce-based.
+// History note (security trade-off, intentional):
+//   The first iteration of this file used a per-request nonce + the
+//   `'strict-dynamic'` directive (Google CSP team / OWASP recommended
+//   pattern). That broke under Next 16 + Turbopack production builds:
+//   Turbopack injects its chunk-loader inline scripts without picking
+//   up the nonce from the `x-nonce` request header (the propagation
+//   that works under webpack does NOT work under Turbopack). With
+//   `'strict-dynamic'` set, host-based allowlisting (`'self'`) is
+//   disabled, so every `_next/static/chunks/*.js` was blocked by the
+//   browser. The CI E2E smoke test caught it.
 //
-// Pattern: "strict-dynamic with fallback" recommended by Google CSP team
-//   and OWASP. Modern browsers honor `'nonce-X' 'strict-dynamic'` and
-//   ignore the `'unsafe-inline'` fallback. Older browsers without
-//   strict-dynamic support fail-open to `'unsafe-inline'` instead of
-//   breaking the site outright.
+//   We degraded to a static CSP that is compatible with Turbopack:
+//     - `'self'` allowlist for chunks (no strict-dynamic).
+//     - `'unsafe-inline'` for inline scripts that Next/Turbopack
+//        injects without nonce (chunk loader, font preload bootstrap).
+//     - `https://challenges.cloudflare.com` for Turnstile.
+//
+//   We do NOT include a nonce in `script-src`, because the moment a
+//   nonce is present in the directive, modern browsers IGNORE
+//   `'unsafe-inline'` — and the inline scripts Next emits without a
+//   nonce break again.
+//
+//   Trade-off accepted: an XSS-injected inline `<script>` would now
+//   execute (was blocked by nonce before). Mitigations still in place:
+//     - All user input is server-validated via Zod (lib/contact/schema.ts)
+//     - DOMPurify-style escaping is N/A (we render via React; React
+//       escapes by default)
+//     - No `dangerouslySetInnerHTML` anywhere in the codebase
+//     - Cross-origin script loading is still blocked (only `'self'`
+//       and the Turnstile origin allowed)
+//
+//   Re-evaluate when:
+//     - Next/Turbopack adds nonce propagation in a future minor
+//     - Or we move to a stack where it is supported (webpack mode is
+//       still available via `next build --webpack`, kept as escape
+//       hatch in case the CSP regression becomes unacceptable)
 //
 // Dev: skip CSP entirely. Turbopack/HMR rely on eval and inline scripts
 //   that don't carry our nonce; trying to enforce CSP in dev makes the
@@ -22,58 +46,32 @@ import { NextResponse, type NextRequest } from 'next/server'
 
 const isProd = process.env.NODE_ENV === 'production'
 
-export function middleware(request: NextRequest) {
+// Cloudflare Turnstile loads its widget script + iframe + verify call
+// from challenges.cloudflare.com. Allowlisted across script-src,
+// connect-src, and frame-src so the widget renders, fetches its
+// challenge, and posts back to siteverify.
+const CSP_HEADER = [
+  "default-src 'self'",
+  "script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com",
+  // Style-src keeps 'unsafe-inline' deliberately. Next.js + CSS
+  // Modules emit critical inline <style> blocks during streaming.
+  "style-src 'self' 'unsafe-inline'",
+  "font-src 'self' data:",
+  "img-src 'self' data: blob:",
+  "connect-src 'self' https://challenges.cloudflare.com",
+  "frame-src 'self' https://challenges.cloudflare.com",
+  "frame-ancestors 'none'",
+  "base-uri 'self'",
+  "form-action 'self'",
+  "object-src 'none'",
+  'upgrade-insecure-requests',
+].join('; ')
+
+export function middleware(_request: NextRequest) {
   if (!isProd) return NextResponse.next()
 
-  // 16-byte random nonce, base64. crypto.randomUUID() also works but
-  // randomBytes gives a slightly tighter base64 surface.
-  const nonceBuffer = new Uint8Array(16)
-  crypto.getRandomValues(nonceBuffer)
-  const nonce = btoa(String.fromCharCode(...nonceBuffer))
-
-  // Cloudflare Turnstile loads its widget script + iframe from
-  // challenges.cloudflare.com. Allowlisted explicitly so the CSP holds
-  // even when 'strict-dynamic' isn't honored by older browsers (the
-  // legacy 'unsafe-inline' fallback wouldn't cover a 3rd-party host).
-  const cspHeader = [
-    "default-src 'self'",
-    // 'strict-dynamic' lets scripts loaded by trusted (nonce'd) scripts
-    // run without their own nonce. 'unsafe-inline' is the legacy
-    // fallback; modern browsers ignore it when nonce + strict-dynamic
-    // are present. challenges.cloudflare.com is the Turnstile origin.
-    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' 'unsafe-inline' https://challenges.cloudflare.com`,
-    // Style-src keeps 'unsafe-inline' deliberately. Next.js + CSS
-    // Modules emit critical inline <style> blocks during streaming;
-    // forcing nonce on them would require non-trivial wiring with no
-    // matching threat (inline-style XSS is a much narrower vector
-    // than inline-script XSS).
-    "style-src 'self' 'unsafe-inline'",
-    "font-src 'self' data:",
-    "img-src 'self' data: blob:",
-    // Turnstile makes a verify call from the widget to its own origin.
-    "connect-src 'self' https://challenges.cloudflare.com",
-    // Turnstile renders its challenge inside an iframe.
-    "frame-src 'self' https://challenges.cloudflare.com",
-    "frame-ancestors 'none'",
-    "base-uri 'self'",
-    "form-action 'self'",
-    "object-src 'none'",
-    'upgrade-insecure-requests',
-  ].join('; ')
-
-  // Propagate the nonce via request header so Next.js (and any layout
-  // that reads `headers()`) can attach it to internal inline scripts.
-  const requestHeaders = new Headers(request.headers)
-  requestHeaders.set('x-nonce', nonce)
-  requestHeaders.set('Content-Security-Policy', cspHeader)
-
-  const response = NextResponse.next({
-    request: { headers: requestHeaders },
-  })
-
-  // Also surface the CSP header on the response so the browser actually
-  // enforces it.
-  response.headers.set('Content-Security-Policy', cspHeader)
+  const response = NextResponse.next()
+  response.headers.set('Content-Security-Policy', CSP_HEADER)
   return response
 }
 
