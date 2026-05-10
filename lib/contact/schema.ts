@@ -91,6 +91,12 @@ export const contactSchema = z
     // optional" — anything goes — and the runtime check in route.ts:POST
     // does the actual rejection silently.
     honeypot: z.string().optional(),
+
+    // Cloudflare Turnstile token. Optional in the schema — the route
+    // checks isTurnstileEnabled() and only enforces presence when both
+    // keys are configured. Token shape is opaque to us; CF validates
+    // server-side via verifyTurnstile().
+    turnstileToken: z.string().optional(),
   })
   .strict()
   .superRefine((data, ctx) => {

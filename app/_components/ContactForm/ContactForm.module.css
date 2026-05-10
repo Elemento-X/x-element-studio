@@ -182,6 +182,13 @@
   margin-top: var(--s-2);
 }
 
+/* Cloudflare Turnstile widget container — sits between Message and the
+   submit row. Cloudflare's widget renders its own iframe and matches
+   the theme via the `theme: 'dark'` option, so we only manage spacing. */
+.turnstile {
+  margin-top: var(--s-2);
+}
+
 .errorBanner {
   font-family: var(--font-mono);
   font-size: 12px;

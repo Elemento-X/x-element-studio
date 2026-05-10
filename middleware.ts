@@ -31,13 +31,17 @@ export function middleware(request: NextRequest) {
   crypto.getRandomValues(nonceBuffer)
   const nonce = btoa(String.fromCharCode(...nonceBuffer))
 
+  // Cloudflare Turnstile loads its widget script + iframe from
+  // challenges.cloudflare.com. Allowlisted explicitly so the CSP holds
+  // even when 'strict-dynamic' isn't honored by older browsers (the
+  // legacy 'unsafe-inline' fallback wouldn't cover a 3rd-party host).
   const cspHeader = [
     "default-src 'self'",
     // 'strict-dynamic' lets scripts loaded by trusted (nonce'd) scripts
     // run without their own nonce. 'unsafe-inline' is the legacy
     // fallback; modern browsers ignore it when nonce + strict-dynamic
-    // are present.
-    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' 'unsafe-inline'`,
+    // are present. challenges.cloudflare.com is the Turnstile origin.
+    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' 'unsafe-inline' https://challenges.cloudflare.com`,
     // Style-src keeps 'unsafe-inline' deliberately. Next.js + CSS
     // Modules emit critical inline <style> blocks during streaming;
     // forcing nonce on them would require non-trivial wiring with no
@@ -46,7 +50,10 @@ export function middleware(request: NextRequest) {
     "style-src 'self' 'unsafe-inline'",
     "font-src 'self' data:",
     "img-src 'self' data: blob:",
-    "connect-src 'self'",
+    // Turnstile makes a verify call from the widget to its own origin.
+    "connect-src 'self' https://challenges.cloudflare.com",
+    // Turnstile renders its challenge inside an iframe.
+    "frame-src 'self' https://challenges.cloudflare.com",
     "frame-ancestors 'none'",
     "base-uri 'self'",
     "form-action 'self'",

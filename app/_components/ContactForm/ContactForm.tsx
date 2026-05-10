@@ -1,5 +1,6 @@
 'use client'
 
+import { Turnstile } from '@marsidev/react-turnstile'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState } from 'react'
 import {
@@ -17,6 +18,10 @@ import {
 } from '@/lib/contact/schema'
 import { Button } from '../Button/Button'
 import styles from './ContactForm.module.css'
+
+// Public — Next inlines this at build time when prefixed NEXT_PUBLIC_*.
+// Empty string = Turnstile disabled (graceful degrade per the env contract).
+const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? ''
 
 type SubmitState =
   | { status: 'idle' }
@@ -76,6 +81,9 @@ function EngagementOtherField({
 
 export function ContactForm() {
   const [state, setState] = useState<SubmitState>({ status: 'idle' })
+  // Token from Cloudflare Turnstile widget callback. Only attached to
+  // the submit body when Turnstile is enabled (TURNSTILE_SITE_KEY set).
+  const [turnstileToken, setTurnstileToken] = useState<string>('')
 
   const {
     register,
@@ -118,10 +126,15 @@ export function ContactForm() {
   const onSubmit = async (data: ContactInput) => {
     setState({ status: 'submitting' })
     try {
+      // Attach Turnstile token (if any) to the submit body. The server
+      // only enforces it when both keys are configured; sending it
+      // unconditionally is safe and keeps the client code simple.
+      const payload = TURNSTILE_SITE_KEY ? { ...data, turnstileToken } : data
+
       const res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
+        body: JSON.stringify(payload),
       })
 
       if (res.ok) {
@@ -310,13 +323,27 @@ export function ContactForm() {
         )}
       </div>
 
+      {TURNSTILE_SITE_KEY && (
+        <div className={styles.turnstile}>
+          <Turnstile
+            siteKey={TURNSTILE_SITE_KEY}
+            onSuccess={(token) => setTurnstileToken(token)}
+            onExpire={() => setTurnstileToken('')}
+            onError={() => setTurnstileToken('')}
+            options={{ theme: 'dark', size: 'flexible' }}
+          />
+        </div>
+      )}
+
       <div className={styles.actions}>
         <Button
           as="button"
           type="submit"
           variant="primary"
           withArrow
-          disabled={isSubmitting}
+          disabled={
+            isSubmitting || (Boolean(TURNSTILE_SITE_KEY) && !turnstileToken)
+          }
           className={styles.submitBone}
         >
           {isSubmitting ? 'Sending…' : 'Send brief'}

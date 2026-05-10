@@ -9,6 +9,7 @@ import {
   rateLimitContactEmail,
 } from '@/lib/contact/rate-limit'
 import { contactSchema } from '@/lib/contact/schema'
+import { isTurnstileEnabled, verifyTurnstile } from '@/lib/contact/turnstile'
 
 /**
  * Contact form pipeline:
@@ -253,6 +254,28 @@ export async function POST(req: NextRequest) {
   if (data.honeypot) {
     console.info(`[contact] honeypot_hit rid=${requestId}`)
     return okResponse(requestId)
+  }
+
+  // Cloudflare Turnstile verify (only when keys configured). Defense
+  // in depth alongside honeypot — catches bots that fill out forms but
+  // don't run JS / can't pass the challenge. Failure = explicit 403,
+  // not silent: legitimate users with a stale/missing token see the
+  // error and can retry; bots already failed at the widget anyway.
+  if (isTurnstileEnabled()) {
+    const result = await verifyTurnstile(data.turnstileToken ?? '', ip)
+    if (!result.ok) {
+      console.warn(
+        `[contact] turnstile_failed code=${result.errorCode} rid=${requestId}`,
+      )
+      return errorResponse(
+        403,
+        {
+          code: 'TURNSTILE_FAILED',
+          message: 'Bot challenge failed. Refresh and try again.',
+        },
+        requestId,
+      )
+    }
   }
 
   // Per-email cap (after parse, before persist) — catches the "single

@@ -99,6 +99,22 @@ const envSchema = z
       z.string().optional(),
     ),
 
+    // Cloudflare Turnstile (anti-bot, defense-in-depth alongside honeypot
+    // + rate-limit). Both keys optional: when either is missing, the form
+    // skips the Turnstile challenge entirely (degrades gracefully).
+    // Test keys for dev (provided by Cloudflare):
+    //   site:   1x00000000000000000000AA   (always passes)
+    //   secret: 1x0000000000000000000000000000000AA
+    // Real keys obtained from cloudflare.com → Turnstile dashboard.
+    NEXT_PUBLIC_TURNSTILE_SITE_KEY: z.preprocess(
+      (v) => (v === '' ? undefined : v),
+      z.string().optional(),
+    ),
+    TURNSTILE_SECRET_KEY: z.preprocess(
+      (v) => (v === '' ? undefined : v),
+      z.string().optional(),
+    ),
+
     // Observability — Sentry (optional). Lazy-loaded by lib/observability/sentry.ts
     // when DSN is set; otherwise zero runtime weight. preprocess turns empty
     // string into undefined so a blank entry in .env does not fail .url().
