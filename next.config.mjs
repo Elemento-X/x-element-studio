@@ -1,8 +1,7 @@
-// Security headers applied globally. CSP starts permissive (`unsafe-inline`
-// in script-src) because Next.js 16 production embeds inline runtime hooks;
-// tightening to a nonce-based CSP requires a Routing Middleware that injects
-// per-request nonce — tracked as Bucket B follow-up. Other headers are
-// strict from the start.
+// Static security headers applied globally via Next's headers() config.
+// Content-Security-Policy lives in middleware.ts (it needs a per-request
+// nonce, which a static config can't generate). Everything else is
+// header-static and goes here.
 const SECURITY_HEADERS = [
   {
     key: 'Strict-Transport-Security',
@@ -14,22 +13,6 @@ const SECURITY_HEADERS = [
   {
     key: 'Permissions-Policy',
     value: 'camera=(), microphone=(), geolocation=(), interest-cohort=()',
-  },
-  {
-    key: 'Content-Security-Policy',
-    value: [
-      "default-src 'self'",
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
-      "style-src 'self' 'unsafe-inline'",
-      "font-src 'self' data:",
-      "img-src 'self' data: blob:",
-      "connect-src 'self'",
-      "frame-ancestors 'none'",
-      "base-uri 'self'",
-      "form-action 'self'",
-      "object-src 'none'",
-      'upgrade-insecure-requests',
-    ].join('; '),
   },
 ]
 
