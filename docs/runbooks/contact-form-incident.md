@@ -61,7 +61,7 @@ Tags emitted (all include `rid=<requestId>` for correlation):
 | `[contact:ratelimit] global_cap_hit`      | Global hourly cap hit — likely under attack   |
 | `[contact:ratelimit] email_cap_hit`       | Per-email cap hit — likely targeted spam      |
 | `[contact] honeypot_hit`                  | Bot caught (silent 200, expected)             |
-| `[contact] turnstile_failed code=X`       | Turnstile rejected the token or siteverify failed (codes: `invalid-input-response`, `invalid-input-secret`, `timeout-or-duplicate`, `bad-request`, `internal-error`, or our own: `http_5xx`, `transport`, `timeout`) |
+| `[contact] turnstile_failed code=X`       | Turnstile rejected the token or siteverify failed. CF codes: `missing-input-response`, `invalid-input-response`, `invalid-input-secret`, `timeout-or-duplicate`, `bad-request`, `internal-error`. Our wrapper codes: `http_5xx`, `transport`, `timeout`, `unknown` (CF returned success=false without an error-code — likely API change). |
 
 If you see `permanent_error` go to step 3 (Notion). If `resend_error` go to step 4 (Resend). If `upstash_unavailable` go to step 5 (Upstash). If `turnstile_failed` go to step 6 (Turnstile).
 
@@ -95,11 +95,14 @@ If you see `permanent_error` go to step 3 (Notion). If `resend_error` go to step
 - https://www.cloudflarestatus.com → check Turnstile component status.
 - https://dash.cloudflare.com → Turnstile → your site → **Analytics** tab → look for spike in `failed` solves.
 - Read the `code` from the log line `[contact] turnstile_failed code=X`:
-  - `invalid-input-secret` — server has the wrong `TURNSTILE_SECRET_KEY` (typo / propagation issue / not redeployed). Rotate or fix env (see `secret-rotation.md`).
+  - `missing-input-response` — token absent on the request (client widget failed to render or solve, or JS bug stripped the token). Self-heal: user refreshes form. Sustained across many submits = the widget is broken in production; kill-switch the keys to fall back to honeypot + rate-limit while you debug the client.
   - `invalid-input-response` — token expired or malformed (user took too long; widgets expire ~5 min). Self-heal: user refreshes form.
+  - `invalid-input-secret` — server has the wrong `TURNSTILE_SECRET_KEY` (typo / propagation issue / not redeployed). Rotate or fix env (see `secret-rotation.md` Turnstile section).
   - `timeout-or-duplicate` — token already used (replay) or expired. Self-heal.
+  - `bad-request` — malformed POST to siteverify (our wrapper bug). Open issue and patch.
   - `internal-error` — Cloudflare-side issue. Check status page; transient.
   - `http_5xx` / `transport` / `timeout` — Cloudflare unreachable from Vercel. Likely transient. Sustained = consider kill-switch (Option 1) until restored; honeypot + rate-limit remain active without the widget.
+  - `unknown` — Cloudflare returned `success=false` with no error-code. Treat as `internal-error` operationally (transient). Also: open an issue/Cloudflare community thread — it signals a CF API change and our parser needs hardening.
 - If keys are missing entirely (operator removed them by mistake), the widget doesn't render and the route skips verify. Form continues to work in degraded mode.
 
 ---
@@ -148,7 +151,7 @@ If you see `permanent_error` go to step 3 (Notion). If `resend_error` go to step
 1. **Short-term mitigation:** clear `TURNSTILE_SECRET_KEY` and `NEXT_PUBLIC_TURNSTILE_SITE_KEY` from Vercel envs (Production), redeploy. The widget stops rendering, the route skips verify, form falls back to honeypot + rate-limit only. Communicate degraded state in `#elemento-x-ops`.
 2. **Recovery:** restore both envs, redeploy, validate per `secret-rotation.md` Turnstile section.
 
-If the failure is `code=invalid-input-secret`, the secret is wrong (not a CF outage) — go to `secret-rotation.md`.
+If the failure is `code=invalid-input-secret`, the secret is wrong (not a CF outage) — go to `secret-rotation.md` Turnstile section.
 
 ---
 
