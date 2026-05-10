@@ -199,12 +199,23 @@ const envSchema = z
               'FROM_EMAIL não pode usar @resend.dev em produção (sandbox sender). Verifique um domínio próprio no Resend.',
           })
         }
-        if (data.NOTIFY_EMAIL === 'xelementcontact@gmail.com') {
+        // Reject any free-mail provider as the operator inbox in prod —
+        // not just the dev default. A trocar por outro Gmail/Hotmail/etc
+        // pessoal seria igualmente errado: leads sensíveis indo pra
+        // inbox individual + zero política corporativa de retenção.
+        // Defesa em profundidade: a defesa primária é o operador
+        // configurar o inbox da equipe; este é o garde-fou caso ele
+        // esqueça e copie o default literal ou troque por outro Gmail.
+        if (
+          /@(gmail|hotmail|outlook|live|yahoo|icloud|proton(mail)?)\.com$/i.test(
+            data.NOTIFY_EMAIL,
+          )
+        ) {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
             path: ['NOTIFY_EMAIL'],
             message:
-              'NOTIFY_EMAIL é o default de DEV (Gmail pessoal). Em produção, configure inbox da equipe.',
+              'NOTIFY_EMAIL não pode ser inbox pessoal (gmail/hotmail/outlook/yahoo/icloud/proton) em produção. Configure inbox da equipe em domínio próprio.',
           })
         }
       }
