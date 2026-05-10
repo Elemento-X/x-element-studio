@@ -70,10 +70,7 @@ export interface PersistMeta {
   source: string
 }
 
-function buildProperties(
-  input: ContactOutput,
-  meta: PersistMeta,
-): CreatePageProperties {
+function buildCoreProperties(input: ContactOutput): CreatePageProperties {
   const props: CreatePageProperties = {
     Name: {
       title: [{ text: { content: input.name } }],
@@ -84,10 +81,6 @@ function buildProperties(
       rich_text: [{ text: { content: input.message } }],
     },
     Status: { select: { name: 'New' } },
-    'IP hash': {
-      rich_text: [{ text: { content: meta.ipHash } }],
-    },
-    Source: { select: { name: meta.source } },
   }
 
   if (input.company) {
@@ -104,16 +97,69 @@ function buildProperties(
   return props
 }
 
+function buildProperties(
+  input: ContactOutput,
+  meta: PersistMeta,
+): CreatePageProperties {
+  return {
+    ...buildCoreProperties(input),
+    'IP hash': {
+      rich_text: [{ text: { content: meta.ipHash } }],
+    },
+    Source: { select: { name: meta.source } },
+  }
+}
+
+// Module-level cache: once we detect that the Notion DB doesn't have the
+// metadata properties (operator hasn't added them yet), every subsequent
+// submit skips them — avoids paying the validation round-trip per call.
+// Reset is a process restart (cheap; the cache is just a perf hint).
+let _skipMetaProps = false
+
 async function createNotionPage(
   input: ContactOutput,
   meta: PersistMeta,
 ): Promise<string> {
   const notion = getNotion()
-  const page = await notion.pages.create({
-    parent: { database_id: env.NOTION_DATABASE_ID as string },
-    properties: buildProperties(input, meta),
-  })
-  return page.id
+
+  if (_skipMetaProps) {
+    const page = await notion.pages.create({
+      parent: { database_id: env.NOTION_DATABASE_ID as string },
+      properties: buildCoreProperties(input),
+    })
+    return page.id
+  }
+
+  try {
+    const page = await notion.pages.create({
+      parent: { database_id: env.NOTION_DATABASE_ID as string },
+      properties: buildProperties(input, meta),
+    })
+    return page.id
+  } catch (err) {
+    // The operator may not have added `IP hash` / `Source` to the
+    // Notion DB schema yet. Notion responds with a validation_error
+    // mentioning "is not a property that exists" — recognize that
+    // exact shape and retry with the core properties only. Cache the
+    // outcome so subsequent submits skip the probe.
+    if (
+      isNotionClientError(err) &&
+      err.code === 'validation_error' &&
+      /is not a property that exists/.test(err.message)
+    ) {
+      _skipMetaProps = true
+      console.warn(
+        '[contact:persist] notion_missing_meta_props fallback=core_only ' +
+          '(add `IP hash` and `Source` to the Notion DB to enable per-submission metadata)',
+      )
+      const page = await notion.pages.create({
+        parent: { database_id: env.NOTION_DATABASE_ID as string },
+        properties: buildCoreProperties(input),
+      })
+      return page.id
+    }
+    throw err
+  }
 }
 
 function classifyError(err: unknown): 'transient' | 'permanent' {

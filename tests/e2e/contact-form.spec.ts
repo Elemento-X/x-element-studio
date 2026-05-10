@@ -29,11 +29,14 @@ test.describe('Contact form — golden path (stub mode)', () => {
 
     await page.goto('/#contact')
 
-    // The form renders only when NEXT_PUBLIC_CONTACT_FORM_ENABLED=true.
-    // If the env is off, the section falls back to mailto buttons —
-    // mark the test as skipped rather than fail (env-driven coverage).
+    // ContactForm is wrapped in `next/dynamic({ ssr: false })`, so the
+    // form node only mounts after client-side hydration. Wait for it
+    // briefly. If it never appears, the env flag is off → skip the
+    // test (the section falls back to mailto buttons in that mode).
     const form = page.getByRole('form', { name: /contact form/i })
-    if ((await form.count()) === 0) {
+    try {
+      await form.waitFor({ state: 'visible', timeout: 5_000 })
+    } catch {
       test.skip(
         true,
         'NEXT_PUBLIC_CONTACT_FORM_ENABLED is off — form not rendered.',
