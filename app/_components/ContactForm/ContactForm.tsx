@@ -5,6 +5,7 @@ import { useState } from 'react'
 import {
   type Control,
   type FieldError,
+  type FieldErrors,
   type UseFormRegister,
   useForm,
   useWatch,
@@ -81,6 +82,7 @@ export function ContactForm() {
     handleSubmit,
     control,
     reset,
+    setFocus,
     formState: { errors, isSubmitting },
   } = useForm<ContactInput>({
     resolver: zodResolver(contactSchema),
@@ -94,6 +96,24 @@ export function ContactForm() {
       honeypot: '',
     },
   })
+
+  // When the form fails validation on submit, RHF marks fields as
+  // aria-invalid but doesn't programmatically focus the first error.
+  // Keyboard / screen-reader users would have to tab back manually to
+  // find the failure. Focus the first errored field in DOM order so
+  // the user lands directly on what they need to fix.
+  const FIELD_ORDER: Array<keyof ContactInput> = [
+    'name',
+    'email',
+    'company',
+    'engagement',
+    'engagementOther',
+    'message',
+  ]
+  const onInvalid = (formErrors: FieldErrors<ContactInput>) => {
+    const first = FIELD_ORDER.find((f) => formErrors[f])
+    if (first) setFocus(first)
+  }
 
   const onSubmit = async (data: ContactInput) => {
     setState({ status: 'submitting' })
@@ -141,7 +161,7 @@ export function ContactForm() {
   return (
     <form
       className={styles.form}
-      onSubmit={handleSubmit(onSubmit)}
+      onSubmit={handleSubmit(onSubmit, onInvalid)}
       noValidate
       aria-label="Contact form"
     >
