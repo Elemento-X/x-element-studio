@@ -61,7 +61,7 @@ Tags emitted (all include `rid=<requestId>` for correlation):
 | `[contact:ratelimit] global_cap_hit`      | Global hourly cap hit — likely under attack   |
 | `[contact:ratelimit] email_cap_hit`       | Per-email cap hit — likely targeted spam      |
 | `[contact] honeypot_hit`                  | Bot caught (silent 200, expected)             |
-| `[contact] turnstile_failed code=X`       | Turnstile rejected the token or siteverify failed. CF codes: `missing-input-response`, `invalid-input-response`, `invalid-input-secret`, `timeout-or-duplicate`, `bad-request`, `internal-error`. Our wrapper codes: `http_5xx`, `transport`, `timeout`, `unknown` (CF returned success=false without an error-code — likely API change). |
+| `[contact] turnstile_failed code=X`       | Turnstile rejected the token or siteverify failed. CF codes: `missing-input-response`, `invalid-input-response`, `invalid-input-secret`, `timeout-or-duplicate`, `bad-request`, `internal-error`. Our wrapper codes: `http_<status>`, `transport`, `timeout`, `unknown` (CF returned success=false without an error-code — likely API change). |
 
 If you see `permanent_error` go to step 3 (Notion). If `resend_error` go to step 4 (Resend). If `upstash_unavailable` go to step 5 (Upstash). If `turnstile_failed` go to step 6 (Turnstile).
 
@@ -101,7 +101,8 @@ If you see `permanent_error` go to step 3 (Notion). If `resend_error` go to step
   - `timeout-or-duplicate` — token already used (replay) or expired. Self-heal.
   - `bad-request` — malformed POST to siteverify (our wrapper bug). Open issue and patch.
   - `internal-error` — Cloudflare-side issue. Check status page; transient.
-  - `http_5xx` / `transport` / `timeout` — Cloudflare unreachable from Vercel. Likely transient. Sustained = consider kill-switch (Option 1) until restored; honeypot + rate-limit remain active without the widget.
+  - `http_<status>` — siteverify returned a non-2xx HTTP. The `<status>` is the literal HTTP status. `http_5xx` family (500, 502, 503, 504) = Cloudflare-side issue, transient (sustained = kill-switch Option 1 until restored; honeypot + rate-limit remain active without the widget). `http_4xx` family (400, 403, 429) = our request is being rejected by CF — wrapper bug or CF blocking our IP/account; open issue and inspect the request shape.
+  - `transport` / `timeout` — Cloudflare unreachable from Vercel (network-level error or 5s budget hit). Likely transient. Sustained = same kill-switch playbook as `http_5xx`.
   - `unknown` — Cloudflare returned `success=false` with no error-code. Treat as `internal-error` operationally (transient). Also: open an issue/Cloudflare community thread — it signals a CF API change and our parser needs hardening.
 - If keys are missing entirely (operator removed them by mistake), the widget doesn't render and the route skips verify. Form continues to work in degraded mode.
 
