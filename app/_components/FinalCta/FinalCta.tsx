@@ -19,11 +19,15 @@ export function FinalCta() {
   // Brand rule: 1 gold per primary viewport. With the form active, the
   // single gold of the FinalCta is the .card::before hairline (designer
   // spec). The intro eyebrow's gold modifier and the h2's gold word both
-  // cede so they don't compete; lexical emphasis on "brief." comes from
-  // line-break + last-word position. In the dormant (mailto) state the
-  // gold modifier still applies, since the card is the only other gold.
+  // cede so they don't compete; the eyebrow's own ::before hairline also
+  // cedes via .eyebrowMuted (otherwise on desktop ≥1024px the 14×1px
+  // hairline of the intro eyebrow coexists with the 40×1px hairline of
+  // the card, totaling 2 golds in the same viewport row). Lexical
+  // emphasis on "brief." comes from line-break + last-word position.
+  // In the dormant (mailto) state the gold modifier still applies,
+  // since the card is the only other gold.
   const eyebrowClassName = formEnabled
-    ? styles.eyebrow
+    ? `${styles.eyebrow} ${styles.eyebrowMuted}`
     : `${styles.eyebrow} ${styles.signal}`
   const briefClassName = formEnabled ? undefined : styles.gold
 
