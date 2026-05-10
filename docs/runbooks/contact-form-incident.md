@@ -61,8 +61,9 @@ Tags emitted (all include `rid=<requestId>` for correlation):
 | `[contact:ratelimit] global_cap_hit`      | Global hourly cap hit — likely under attack   |
 | `[contact:ratelimit] email_cap_hit`       | Per-email cap hit — likely targeted spam      |
 | `[contact] honeypot_hit`                  | Bot caught (silent 200, expected)             |
+| `[contact] turnstile_failed code=X`       | Turnstile rejected the token or siteverify failed (codes: `invalid-input-response`, `invalid-input-secret`, `timeout-or-duplicate`, `bad-request`, `internal-error`, or our own: `http_5xx`, `transport`, `timeout`) |
 
-If you see `permanent_error` go to step 3 (Notion). If `resend_error` go to step 4 (Resend). If `upstash_unavailable` go to step 5 (Upstash).
+If you see `permanent_error` go to step 3 (Notion). If `resend_error` go to step 4 (Resend). If `upstash_unavailable` go to step 5 (Upstash). If `turnstile_failed` go to step 6 (Turnstile).
 
 ### 3. Notion dashboard
 
@@ -88,6 +89,18 @@ If you see `permanent_error` go to step 3 (Notion). If `resend_error` go to step
 - https://status.upstash.com → check current incidents.
 - https://console.upstash.com → your DB → **Status: Active** + recent commands graph not flat.
 - If Upstash is down, the route degrades to in-memory rate-limit (per-process, not shared across Vercel instances). Form **continues to work** — you'll see `[contact:ratelimit] upstash_unavailable` warnings, no user-facing 5xx. Mitigation: wait or rotate URL/token (see `secret-rotation.md`).
+
+### 6. Turnstile (Cloudflare bot challenge)
+
+- https://www.cloudflarestatus.com → check Turnstile component status.
+- https://dash.cloudflare.com → Turnstile → your site → **Analytics** tab → look for spike in `failed` solves.
+- Read the `code` from the log line `[contact] turnstile_failed code=X`:
+  - `invalid-input-secret` — server has the wrong `TURNSTILE_SECRET_KEY` (typo / propagation issue / not redeployed). Rotate or fix env (see `secret-rotation.md`).
+  - `invalid-input-response` — token expired or malformed (user took too long; widgets expire ~5 min). Self-heal: user refreshes form.
+  - `timeout-or-duplicate` — token already used (replay) or expired. Self-heal.
+  - `internal-error` — Cloudflare-side issue. Check status page; transient.
+  - `http_5xx` / `transport` / `timeout` — Cloudflare unreachable from Vercel. Likely transient. Sustained = consider kill-switch (Option 1) until restored; honeypot + rate-limit remain active without the widget.
+- If keys are missing entirely (operator removed them by mistake), the widget doesn't render and the route skips verify. Form continues to work in degraded mode.
 
 ---
 
@@ -127,6 +140,15 @@ If you see `permanent_error` go to step 3 (Notion). If `resend_error` go to step
 
 **Reproduce:** site moved from `elemento-x.com` to `www.elemento-x.com` without updating `NEXT_PUBLIC_SITE_URL` → submits return `403 FORBIDDEN`.
 **Fix:** update `NEXT_PUBLIC_SITE_URL` to the canonical origin currently serving traffic, redeploy.
+
+### Cause H — Turnstile siteverify timeout / Cloudflare outage
+
+**Reproduce:** Cloudflare Turnstile API unreachable (network partition or CF outage) → submits with widget rendered return `403 TURNSTILE_FAILED`. Logs: `[contact] turnstile_failed code=timeout` or `code=transport` or `code=http_5xx`.
+**Fix:** check https://www.cloudflarestatus.com. If transient (< 5 min), wait. If sustained:
+1. **Short-term mitigation:** clear `TURNSTILE_SECRET_KEY` and `NEXT_PUBLIC_TURNSTILE_SITE_KEY` from Vercel envs (Production), redeploy. The widget stops rendering, the route skips verify, form falls back to honeypot + rate-limit only. Communicate degraded state in `#elemento-x-ops`.
+2. **Recovery:** restore both envs, redeploy, validate per `secret-rotation.md` Turnstile section.
+
+If the failure is `code=invalid-input-secret`, the secret is wrong (not a CF outage) — go to `secret-rotation.md`.
 
 ---
 

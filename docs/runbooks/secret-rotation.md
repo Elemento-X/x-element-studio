@@ -14,6 +14,7 @@
 | `NOTION_API_KEY`             | Every 6 months  | Token sees only DBs explicitly connected, but PII (lead emails) lives there. |
 | `RESEND_API_KEY`             | Every 6 months  | Account-wide send authority. Compromise = spam-from-our-domain. |
 | `UPSTASH_REDIS_REST_TOKEN`   | Every 12 months | Rate-limit DB only (no PII). Lower urgency, but still rotate. |
+| `TURNSTILE_SECRET_KEY`       | Every 12 months | Bot-challenge verifier only (no PII). Site key (`NEXT_PUBLIC_TURNSTILE_SITE_KEY`) rotates only on domain change. |
 
 Set a quarterly recurring reminder in the team calendar covering all three.
 
@@ -170,6 +171,63 @@ The old token is **gone the moment you reset**. If validation fails:
 3. Update Vercel env with this newer value.
 4. Redeploy. Smoke test.
 5. Investigate the typo / propagation issue.
+
+---
+
+## TURNSTILE_SECRET_KEY
+
+### Procedure
+
+1. **Generate the new secret key in Cloudflare.**
+   - https://dash.cloudflare.com → Turnstile → select your site (`elemento-x.com`).
+   - Click **"Settings"** → **"Rotate secret key"**. The new value replaces the old one immediately — Cloudflare does NOT support side-by-side secrets for the same site.
+   - Copy the new value (`0x...`) immediately.
+   - **Site key (`NEXT_PUBLIC_TURNSTILE_SITE_KEY`) does not change** — leave it. The site key only rotates if the domain itself changes (then both keys rotate together via "Add site").
+
+2. **Update Vercel env (Production scope first).**
+   - Vercel → Project → Settings → Environment Variables.
+   - Edit `TURNSTILE_SECRET_KEY` → paste new value → Production-only → Save.
+
+3. **Trigger redeploy of Production.**
+
+4. **Validate (next section).**
+
+5. **Update Preview/Dev envs** with the same new value.
+
+6. **Communicate completion** in `#elemento-x-ops`.
+
+### Validation
+
+- Submit one real form on `elemento-x.com` with the widget visible. Check it solves the challenge (the widget shows a green check, not "verification failed").
+- In Vercel logs, confirm `[contact] turnstile_failed code=...` is NOT firing for legitimate submits. Successful verify is silent (no log line — only failures log).
+- If `turnstile_failed code=invalid-input-secret` shows up: the new secret was copy-pasted wrong (trailing whitespace, missing chars).
+- Confirm form submission completes end-to-end: Notion row + operator email arrive.
+
+### Rollback
+
+The old secret is **gone the moment Cloudflare rotates it**. If validation fails:
+
+1. The route fails closed — `turnstile_failed` returns 403 to all submits with the widget rendered. **The form continues to work** for users without the widget rendering (graceful degrade pre-keys), but legitimate users will be blocked.
+2. Rotate the secret AGAIN in Cloudflare → new value.
+3. Update Vercel env with this newer value.
+4. Redeploy. Validate.
+5. Investigate the propagation issue (typo, whitespace, wrong scope).
+
+### Site key rotation (rare)
+
+- `NEXT_PUBLIC_TURNSTILE_SITE_KEY` is a public identifier (visible in HTML). It only needs rotation if:
+  - The domain changes (new site in Cloudflare → new site key + new secret key, both rotated together).
+  - Cloudflare advises rotation due to abuse (rare).
+- Rotation procedure: add the new site in Cloudflare → update both `NEXT_PUBLIC_TURNSTILE_SITE_KEY` and `TURNSTILE_SECRET_KEY` → redeploy. Old site key keeps working until you delete the old site in Cloudflare.
+
+### Known residual risk — timing leak
+
+The route runs Turnstile verify **after** the honeypot check, so an attacker can fingerprint
+honeypot trips by measuring response latency (silent 200 in ~5ms vs Turnstile path in
+100-300ms). Accepted as residual risk during F2 audit (#4) — closing it would require
+constant-time response padding, which is not worth the complexity for a probabilistic
+defense-in-depth layer. If the honeypot becomes a primary defense (e.g. Turnstile is
+disabled long-term), revisit this trade-off.
 
 ---
 
