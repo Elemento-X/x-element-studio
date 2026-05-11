@@ -67,7 +67,7 @@ export default async function OpenGraphImage() {
             display: 'flex',
           }}
         >
-          Elemento-X / Studio
+          X Element / Studio
         </div>
       </div>
 
@@ -102,7 +102,7 @@ export default async function OpenGraphImage() {
               display: 'flex',
             }}
           >
-            Elemento-X
+            X Element
           </div>
           <div
             style={{
@@ -135,7 +135,7 @@ export default async function OpenGraphImage() {
           textTransform: 'uppercase',
         }}
       >
-        <span>elemento-x.com</span>
+        <span>xelement.studio</span>
         <span style={{ color: '#F5C21A' }}>·</span>
         <span>EX-CORE-01 / Operational</span>
       </div>

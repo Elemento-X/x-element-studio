@@ -65,12 +65,17 @@
   margin: 0 auto 56px;
   display: grid;
   place-items: center;
-  background: var(--ex-gold);
+  background: var(--xe-gold);
   border-radius: var(--r-3);
   overflow: hidden;
-  box-shadow:
-    0 0 0 1px rgba(245, 194, 26, 0.4),
-    0 0 60px rgba(245, 194, 26, 0.18);
+  /* Brand rule: borders separate, not shadows. The previous
+     `0 0 0 1px ... + 0 0 60px ...` mixed a 1px ring (which should be
+     a real border) with a 60px decorative glow (anti-brand). The
+     border now lives in the box model, and the radial-gradient halo
+     already in `.glow` (linha 32) carries the atmospheric effect
+     without spilling shadow under the flask. Audit F6.1 finding
+     F-MANI-02. */
+  border: 1px solid var(--line-gold);
 }
 
 .flask :global(img) {
@@ -83,7 +88,7 @@
 .lines {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--s-3);
   margin: 0;
   padding: 0;
 }
@@ -100,7 +105,7 @@
 }
 
 .gold {
-  color: var(--ex-gold);
+  color: var(--xe-gold);
   font-weight: 600;
 }
 
@@ -123,4 +128,29 @@
 
 .sig cite {
   font-style: normal;
+}
+
+/* Mobile: the desktop padding (160px 0) consumes ~50% of a 640-tall
+   viewport before any content renders. Halved to 80px, with internal
+   gaps tightened to keep the section breathing room proportional to
+   the now-smaller frame. Audit F6.1 finding F-MANI-01. */
+@media (max-width: 720px) {
+  .manifesto {
+    padding: 80px 0;
+  }
+  .flask {
+    margin-bottom: var(--s-6);
+  }
+  .body {
+    margin-top: var(--s-6);
+  }
+  .sig {
+    margin-top: var(--s-6);
+  }
+  /* Glow shaft `width: 500px` would clip past viewport edges in
+     ≤500px screens; cap at 90vw for a clean fade against the side
+     borders. Audit F6.1 finding F-MANI-03. */
+  .glow {
+    width: min(500px, 90vw);
+  }
 }

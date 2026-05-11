@@ -1,6 +1,6 @@
 openapi: 3.1.0
 info:
-  title: Elemento-X Studio Contact API
+  title: X Element Studio Contact API
   version: 1.0.0
   description: |
     Public contact form endpoint. Validates input, persists to Notion,
@@ -13,11 +13,11 @@ info:
 
     Response envelope follows .claude/rules/api-contract.md.
   contact:
-    name: Elemento-X Studio
-    email: contact@elemento-x.com
+    name: X Element Studio
+    email: contact@xelement.studio
 
 servers:
-  - url: https://elemento-x.com
+  - url: https://xelement.studio
     description: Production
   - url: http://localhost:3000
     description: Local dev

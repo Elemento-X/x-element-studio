@@ -1,7 +1,7 @@
 /* ============================================================
-   Elemento-X — Design tokens
+   X Element — Design tokens
    Darkness as default. Gold as signal.
-   Source of truth: src/docs/elemento-x-design-system/project/colors_and_type.css
+   Source of truth: src/docs/x-element-design-system/project/colors_and_type.css
 
    Fonts: all three families self-hosted via next/font (see app/layout.tsx).
    Inter (body) is local WOFF2 from rsms/inter; Exo 2 (display) and
@@ -11,30 +11,30 @@
 
 :root {
   /* Surface — 90% dark */
-  --ex-deep-black: #0d0d0f;
-  --ex-near-black: #111114;
-  --ex-graphite: #1a1a1e;
-  --ex-dark-gray: #2b2b2e;
+  --xe-deep-black: #0d0d0f;
+  --xe-near-black: #111114;
+  --xe-graphite: #1a1a1e;
+  --xe-dark-gray: #2b2b2e;
 
   /* Signal — 10% */
-  --ex-gold: #f5c21a;
-  --ex-gold-dim: #c89e14;
-  --ex-gold-deep: #6e5b00;
+  --xe-gold: #f5c21a;
+  --xe-gold-dim: #c89e14;
+  --xe-gold-deep: #6e5b00;
 
   /* Neutrals */
-  --ex-soft-white: #eaeaea;
-  --ex-muted-gray: #8e8e94;
+  --xe-soft-white: #eaeaea;
+  --xe-muted-gray: #8e8e94;
 
   /* Foreground */
-  --fg-1: var(--ex-soft-white);
+  --fg-1: var(--xe-soft-white);
   --fg-2: #b8b8bd;
-  --fg-3: var(--ex-muted-gray);
-  --fg-signal: var(--ex-gold);
+  --fg-3: var(--xe-muted-gray);
+  --fg-signal: var(--xe-gold);
 
   /* Background */
-  --bg-canvas: var(--ex-deep-black);
-  --bg-panel: var(--ex-near-black);
-  --bg-raised: var(--ex-graphite);
+  --bg-canvas: var(--xe-deep-black);
+  --bg-panel: var(--xe-near-black);
+  --bg-raised: var(--xe-graphite);
   --bg-input: #0a0a0c;
 
   /* Lines */
@@ -121,17 +121,17 @@ body[data-atmosphere='classified'] {
 }
 
 body[data-accent='ember'] {
-  --ex-gold: #f07a2a;
-  --ex-gold-dim: #c45d18;
+  --xe-gold: #f07a2a;
+  --xe-gold-dim: #c45d18;
   --line-gold: rgba(240, 122, 42, 0.45);
 }
 body[data-accent='bone'] {
-  --ex-gold: #ede6d3;
-  --ex-gold-dim: #c9c2b0;
+  --xe-gold: #ede6d3;
+  --xe-gold-dim: #c9c2b0;
   --line-gold: rgba(237, 230, 211, 0.45);
 }
 body[data-accent='oxide'] {
-  --ex-gold: #8aa8ff;
-  --ex-gold-dim: #6b87d6;
+  --xe-gold: #8aa8ff;
+  --xe-gold-dim: #6b87d6;
   --line-gold: rgba(138, 168, 255, 0.45);
 }

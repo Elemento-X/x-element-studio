@@ -49,11 +49,11 @@ describe('/api/csp-report', () => {
   it('accepts a legacy csp-report body and logs host-only details', async () => {
     const body = JSON.stringify({
       'csp-report': {
-        'document-uri': 'https://elemento-x.com/?utm=secret',
+        'document-uri': 'https://xelement.studio/?utm=secret',
         'violated-directive': 'script-src',
         'effective-directive': 'script-src-elem',
         'blocked-uri': 'https://evil.example/inject.js',
-        'source-file': 'https://elemento-x.com/page',
+        'source-file': 'https://xelement.studio/page',
       },
     })
 
@@ -66,7 +66,7 @@ describe('/api/csp-report', () => {
     expect(logged).toMatchObject({
       tag: 'csp:report-only',
       directive: 'script-src-elem',
-      document: 'elemento-x.com',
+      document: 'xelement.studio',
       blocked: 'evil.example',
     })
     // Anti-PII: query string and path MUST NOT leak
@@ -108,9 +108,9 @@ describe('/api/csp-report', () => {
     const body = JSON.stringify([
       {
         type: 'csp-violation',
-        url: 'https://elemento-x.com/',
+        url: 'https://xelement.studio/',
         body: {
-          documentURL: 'https://elemento-x.com/',
+          documentURL: 'https://xelement.studio/',
           blockedURL: 'inline',
           effectiveDirective: 'script-src-elem',
           violatedDirective: 'script-src',
@@ -141,7 +141,7 @@ describe('/api/csp-report', () => {
       {
         type: 'csp-violation',
         body: {
-          documentURL: 'https://elemento-x.com/',
+          documentURL: 'https://xelement.studio/',
           // Crafted payload: tries to forge a fake log line
           effectiveDirective:
             'script-src\n[csp:report-only] directive=FAKE document=evil.com',

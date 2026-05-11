@@ -348,7 +348,14 @@ export function ContactForm() {
           }
           className={styles.submitBone}
         >
-          {isSubmitting ? tSubmit('submitting') : tSubmit('idle')}
+          {isSubmitting ? (
+            <>
+              <span className={styles.loadingDot} aria-hidden="true" />
+              {tSubmit('submitting')}
+            </>
+          ) : (
+            tSubmit('idle')
+          )}
         </Button>
         {state.status === 'error' && (
           <span

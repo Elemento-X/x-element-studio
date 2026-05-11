@@ -38,9 +38,9 @@ The cost of rotating unnecessarily is ~10 minutes. The cost of NOT rotating afte
 Before touching any secret:
 
 1. **Confirm you are on-call** or have explicit handoff.
-2. **Open the incident channel** (`#elemento-x-ops`) — even routine rotations get logged. Format: `Rotating <secret> at <UTC timestamp> — reason: <calendar | leak suspected | offboarding>`.
+2. **Open the incident channel** (`#x-element-ops`) — even routine rotations get logged. Format: `Rotating <secret> at <UTC timestamp> — reason: <calendar | leak suspected | offboarding>`.
 3. **Do not rotate during peak traffic** unless responding to leak. Schedule routine rotation for low-traffic windows (weekday morning UTC, never Friday afternoon).
-4. **Have the smoke test ready** in another terminal: `BASE_URL=https://elemento-x.com bash scripts/smoke-test-prod.sh`.
+4. **Have the smoke test ready** in another terminal: `BASE_URL=https://xelement.studio bash scripts/smoke-test-prod.sh`.
 
 ---
 
@@ -49,7 +49,7 @@ Before touching any secret:
 ### Procedure
 
 1. **Generate the new token.**
-   - Go to https://www.notion.so/profile/integrations → click your "Elemento-X form" integration.
+   - Go to https://www.notion.so/profile/integrations → click your "X Element form" integration.
    - **Do NOT delete it** — that breaks the connection to the Contacts DB. Just generate a new token.
    - Click "Show" on the existing secret → "Regenerate". Copy the new value (`secret_…`) immediately; it is shown once.
 
@@ -67,13 +67,13 @@ Before touching any secret:
 5. **Update Preview & Development envs once production is verified.**
    - Same env in Vercel → also check "Preview" + "Development" → Save.
 
-6. **Communicate completion** in `#elemento-x-ops`: `NOTION_API_KEY rotated successfully at <UTC timestamp>.`
+6. **Communicate completion** in `#x-element-ops`: `NOTION_API_KEY rotated successfully at <UTC timestamp>.`
 
 ### Validation
 
 After redeploy:
 
-- Run `BASE_URL=https://elemento-x.com bash scripts/smoke-test-prod.sh` — must exit 0.
+- Run `BASE_URL=https://xelement.studio bash scripts/smoke-test-prod.sh` — must exit 0.
 - Submit one real test (`name="SMOKE TEST ROTATE"`, valid email) → confirm Notion row appears within 5s.
 - In Vercel logs, look for `[contact:persist] ok attempt=1` for the new submit. `permanent_error code=unauthorized` means the new token did not propagate (forgot the redeploy?).
 - Archive the test Notion row.
@@ -95,7 +95,7 @@ If validation fails:
 
 1. **Generate a new key, side-by-side with the old one.**
    - https://resend.com/api-keys → "Create API Key".
-   - Name: `elemento-x-prod-<YYYYMMDD>` (date in the name makes audit obvious).
+   - Name: `x-element-prod-<YYYYMMDD>` (date in the name makes audit obvious).
    - Permission: **Sending access** (least privilege; do NOT grant Full access for the contact form's needs).
    - Copy the key (`re_…`) immediately.
    - **Do NOT revoke the old key yet** — keep both alive for the cutover window.
@@ -109,7 +109,7 @@ If validation fails:
 
 5. **Update Preview/Dev envs.**
 
-6. **Communicate completion** in `#elemento-x-ops`.
+6. **Communicate completion** in `#x-element-ops`.
 
 ### Validation
 
@@ -154,7 +154,7 @@ If you already revoked the old key:
 
 7. **Update Preview/Dev envs** with the same new token (Upstash uses one DB across envs unless you provisioned separate ones).
 
-8. **Communicate completion** in `#elemento-x-ops`. Mention the brief degraded-mode window.
+8. **Communicate completion** in `#x-element-ops`. Mention the brief degraded-mode window.
 
 ### Validation
 
@@ -179,7 +179,7 @@ The old token is **gone the moment you reset**. If validation fails:
 ### Procedure
 
 1. **Generate the new secret key in Cloudflare.**
-   - https://dash.cloudflare.com → Turnstile → select your site (`elemento-x.com`).
+   - https://dash.cloudflare.com → Turnstile → select your site (`xelement.studio`).
    - Click **"Settings"** → **"Rotate secret key"**. The new value replaces the old one immediately — Cloudflare does NOT support side-by-side secrets for the same site.
    - Copy the new value (`0x...`) immediately.
    - **Site key (`NEXT_PUBLIC_TURNSTILE_SITE_KEY`) does not change** — leave it. The site key only rotates if the domain itself changes (then both keys rotate together via "Add site").
@@ -194,11 +194,11 @@ The old token is **gone the moment you reset**. If validation fails:
 
 5. **Update Preview/Dev envs** with the same new value.
 
-6. **Communicate completion** in `#elemento-x-ops`.
+6. **Communicate completion** in `#x-element-ops`.
 
 ### Validation
 
-- Submit one real form on `elemento-x.com` with the widget visible. Check it solves the challenge (the widget shows a green check, not "verification failed").
+- Submit one real form on `xelement.studio` with the widget visible. Check it solves the challenge (the widget shows a green check, not "verification failed").
 - In Vercel logs, confirm `[contact] turnstile_failed code=...` is NOT firing for legitimate submits. Successful verify is silent (no log line — only failures log).
 - If `turnstile_failed code=invalid-input-secret` shows up: the new secret was copy-pasted wrong (trailing whitespace, missing chars).
 - Confirm form submission completes end-to-end: Notion row + operator email arrive.

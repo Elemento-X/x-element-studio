@@ -4,11 +4,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-**Elemento-X Studio** — landing site for a high-performance technology studio. Brand voice: *"Darkness as default. Gold as signal."* — controlled, minimal, never warm.
+**X Element Studio** — landing site for a high-performance technology studio. Brand voice: *"Darkness as default. Gold as signal."* — controlled, minimal, never warm.
 
 Repo: https://github.com/Elemento-X/elemento-x-studio
 
-The full project context (brand, tokens, sections, design rules) lives in `.claude/commands/elemento-x-studio.md`. Read that first; it is the source of truth for any visual or copy decision.
+The full project context (brand, tokens, sections, design rules) lives in `.claude/commands/x-element-studio.md`. Read that first; it is the source of truth for any visual or copy decision.
 
 ## Stack
 
@@ -35,7 +35,7 @@ The hooks in `.claude/hooks/` run lint, typecheck, prettier, secret-scan, and pr
 
 ```
 app/
-  layout.tsx          # Root layout — Inter local font, body data-attrs (atmosphere/density/accent)
+  layout.tsx          # Root layout — Inter local font, body data-attrs (atmosphere/accent)
   page.tsx            # Landing — composes section components in order
   globals.css         # Reset + .container utility + reduced-motion
   tokens.css          # All design tokens + atmosphere/accent mode overrides
@@ -46,12 +46,12 @@ app/
 public/
   fonts/              # Inter 18pt WOFF2 (300/400/500/600 only) — Exo 2 + JetBrains via next/font/google
   assets/             # Brand SVG/PNG (logo flask, wordmarks, motif icons)
-src/docs/             # Claude Design handoff bundles (READ-ONLY reference)
-  elemento-x/                 # Landing page source-of-truth (HTML/CSS prototype)
-  elemento-x-design-system/   # Brand bible + DS preview cards + dashboard kit
+docs/             # Claude Design handoff bundles (READ-ONLY reference)
+  x-element/                 # Landing page source-of-truth (HTML/CSS prototype)
+  x-element-design-system/   # Brand bible + DS preview cards + dashboard kit
 .claude/
   agents/             # Specialized QA/review/security/etc. agents
-  commands/           # Slash commands — including elemento-x-studio.md (project context)
+  commands/           # Slash commands — including x-element-studio.md (project context)
   hooks/              # PreToolUse/PostToolUse JS scripts (format/lint/protect/secret-scan)
   rules/              # Path-scoped rules (qa-pipeline, security, api-contract, api-routes)
   metrics/            # pipeline.jsonl + categories.json (QA telemetry)
@@ -74,11 +74,11 @@ The body carries three `data-` attributes set in `layout.tsx`:
 
 - `data-atmosphere`: `signal` (default) | `shadow` | `classified` — controlled by token overrides in `tokens.css`
 - `data-density`: `editorial` | `standard` (default) | `dense` — currently set on body but not yet wired through section padding (originally driven by the `tweaks-panel.jsx` overlay we **do not** ship)
-- `data-accent`: `gold` (default) | `ember` | `bone` | `oxide` — swaps `--ex-gold` and `--line-gold`
+- `data-accent`: `gold` (default) | `ember` | `bone` | `oxide` — swaps `--xe-gold` and `--line-gold`
 
-If you add a new section, respect these modes by reading from `var(--ex-gold)` and friends, never a literal hex.
+If you add a new section, respect these modes by reading from `var(--xe-gold)` and friends, never a literal hex.
 
-## Brand non-negotiables (from `.claude/commands/elemento-x-studio.md`)
+## Brand non-negotiables (from `.claude/commands/x-element-studio.md`)
 
 - **One** gold element per primary viewport. Gold is never a background, never a gradient.
 - **No pure white.** `--fg-1` is `#EAEAEA`.
@@ -91,11 +91,11 @@ If a change makes the page look "cool," it's wrong. If it looks **inevitable**, 
 
 ## QA pipeline (see `.claude/rules/qa-pipeline.md`)
 
-Code delivery: `(@tester + @security) → @reviewer`. Extended path-matrix triggers `@design-qa`, `@copywriter`, `@performance`, `@seo` automatically based on what files change. UI changes must reconcile against `src/docs/elemento-x/project/Landing Page-print.html` (the source of visual truth).
+Code delivery: `(@tester + @security) → @reviewer`. Extended path-matrix triggers `@design-qa`, `@copywriter`, `@performance`, `@seo` automatically based on what files change. UI changes must reconcile against `docs/x-element/project/Landing Page-print.html` (the source of visual truth).
 
 ## Notes for future agents
 
-- The HTML in `src/docs/` is **prototype**, not production. Recreate visually, do not transliterate structure.
+- The HTML in `docs/` is **prototype**, not production. Recreate visually, do not transliterate structure.
 - Do not render the prototype HTML in a browser to "check" — read the source. Dimensions and rules are spelled out.
 - Inter ships locally as WOFF2 (rsms/inter 18pt optical, weights 300/400/500/600) — cinematic typography is brand identity. Exo 2 + JetBrains Mono come via `next/font/google`, which self-hosts the WOFF2 at build time (no Google CDN at runtime, no render-blocking `@import`).
 - The `tweaks-panel.jsx` and `Landing Page-print.html` `<script>` tags from the design bundle are **not** ported. We replicate the visual states only.

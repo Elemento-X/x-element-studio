@@ -67,7 +67,7 @@ function escapeHtml(s: string): string {
 
 function buildSubject(input: ContactOutput): string {
   const engagement = ENGAGEMENT_LABELS[input.engagement]
-  return `[Elemento-X] ${engagement} — ${input.name}`
+  return `[X Element] ${engagement} — ${input.name}`
 }
 
 function buildText(input: ContactOutput): string {

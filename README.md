@@ -1,2 +1,2 @@
-# elemento-x-studio
-elemento-x-studio
+# x-element-studio
+x-element-studio

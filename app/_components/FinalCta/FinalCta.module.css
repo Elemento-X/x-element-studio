@@ -21,7 +21,7 @@
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  margin-bottom: 24px;
+  margin-bottom: var(--s-5);
 }
 
 .eyebrow::before {
@@ -29,11 +29,11 @@
   display: inline-block;
   width: 14px;
   height: 1px;
-  background: var(--ex-gold);
+  background: var(--xe-gold);
 }
 
 .signal {
-  color: var(--ex-gold);
+  color: var(--xe-gold);
 }
 
 /* Card eyebrow ("Engagement brief") cedes its gold hairline when the
@@ -55,11 +55,11 @@
 }
 
 .gold {
-  color: var(--ex-gold);
+  color: var(--xe-gold);
 }
 
 .body {
-  margin-top: 32px;
+  margin-top: var(--s-6);
   max-width: 48ch;
   font-size: 16px;
   line-height: 1.6;
@@ -69,7 +69,7 @@
 .cta {
   margin-top: 44px;
   display: flex;
-  gap: 16px;
+  gap: var(--s-4);
   flex-wrap: wrap;
 }
 
@@ -77,7 +77,7 @@
   background: var(--bg-panel);
   border: 1px solid var(--line-subtle);
   border-radius: var(--r-4);
-  padding: 32px;
+  padding: var(--s-6);
   position: relative;
 }
 
@@ -88,7 +88,7 @@
   right: 32px;
   width: 40px;
   height: 1px;
-  background: var(--ex-gold);
+  background: var(--xe-gold);
 }
 
 .brief {
@@ -105,7 +105,7 @@
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  padding: 16px 0;
+  padding: var(--s-4) 0;
   border-top: 1px solid var(--line-hairline);
   font-size: 13px;
 }
@@ -129,14 +129,14 @@
 }
 
 .vSignal {
-  color: var(--ex-gold);
+  color: var(--xe-gold);
 }
 
 .disclaimer {
   font-size: 12px;
   color: var(--fg-3);
   line-height: 1.55;
-  padding-top: 16px;
+  padding-top: var(--s-4);
   margin-top: 20px;
   border-top: 1px solid var(--line-hairline);
 }
@@ -144,7 +144,7 @@
 @media (max-width: 1024px) {
   .inner {
     grid-template-columns: 1fr;
-    gap: 48px;
+    gap: var(--s-7);
   }
   .section {
     padding: 80px 0;

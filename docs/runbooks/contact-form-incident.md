@@ -69,9 +69,9 @@ If you see `permanent_error` go to step 3 (Notion). If `resend_error` go to step
 
 - Open the Contacts DB (link in 1Password / shared vault).
 - Verify:
-  - **Integration is still connected** (DB → ⋯ → Connections → "Elemento-X form" present).
+  - **Integration is still connected** (DB → ⋯ → Connections → "X Element form" present).
   - Schema unchanged. Required props: Name, Email, Company, Engagement, Engagement detail, Message, Status. A renamed property breaks `lib/contact/persist.ts` → `permanent_error code=validation_error`.
-  - Token not revoked: https://www.notion.so/profile/integrations → "Elemento-X form" status **Active**.
+  - Token not revoked: https://www.notion.so/profile/integrations → "X Element form" status **Active**.
 - Most recent row vs Vercel log timestamp: if logs say `ok` but the row is missing, you are looking at the wrong DB (or the integration was reconnected to a copy).
 
 ### 4. Resend dashboard
@@ -142,14 +142,14 @@ If you see `permanent_error` go to step 3 (Notion). If `resend_error` go to step
 
 ### Cause G — Origin check rejects legitimate cross-subdomain traffic
 
-**Reproduce:** site moved from `elemento-x.com` to `www.elemento-x.com` without updating `NEXT_PUBLIC_SITE_URL` → submits return `403 FORBIDDEN`.
+**Reproduce:** site moved from `xelement.studio` to `www.xelement.studio` without updating `NEXT_PUBLIC_SITE_URL` → submits return `403 FORBIDDEN`.
 **Fix:** update `NEXT_PUBLIC_SITE_URL` to the canonical origin currently serving traffic, redeploy.
 
 ### Cause H — Turnstile siteverify timeout / Cloudflare outage
 
 **Reproduce:** Cloudflare Turnstile API unreachable (network partition or CF outage) → submits with widget rendered return `403 TURNSTILE_FAILED`. Logs: `[contact] turnstile_failed code=timeout` or `code=transport` or `code=http_5xx`.
 **Fix:** check https://www.cloudflarestatus.com. If transient (< 5 min), wait. If sustained:
-1. **Short-term mitigation:** clear `TURNSTILE_SECRET_KEY` and `NEXT_PUBLIC_TURNSTILE_SITE_KEY` from Vercel envs (Production), redeploy. The widget stops rendering, the route skips verify, form falls back to honeypot + rate-limit only. Communicate degraded state in `#elemento-x-ops`.
+1. **Short-term mitigation:** clear `TURNSTILE_SECRET_KEY` and `NEXT_PUBLIC_TURNSTILE_SITE_KEY` from Vercel envs (Production), redeploy. The widget stops rendering, the route skips verify, form falls back to honeypot + rate-limit only. Communicate degraded state in `#x-element-ops`.
 2. **Recovery:** restore both envs, redeploy, validate per `secret-rotation.md` Turnstile section.
 
 If the failure is `code=invalid-input-secret`, the secret is wrong (not a CF outage) — go to `secret-rotation.md` Turnstile section.
@@ -163,8 +163,8 @@ If the failure is `code=invalid-input-secret`, the secret is wrong (not a CF out
 1. Vercel → Project → Settings → Environment Variables → Production.
 2. Set `NEXT_PUBLIC_CONTACT_FORM_ENABLED=false`.
 3. **Trigger redeploy** (Settings → Deployments → ⋯ on latest → "Redeploy"). `NEXT_PUBLIC_*` is build-time — without redeploy, nothing changes.
-4. Verify: visit `/#contact` → mailto fallback rendered (`contact@elemento-x.com`).
-5. Communicate: post in `#elemento-x-ops`: "Form temporarily disabled, mailto active. ETA <X min>."
+4. Verify: visit `/#contact` → mailto fallback rendered (`contact@xelement.studio`).
+5. Communicate: post in `#x-element-ops`: "Form temporarily disabled, mailto active. ETA <X min>."
 
 The fallback is wired in `app/_components/FinalCta/FinalCta.tsx:50,56` — no code change needed.
 
@@ -192,13 +192,13 @@ If `[contact:ratelimit] global_cap_hit` is firing repeatedly and legitimate user
 
 1. **Verify root cause is fixed** (don't restore traffic to a broken backend).
 2. Restore env: `NEXT_PUBLIC_CONTACT_FORM_ENABLED=true` → redeploy.
-3. Run `BASE_URL=https://elemento-x.com bash scripts/smoke-test-prod.sh` (full smoke).
+3. Run `BASE_URL=https://xelement.studio bash scripts/smoke-test-prod.sh` (full smoke).
 4. Submit one **real test** through the live form (`name="SMOKE TEST"`, message contains `"SMOKE TEST"`); confirm:
    - Notion row appears with `Status=New`.
    - Operator inbox receives the email within 30s.
    - Vercel logs show `[contact:persist] ok` and `[contact:notify] ok` with the same `rid`.
 5. **Archive the test row** in Notion (don't delete — keep audit trail). Tag it `Smoke test` if helpful.
-6. Communicate recovery in `#elemento-x-ops`.
+6. Communicate recovery in `#x-element-ops`.
 
 ---
 

@@ -1,4 +1,4 @@
-# Copy Brief — Elemento-X Studio
+# Copy Brief — X Element Studio
 
 **Output do S-3 (sessão 2026-05-09)**
 **Aprovado por:** Maclean (operador, dono)
@@ -10,7 +10,7 @@
 
 **ICP:** times/empresas com fricção operacional crônica.
 
-- **Cargos que entram em contato:** qualquer um — analista, gerente, diretor, CEO, CTO. A pessoa que sente a dor é quem busca a Elemento-X.
+- **Cargos que entram em contato:** qualquer um — analista, gerente, diretor, CEO, CTO. A pessoa que sente a dor é quem busca a X Element.
 - **Setor / tamanho:** não é critério de qualificação.
 - **Dores primárias** (em ordem de prevalência):
   1. **Contas operacionais altas** — tempo de pessoas pagando o custo de processo manual.
@@ -106,7 +106,7 @@ Lista expansível conforme detectarmos clichés em rascunhos.
 
 ## 8. Referências de tom
 
-Calibragem por **fundamento/conceito**, não cópia direta de design ou copy. Voz é Elemento-X — não imitação.
+Calibragem por **fundamento/conceito**, não cópia direta de design ou copy. Voz é X Element — não imitação.
 
 - **Linear** (linear.app) — técnico-cinematográfico, frase curta, zero fluff. Inspiração: estrutura `subject — verb — outcome` e densidade por palavra.
 - **Vercel** (vercel.com) — controlado, autoritativo, gold/signal raro. Inspiração: hierarquia visual + permissão pra poucas afirmações grandes.

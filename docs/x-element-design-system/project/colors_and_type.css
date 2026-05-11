@@ -1,5 +1,5 @@
 /* ============================================================
-   Elemento-X — Colors & Type tokens
+   X Element — Colors & Type tokens
    Darkness as default. Gold as signal.
    ============================================================ */
 
@@ -45,30 +45,30 @@
 
 :root {
   /* ---------- Core surface (90% dark) ---------- */
-  --ex-deep-black:   #0D0D0F;   /* canvas */
-  --ex-near-black:   #111114;   /* panels */
-  --ex-graphite:     #1A1A1E;   /* elevated surfaces */
-  --ex-dark-gray:    #2B2B2E;   /* borders, inputs */
+  --xe-deep-black:   #0D0D0F;   /* canvas */
+  --xe-near-black:   #111114;   /* panels */
+  --xe-graphite:     #1A1A1E;   /* elevated surfaces */
+  --xe-dark-gray:    #2B2B2E;   /* borders, inputs */
 
   /* ---------- Signal (10%) ---------- */
-  --ex-gold:         #F5C21A;
-  --ex-gold-dim:     #C89E14;   /* hover on gold button */
-  --ex-gold-deep:    #6E5B00;   /* subtle accents, focus ring halo */
+  --xe-gold:         #F5C21A;
+  --xe-gold-dim:     #C89E14;   /* hover on gold button */
+  --xe-gold-deep:    #6E5B00;   /* subtle accents, focus ring halo */
 
   /* ---------- Neutrals ---------- */
-  --ex-soft-white:   #EAEAEA;
-  --ex-muted-gray:   #6A6A6F;
+  --xe-soft-white:   #EAEAEA;
+  --xe-muted-gray:   #6A6A6F;
 
   /* ---------- Semantic foreground ---------- */
-  --fg-1: var(--ex-soft-white);   /* primary text */
+  --fg-1: var(--xe-soft-white);   /* primary text */
   --fg-2: #B8B8BD;                /* secondary text */
-  --fg-3: var(--ex-muted-gray);   /* tertiary / meta */
-  --fg-signal: var(--ex-gold);    /* accent */
+  --fg-3: var(--xe-muted-gray);   /* tertiary / meta */
+  --fg-signal: var(--xe-gold);    /* accent */
 
   /* ---------- Semantic background ---------- */
-  --bg-canvas:  var(--ex-deep-black);
-  --bg-panel:   var(--ex-near-black);
-  --bg-raised:  var(--ex-graphite);
+  --bg-canvas:  var(--xe-deep-black);
+  --bg-panel:   var(--xe-near-black);
+  --bg-raised:  var(--xe-graphite);
   --bg-input:   #0A0A0C;
 
   /* ---------- Lines & edges ---------- */

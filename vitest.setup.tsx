@@ -27,7 +27,7 @@ const baseTestEnv: Record<string, string> = {
   CONTACT_GLOBAL_LIMIT_PER_HOUR: '200',
   CONTACT_EMAIL_LIMIT_PER_HOUR: '2',
   EMAIL_PROVIDER: 'resend',
-  FROM_EMAIL: 'Elemento-X <onboarding@resend.dev>',
+  FROM_EMAIL: 'X Element <onboarding@resend.dev>',
   NOTIFY_EMAIL: 'ops@example.com',
 }
 const envBag = process.env as Record<string, string | undefined>

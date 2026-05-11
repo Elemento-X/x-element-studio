@@ -13,15 +13,16 @@
   transition: all var(--t-fast);
   white-space: nowrap;
   line-height: 1;
+  min-height: 44px;
 }
 
 .primary {
-  background: var(--ex-gold);
-  color: var(--ex-deep-black);
+  background: var(--xe-gold);
+  color: var(--xe-deep-black);
 }
 
 .primary:hover {
-  background: var(--ex-gold-dim);
+  background: var(--xe-gold-dim);
 }
 
 .primary .arrow {

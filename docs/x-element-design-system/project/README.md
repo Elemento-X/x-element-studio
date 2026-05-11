@@ -1,10 +1,10 @@
-# Elemento-X Design System
+# X Element Design System
 
 > We are not loud. We are effective.
 > We are not visible. We are essential.
 > We don't decorate. We optimize.
 
-Elemento-X is a high-performance technology studio that builds intelligent systems, automation pipelines, and scalable digital products. The design system powers internal tools, dashboards, and client-facing platforms with a unified visual and interaction language rooted in **clarity, control, and sophistication**.
+X Element is a high-performance technology studio that builds intelligent systems, automation pipelines, and scalable digital products. The design system powers internal tools, dashboards, and client-facing platforms with a unified visual and interaction language rooted in **clarity, control, and sophistication**.
 
 The brand should feel like a classified system interface, a high-end control panel, a private intelligence platform. **Darkness is the default. Gold is the signal.** UI is 90% dark, 10% signal — gold is never a background, always an intentional emphasis.
 
@@ -33,8 +33,8 @@ SKILL.md                 — Agent-Skill entry point
 assets/
   logo-mark.png          — primary flask/X mark, gold on gold bg
   logo-mark-dark.svg     — recolor of logo mark for dark panels
-  wordmark-stacked.svg   — "ELEMENTO-X" + tagline, for dark bg
-  wordmark-inline.svg    — "ELEMENTO-X" inline, for dark bg
+  wordmark-stacked.svg   — "X ELEMENT" + tagline, for dark bg
+  wordmark-inline.svg    — "X ELEMENT" inline, for dark bg
   icon-flask.svg         — signature motif, line
   icon-orbit.svg         — signature motif, line
   icon-target.svg        — signature motif, line
@@ -67,7 +67,7 @@ preview/                 — design-system cards (registered assets)
   motif-orbit.html       — brand motif: orbit / target / layers
 
 ui_kits/
-  dashboard/             — Elemento-X Ops Console (command center)
+  dashboard/             — X Element Ops Console (command center)
     index.html
     README.md
     *.jsx
@@ -96,7 +96,7 @@ ui_kits/
 
 - **"We"** when representing the company: *"We build systems that scale."*
 - **"You"** is rare and deliberate — used only for direct-addressed interfaces (empty states, dialogs). Most UI is impersonal, system-voiced.
-- Avoid "I". Elemento-X never speaks as an individual.
+- Avoid "I". X Element never speaks as an individual.
 
 ### Emoji
 
@@ -199,7 +199,7 @@ See `colors_and_type.css` for tokens. Short version:
 
 ### Hover / press states
 
-- **Hover on buttons (primary gold):** shift to `--ex-gold-dim`, no motion.
+- **Hover on buttons (primary gold):** shift to `--xe-gold-dim`, no motion.
 - **Hover on buttons (ghost):** border shifts from `--line-subtle` → `--line-strong`; text color from `--fg-2` → `--fg-1`.
 - **Hover on rows (dashboards, lists):** background shifts +4pt gray (`rgba(234,234,234,0.03)`) — nothing moves, nothing scales.
 - **Press:** surface drops brightness ~10%. **No scale transforms.** No bounce.
@@ -235,7 +235,7 @@ See `colors_and_type.css` for tokens. Short version:
 ### Data visualization
 
 - **Baseline series:** `--fg-3` (muted gray).
-- **Highlighted series:** `--ex-gold`. Only **one** gold series per chart.
+- **Highlighted series:** `--xe-gold`. Only **one** gold series per chart.
 - No multi-color palettes. If you need to differentiate three series, use gold + two tones of gray (light, medium).
 - Gridlines: `--line-hairline`. Axes: `--fg-3`.
 - Labels: 11px, uppercase, tracked, muted.
@@ -245,13 +245,13 @@ See `colors_and_type.css` for tokens. Short version:
 
 ## ICONOGRAPHY
 
-Elemento-X does **not** use a generic icon set. The brand rejects tech clichés — no rocket, no puzzle piece, no lightbulb, no emoji. Our visual language is a small, tightly controlled set of **signature motifs** plus a line-style system iconography for product UI.
+X Element does **not** use a generic icon set. The brand rejects tech clichés — no rocket, no puzzle piece, no lightbulb, no emoji. Our visual language is a small, tightly controlled set of **signature motifs** plus a line-style system iconography for product UI.
 
 ### Signature brand motifs
 
 The brand board defines four core elements — these appear in marketing, concept art, loading states, empty states, and section dividers:
 
-1. **Flask with X** — the primary logo. The hidden element. Represents Elemento-X itself.
+1. **Flask with X** — the primary logo. The hidden element. Represents X Element itself.
 2. **Orbit / concentric circles** — automation loops, intelligent systems. Used for loading states and "system active" indicators.
 3. **Target / crosshair** — decision, focus, zero-point precision. Used for CTAs, focus states, key data points.
 4. **Layers** — product + engineering + design synergy. Used for architecture diagrams, feature groupings.
@@ -274,7 +274,7 @@ For functional UI (nav, toolbars, buttons) the system uses **Lucide** — loaded
 
 **Rules:**
 
-- Icons are `--fg-2` by default, `--fg-1` on hover, `--ex-gold` when active.
+- Icons are `--fg-2` by default, `--fg-1` on hover, `--xe-gold` when active.
 - Default size: 16px. Nav rail: 20px. Hero: 24px.
 - Stroke width stays at Lucide default (1.5–2). Never filled. Never colored beyond the three states above.
 
