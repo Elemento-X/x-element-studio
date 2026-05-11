@@ -1,12 +1,12 @@
 ---
-description: Contexto completo do projeto Elemento-X Studio. Carregado automaticamente em toda sessão.
+description: Contexto completo do projeto X Element Studio. Carregado automaticamente em toda sessão.
 ---
 
-# Elemento-X Studio — Contexto do Projeto
+# X Element Studio — Contexto do Projeto
 
 ## O que é
 
-Site marketing / landing page do **Elemento-X Studio** — estúdio de tecnologia que constrói sistemas inteligentes, pipelines de automação e produtos digitais escaláveis. Marca posicionada como *high-end private intelligence platform*, não como agência criativa.
+Site marketing / landing page do **X Element Studio** — estúdio de tecnologia que constrói sistemas inteligentes, pipelines de automação e produtos digitais escaláveis. Marca posicionada como *high-end private intelligence platform*, não como agência criativa.
 
 - **Tagline (PT-BR):** *Sistemas inteligentes. Impacto real.*
 - **Tagline (EN):** *Intelligent systems. Real impact.*
@@ -19,18 +19,18 @@ Site marketing / landing page do **Elemento-X Studio** — estúdio de tecnologi
 ## Estrutura
 
 ```
-elemento-x-studio/
+x-element-studio/
 ├── .claude/                       # Equipe de agentes, hooks, rules, metrics
 ├── src/
 │   ├── docs/
-│   │   ├── elemento-x/            # Handoff Claude Design — Landing Page
+│   │   ├── x-element/            # Handoff Claude Design — Landing Page
 │   │   │   └── project/
 │   │   │       ├── Landing Page-print.html  # Source de verdade do design
 │   │   │       ├── colors_and_type.css      # Tokens (cores, type, spacing)
 │   │   │       ├── tweaks-panel.jsx         # Ignorar (overlay de design)
 │   │   │       ├── assets/                  # Logos, ícones brand (svg/png)
 │   │   │       └── fonts/                   # Inter (18/24/28pt)
-│   │   └── elemento-x-design-system/        # Sistema completo
+│   │   └── x-element-design-system/        # Sistema completo
 │   │       └── project/
 │   │           ├── Design.md                # Guia de bolso (PT-BR)
 │   │           ├── README.md                # Brand bible (EN)
@@ -46,7 +46,7 @@ elemento-x-studio/
 
 - **Darkness as default. Gold as signal.** UI 90% escuro, 10% sinal.
 - **Apenas UM elemento dourado por viewport primário.** Gold nunca é fundo.
-- **Sem branco puro** (`#FFFFFF`) — usa `--ex-soft-white` (`#EAEAEA`).
+- **Sem branco puro** (`#FFFFFF`) — usa `--xe-soft-white` (`#EAEAEA`).
 - **Bordas separam, não sombras.** Border-radius máximo: `8px`. Nunca pill.
 - **Sem gradientes como background.** Permitido apenas: gold shaft vertical + grain 1–3%.
 - **Sem emoji. Sem unicode decorativo.**
@@ -60,15 +60,15 @@ Se parece "cool", foi longe demais. Se parece **inevitável**, acertou.
 
 ```
 Cores
-  --ex-deep-black   #0D0D0F   canvas
-  --ex-near-black   #111114   panels
-  --ex-graphite     #1A1A1E   raised
-  --ex-dark-gray    #2B2B2E   borders, inputs
-  --ex-gold         #F5C21A   acento — uma vez por tela
-  --ex-gold-dim     #C89E14   hover gold
-  --ex-soft-white   #EAEAEA   texto primário (--fg-1)
+  --xe-deep-black   #0D0D0F   canvas
+  --xe-near-black   #111114   panels
+  --xe-graphite     #1A1A1E   raised
+  --xe-dark-gray    #2B2B2E   borders, inputs
+  --xe-gold         #F5C21A   acento — uma vez por tela
+  --xe-gold-dim     #C89E14   hover gold
+  --xe-soft-white   #EAEAEA   texto primário (--fg-1)
   #B8B8BD                     texto secundário (--fg-2)
-  --ex-muted-gray   #6A6A6F   meta (--fg-3)
+  --xe-muted-gray   #6A6A6F   meta (--fg-3)
 
 Tipografia
   Display       Exo 2          uppercase, tracking 0.02em

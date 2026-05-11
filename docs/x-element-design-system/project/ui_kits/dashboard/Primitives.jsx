@@ -1,4 +1,4 @@
-// Shared primitives for the Elemento-X Ops Console
+// Shared primitives for the X Element Ops Console
 const { useState, useEffect, useRef, useMemo } = React;
 
 function Icon({ name, size = 16, color, style }) {

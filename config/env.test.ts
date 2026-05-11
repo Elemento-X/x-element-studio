@@ -116,10 +116,10 @@ describe('config/env — defaults', () => {
 describe('config/env — production strict checks', () => {
   it('rejects http NEXT_PUBLIC_SITE_URL in prod', async () => {
     vi.stubEnv('NODE_ENV', 'production')
-    vi.stubEnv('NEXT_PUBLIC_SITE_URL', 'http://elemento-x.com')
+    vi.stubEnv('NEXT_PUBLIC_SITE_URL', 'http://xelement.studio')
     vi.stubEnv('NEXT_PUBLIC_CONTACT_FORM_ENABLED', 'false')
-    vi.stubEnv('FROM_EMAIL', 'team@elemento-x.com')
-    vi.stubEnv('NOTIFY_EMAIL', 'ops@elemento-x.com')
+    vi.stubEnv('FROM_EMAIL', 'team@xelement.studio')
+    vi.stubEnv('NOTIFY_EMAIL', 'ops@xelement.studio')
     delete process.env.NEXT_PHASE
 
     await expect(import('./env')).rejects.toThrow(
@@ -131,8 +131,8 @@ describe('config/env — production strict checks', () => {
     vi.stubEnv('NODE_ENV', 'production')
     vi.stubEnv('NEXT_PUBLIC_SITE_URL', 'https://localhost')
     vi.stubEnv('NEXT_PUBLIC_CONTACT_FORM_ENABLED', 'false')
-    vi.stubEnv('FROM_EMAIL', 'team@elemento-x.com')
-    vi.stubEnv('NOTIFY_EMAIL', 'ops@elemento-x.com')
+    vi.stubEnv('FROM_EMAIL', 'team@xelement.studio')
+    vi.stubEnv('NOTIFY_EMAIL', 'ops@xelement.studio')
     delete process.env.NEXT_PHASE
 
     await expect(import('./env')).rejects.toThrow(
@@ -142,10 +142,10 @@ describe('config/env — production strict checks', () => {
 
   it('passes prod when SITE_URL is HTTPS and form is OFF (deps optional)', async () => {
     vi.stubEnv('NODE_ENV', 'production')
-    vi.stubEnv('NEXT_PUBLIC_SITE_URL', 'https://elemento-x.com')
+    vi.stubEnv('NEXT_PUBLIC_SITE_URL', 'https://xelement.studio')
     vi.stubEnv('NEXT_PUBLIC_CONTACT_FORM_ENABLED', 'false')
-    vi.stubEnv('FROM_EMAIL', 'team@elemento-x.com')
-    vi.stubEnv('NOTIFY_EMAIL', 'ops@elemento-x.com')
+    vi.stubEnv('FROM_EMAIL', 'team@xelement.studio')
+    vi.stubEnv('NOTIFY_EMAIL', 'ops@xelement.studio')
     delete process.env.NEXT_PHASE
 
     const { env } = await import('./env')
@@ -154,10 +154,10 @@ describe('config/env — production strict checks', () => {
 
   it('rejects prod-with-form-ON when Resend/Notion/Upstash envs are absent', async () => {
     vi.stubEnv('NODE_ENV', 'production')
-    vi.stubEnv('NEXT_PUBLIC_SITE_URL', 'https://elemento-x.com')
+    vi.stubEnv('NEXT_PUBLIC_SITE_URL', 'https://xelement.studio')
     vi.stubEnv('NEXT_PUBLIC_CONTACT_FORM_ENABLED', 'true')
-    vi.stubEnv('FROM_EMAIL', 'team@elemento-x.com')
-    vi.stubEnv('NOTIFY_EMAIL', 'ops@elemento-x.com')
+    vi.stubEnv('FROM_EMAIL', 'team@xelement.studio')
+    vi.stubEnv('NOTIFY_EMAIL', 'ops@xelement.studio')
     delete process.env.NEXT_PHASE
     delete process.env.RESEND_API_KEY
     delete process.env.NOTION_API_KEY
@@ -172,10 +172,10 @@ describe('config/env — production strict checks', () => {
 
   it('rejects @resend.dev FROM_EMAIL in prod when form is enabled', async () => {
     vi.stubEnv('NODE_ENV', 'production')
-    vi.stubEnv('NEXT_PUBLIC_SITE_URL', 'https://elemento-x.com')
+    vi.stubEnv('NEXT_PUBLIC_SITE_URL', 'https://xelement.studio')
     vi.stubEnv('NEXT_PUBLIC_CONTACT_FORM_ENABLED', 'true')
-    vi.stubEnv('FROM_EMAIL', 'Elemento-X <onboarding@resend.dev>')
-    vi.stubEnv('NOTIFY_EMAIL', 'ops@elemento-x.com')
+    vi.stubEnv('FROM_EMAIL', 'X Element <onboarding@resend.dev>')
+    vi.stubEnv('NOTIFY_EMAIL', 'ops@xelement.studio')
     vi.stubEnv('RESEND_API_KEY', 're_x')
     vi.stubEnv('NOTION_API_KEY', 'ntn_x')
     vi.stubEnv('NOTION_DATABASE_ID', 'db_x')
@@ -188,9 +188,9 @@ describe('config/env — production strict checks', () => {
 
   it('rejects xelementcontact@gmail.com NOTIFY_EMAIL in prod when form is enabled', async () => {
     vi.stubEnv('NODE_ENV', 'production')
-    vi.stubEnv('NEXT_PUBLIC_SITE_URL', 'https://elemento-x.com')
+    vi.stubEnv('NEXT_PUBLIC_SITE_URL', 'https://xelement.studio')
     vi.stubEnv('NEXT_PUBLIC_CONTACT_FORM_ENABLED', 'true')
-    vi.stubEnv('FROM_EMAIL', 'Team <team@elemento-x.com>')
+    vi.stubEnv('FROM_EMAIL', 'Team <team@xelement.studio>')
     vi.stubEnv('NOTIFY_EMAIL', 'xelementcontact@gmail.com')
     vi.stubEnv('RESEND_API_KEY', 're_x')
     vi.stubEnv('NOTION_API_KEY', 'ntn_x')
@@ -207,7 +207,7 @@ describe('config/env — production strict checks', () => {
     // in env (forgot to promote real values). At runtime the form is ON,
     // so we trip fast instead of silently sending from a fake address.
     vi.stubEnv('NODE_ENV', 'production')
-    vi.stubEnv('NEXT_PUBLIC_SITE_URL', 'https://elemento-x.com')
+    vi.stubEnv('NEXT_PUBLIC_SITE_URL', 'https://xelement.studio')
     vi.stubEnv('NEXT_PUBLIC_CONTACT_FORM_ENABLED', 'true')
     vi.stubEnv('FROM_EMAIL', 'build-noop@example.com')
     vi.stubEnv('NOTIFY_EMAIL', 'build-noop@example.com')

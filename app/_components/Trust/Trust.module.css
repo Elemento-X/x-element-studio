@@ -1,5 +1,5 @@
 .trust {
-  padding: 48px 0 64px;
+  padding: var(--s-7) 0 var(--s-8);
   border-top: 1px solid var(--line-hairline);
   border-bottom: 1px solid var(--line-hairline);
   background: linear-gradient(
@@ -14,7 +14,7 @@
   justify-content: space-between;
   align-items: baseline;
   margin-bottom: 40px;
-  gap: 24px;
+  gap: var(--s-5);
   flex-wrap: wrap;
 }
 
@@ -35,7 +35,7 @@
   display: inline-block;
   width: 14px;
   height: 1px;
-  background: var(--ex-gold);
+  background: var(--xe-gold);
 }
 
 .headCopy {
@@ -55,11 +55,11 @@
 }
 
 .cell {
-  padding: 28px 24px 20px;
+  padding: 28px var(--s-5) 20px;
   border-right: 1px solid var(--line-hairline);
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--s-3);
   position: relative;
 }
 
@@ -70,7 +70,7 @@
 .num {
   font-family: var(--font-mono);
   font-size: 10px;
-  color: var(--ex-gold);
+  color: var(--xe-gold);
   letter-spacing: 0.08em;
 }
 
@@ -83,7 +83,7 @@
   line-height: 1;
   display: flex;
   align-items: baseline;
-  gap: 4px;
+  gap: var(--s-1);
 }
 
 .unit {

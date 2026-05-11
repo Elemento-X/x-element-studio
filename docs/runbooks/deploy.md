@@ -1,6 +1,6 @@
 # Runbook — Deploy
 
-> **Scope:** every production deploy of `elemento-x-studio` to Vercel. Hotfix and routine deploys both follow this. Hotfix gets a fast-path note where it differs.
+> **Scope:** every production deploy of `x-element-studio` to Vercel. Hotfix and routine deploys both follow this. Hotfix gets a fast-path note where it differs.
 > **Owner:** @devops. **Read time:** 3 min. **Time budget:** 15 min for routine deploy, 5 min for hotfix.
 
 ---
@@ -35,10 +35,10 @@ Tick every box before clicking deploy. Skipping a box that turns out to matter i
 ### Operational
 
 - [ ] On-call available for next 30 min (no flights, no commute, no meetings without laptop).
-- [ ] Smoke test command ready to paste: `BASE_URL=https://elemento-x.com bash scripts/smoke-test-prod.sh`.
+- [ ] Smoke test command ready to paste: `BASE_URL=https://xelement.studio bash scripts/smoke-test-prod.sh`.
 - [ ] Rollback target identified: note the URL of the previous green production deploy in case revert is needed.
 - [ ] Window is OK: weekday between 09:00 and 16:00 local for routine deploys. Outside this window only for hotfixes (see Fast-path).
-- [ ] Posted in `#elemento-x-ops`: `Deploying <commit-sha> to production at <UTC timestamp>. Expected duration: 5 min.`
+- [ ] Posted in `#x-element-ops`: `Deploying <commit-sha> to production at <UTC timestamp>. Expected duration: 5 min.`
 
 ---
 
@@ -70,7 +70,7 @@ Use this when:
 For incidents requiring deploy outside business hours:
 
 1. Skip "Window is OK" check. Keep all other pre-deploy boxes.
-2. Open `#elemento-x-ops`: `HOTFIX deploying <commit-sha> at <UTC timestamp>. Issue: <one-liner>. Rollback target: <previous deploy URL>.`
+2. Open `#x-element-ops`: `HOTFIX deploying <commit-sha> at <UTC timestamp>. Issue: <one-liner>. Rollback target: <previous deploy URL>.`
 3. Deploy as routine.
 4. Post-deploy verification is **not optional** — even faster (skip the real test submit if it requires a long DKIM verification window; rely on smoke test exit code).
 5. **Open postmortem in 48h** (`docs/postmortems/PM-…`). Hotfix without postmortem = recurrence guaranteed.
@@ -84,7 +84,7 @@ Run **all** of these. Total time: ~3 min.
 ### 1. Smoke test the API
 
 ```bash
-BASE_URL=https://elemento-x.com bash scripts/smoke-test-prod.sh
+BASE_URL=https://xelement.studio bash scripts/smoke-test-prod.sh
 ```
 
 Must exit `0`. If exit `1`, read the script's per-scenario output and triage with `docs/runbooks/contact-form-incident.md`. Do NOT proceed to step 2 if smoke test fails.
@@ -107,7 +107,7 @@ Look for:
 
 Through the live site, not the API directly:
 
-1. Open `https://elemento-x.com` in an incognito tab.
+1. Open `https://xelement.studio` in an incognito tab.
 2. Scroll to the contact form.
 3. Submit:
    - Name: `SMOKE TEST POST-DEPLOY`
@@ -125,7 +125,7 @@ If any of #4 fails: rollback (next section), then debug.
 
 ### 4. Communicate
 
-Post in `#elemento-x-ops`:
+Post in `#x-element-ops`:
 
 ```
 ✅ Production deploy <commit-sha> verified at <UTC timestamp>.
@@ -151,8 +151,8 @@ When to roll back (no second-guessing):
 2. Find the **previous green production deploy** (the rollback target you noted in pre-deploy).
 3. Click ⋯ → **"Promote to Production"**. Confirm.
 4. Vercel atomic-swaps the alias. New traffic hits the old deploy within seconds.
-5. **Run smoke test on the rolled-back state** to confirm it is healthy: `BASE_URL=https://elemento-x.com bash scripts/smoke-test-prod.sh`.
-6. **Post in `#elemento-x-ops`**: `Rolled back to <previous-sha> at <UTC timestamp>. Bad deploy: <bad-sha>. Reason: <one-liner>. Investigation in progress.`
+5. **Run smoke test on the rolled-back state** to confirm it is healthy: `BASE_URL=https://xelement.studio bash scripts/smoke-test-prod.sh`.
+6. **Post in `#x-element-ops`**: `Rolled back to <previous-sha> at <UTC timestamp>. Bad deploy: <bad-sha>. Reason: <one-liner>. Investigation in progress.`
 7. **Open a Trello card** in Backlog: title `Investigate failed deploy <bad-sha>`, label `pipeline-discovery` + `regression`. Link to Vercel deploy URL + log excerpts.
 
 ### Notes

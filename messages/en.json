@@ -1,16 +1,16 @@
 {
   "metadata": {
-    "title": "Elemento-X — Intelligent systems. Real impact.",
-    "titleTemplate": "%s · Elemento-X",
+    "title": "X Element — Intelligent systems. Real impact.",
+    "titleTemplate": "%s · X Element",
     "description": "Technology studio shipping Full Stack, AI Engineering, Product Strategy and Design Systems. We remove bottlenecks and deliver scalable infrastructure.",
-    "ogTitle": "Elemento-X — Intelligent systems. Real impact.",
+    "ogTitle": "X Element — Intelligent systems. Real impact.",
     "ogDescription": "We build the invisible systems behind high-performance products.",
-    "ogImageAlt": "Elemento-X Studio — gold flask emblem on dark background. Intelligent systems. Real impact.",
-    "twitterTitle": "Elemento-X — Intelligent systems. Real impact.",
+    "ogImageAlt": "X Element Studio — gold flask emblem on dark background. Intelligent systems. Real impact.",
+    "twitterTitle": "X Element — Intelligent systems. Real impact.",
     "twitterDescription": "We build the invisible systems behind high-performance products."
   },
   "nav": {
-    "brandLabel": "Elemento-X home",
+    "brandLabel": "X Element home",
     "primaryLabel": "Primary",
     "links": {
       "capabilities": "Capabilities",
@@ -19,7 +19,9 @@
       "contact": "Contact"
     },
     "statusOperational": "OPERATIONAL · {time} UTC",
-    "cta": "Start"
+    "cta": "Start",
+    "menuOpen": "Open navigation menu",
+    "menuClose": "Close navigation menu"
   },
   "hero": {
     "eyebrow": "EX · 001  /  STUDIO",
@@ -28,7 +30,7 @@
     "headlineLine1": "We build",
     "headlineLine2": "the systems that",
     "headlineLine3": "erase manual work",
-    "sub": "Elemento-X is a technology studio for teams paying the cost of manual work. We design, ship, and hand over systems that recover hours — measured in production, not in slides.",
+    "sub": "X Element is a technology studio for teams paying the cost of manual work. We design, ship, and hand over systems that recover hours — measured in production, not in slides.",
     "ctaPrimary": "Send brief",
     "ctaGhost": "Talk to founders",
     "scrollHint": "Scroll to explore",
@@ -63,7 +65,7 @@
         "num": "03 · UPTIME",
         "stat": "99.98",
         "unit": "%",
-        "label": "Measured across all Elemento-X-operated infrastructure, trailing 12 months."
+        "label": "Measured across all X Element-operated infrastructure, trailing 12 months."
       },
       "timeSaved": {
         "num": "04 · TIME SAVED",
@@ -231,7 +233,7 @@
     "line2": "But everything works",
     "line3": "because of us.",
     "body": "We are the team called when the system has to work. When downtime is expensive. When the people closest to the problem need <strong>leverage</strong>, not another meeting.",
-    "sig": "Elemento-X  ·  Manifesto  ·  2026"
+    "sig": "X Element  ·  Manifesto  ·  2026"
   },
   "finalCta": {
     "eyebrow": "Initiate contact  ·  006",
@@ -266,7 +268,7 @@
       "contact": {
         "title": "Contact",
         "links": {
-          "email": "contact@elemento-x.com",
+          "email": "contact@xelement.studio",
           "discovery": "Book discovery",
           "press": "Press / brand",
           "careers": "Careers"
@@ -282,7 +284,7 @@
         }
       }
     },
-    "copyright": "© 2026 ELEMENTO-X",
+    "copyright": "© 2026 X ELEMENT",
     "nodeStatus": "EX-CORE-01 · OPERATIONAL",
     "privacy": "Privacy",
     "terms": "Terms"
@@ -309,8 +311,8 @@
       "network": "Connection failed. Try again.",
       "rateLimit": "Rate limit hit. Wait an hour.",
       "validation": "Fix the fields marked invalid.",
-      "disabled": "Form is paused. Email contact@elemento-x.com.",
-      "generic": "Submit failed. Try again — or email contact@elemento-x.com."
+      "disabled": "Form is paused. Email contact@xelement.studio.",
+      "generic": "Submit failed. Try again — or email contact@xelement.studio."
     },
     "success": {
       "eyebrow": "Brief received",

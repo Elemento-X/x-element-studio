@@ -1,6 +1,11 @@
 .hero {
   position: relative;
+  /* Fallback for browsers without small-viewport units. `100svh` matches
+     the *small* viewport (browser chrome expanded) so iOS Safari and
+     Android Chrome don't push the hero past the visible area on first
+     paint — a class regression with `100vh` that bites every release. */
   min-height: calc(100vh - 72px);
+  min-height: calc(100svh - 72px);
   padding: 80px 0 96px;
   overflow: hidden;
   display: flex;
@@ -69,7 +74,7 @@
   width: min(640px, 52vw);
   opacity: 0.22;
   pointer-events: none;
-  color: var(--ex-gold);
+  color: var(--xe-gold);
 }
 
 .content {
@@ -104,11 +109,11 @@
   display: inline-block;
   width: 14px;
   height: 1px;
-  background: var(--ex-gold);
+  background: var(--xe-gold);
 }
 
 .eyebrowSignal {
-  color: var(--ex-gold);
+  color: var(--xe-gold);
 }
 
 .pill {
@@ -126,7 +131,7 @@
 }
 
 .signalDiamond {
-  color: var(--ex-gold);
+  color: var(--xe-gold);
   margin-right: 6px;
 }
 
@@ -134,14 +139,19 @@
   font-family: var(--font-display);
   text-transform: uppercase;
   font-weight: 600;
-  font-size: clamp(48px, 7.2vw, 104px);
+  /* Floor dropped 48 → 36 so 320px viewports with longer locale
+     copy (PT-BR/FR) don't push past the container's 280-ish usable
+     width. The middle expression (7.2vw) still drives the curve;
+     desktop ceiling of 104px is unchanged. Audit F6.1 finding
+     F-HERO-02. */
+  font-size: clamp(36px, 7.2vw, 104px);
   line-height: 0.96;
   letter-spacing: 0.005em;
   color: var(--fg-1);
 }
 
 .gold {
-  color: var(--ex-gold);
+  color: var(--xe-gold);
   font-weight: 600;
 }
 
@@ -159,9 +169,9 @@
 }
 
 .cta {
-  margin-top: 48px;
+  margin-top: var(--s-7);
   display: flex;
-  gap: 16px;
+  gap: var(--s-4);
   flex-wrap: wrap;
 }
 
@@ -177,7 +187,7 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  gap: 48px;
+  gap: var(--s-7);
 }
 
 .scroll {
@@ -194,7 +204,7 @@
 .scrollLine {
   width: 1px;
   height: 32px;
-  background: linear-gradient(to bottom, var(--ex-gold), transparent);
+  background: linear-gradient(to bottom, var(--xe-gold), transparent);
 }
 
 .coords {
@@ -215,13 +225,38 @@
 }
 
 @media (max-width: 720px) {
+  .hero {
+    min-height: auto;
+    padding: var(--s-8) 0 var(--s-7);
+  }
   .bottom {
     position: static;
-    margin-top: 48px;
+    margin-top: var(--s-7);
   }
   .glyph {
     opacity: 0.08;
     right: -100px;
     width: 120vw;
+  }
+  /* Decorative gold shaft sits at right: 8% — in mobile that's ~25px
+     from the screen edge, visually crammed against the border and
+     fighting with the bottom rail. Hidden on mobile keeps the
+     viewport clean and preserves "1 gold per primary viewport" via
+     the headline alone. Audit F6.1 finding F-HERO-04. */
+  .shaft {
+    display: none;
+  }
+}
+
+@media (max-width: 540px) {
+  /* Bottom rail (scroll-hint left, coords right) pinches into a
+     horizontal squeeze with `align-items: flex-end` and the coords
+     3-line block growing past the scroll-hint height. Stack
+     vertically below 540px so each line lays out clean. Audit F6.1
+     finding F-HERO-03. */
+  .bottomInner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--s-5);
   }
 }

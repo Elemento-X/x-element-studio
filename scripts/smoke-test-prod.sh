@@ -10,7 +10,7 @@
 #     the canonical sitemap reference / hreflang entries.
 #
 # Usage:
-#   BASE_URL=https://elemento-x.com bash scripts/smoke-test-prod.sh
+#   BASE_URL=https://xelement.studio bash scripts/smoke-test-prod.sh
 #
 # Optional:
 #   FEATURE_OFF=1   assert the form is currently disabled (503 path)
@@ -26,7 +26,7 @@ set -o pipefail
 
 if [ -z "${BASE_URL:-}" ]; then
   echo "ERROR: BASE_URL env var is required." 1>&2
-  echo "Usage: BASE_URL=https://elemento-x.com bash $0" 1>&2
+  echo "Usage: BASE_URL=https://xelement.studio bash $0" 1>&2
   exit 2
 fi
 if ! command -v curl >/dev/null 2>&1; then

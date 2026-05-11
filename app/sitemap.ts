@@ -16,7 +16,7 @@ import { routing } from '@/i18n/config'
  * already in place.
  */
 
-const BASE_URL = 'https://elemento-x.com'
+const BASE_URL = 'https://xelement.studio'
 
 // Last-modified marker for the sitemap. Hardcoded to the release date
 // of the content shape — NOT `new Date()` at request time, which would

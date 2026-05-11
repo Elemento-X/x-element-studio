@@ -5,6 +5,7 @@ import { notFound } from 'next/navigation'
 import localFont from 'next/font/local'
 import { Exo_2, JetBrains_Mono } from 'next/font/google'
 import { routing, type Locale } from '@/i18n/config'
+import { toBCP47 } from '@/lib/seo/bcp47'
 import '../globals.css'
 
 const inter = localFont({
@@ -62,7 +63,7 @@ const jetbrainsMono = JetBrains_Mono({
 // Bing too). The terms that matter for ranking (Full Stack, AI
 // Engineering, etc.) live in title/description/H1/H3 where they
 // actually count — not in a cosmetic head tag.
-export const metadataBase = new URL('https://elemento-x.com')
+export const metadataBase = new URL('https://xelement.studio')
 
 // Path each locale serves on. Default (en) lives at the root because
 // `localePrefix: 'as-needed'` — the others carry their prefix.
@@ -116,7 +117,7 @@ export async function generateMetadata({
       template: t('titleTemplate'),
     },
     description: t('description'),
-    authors: [{ name: 'Elemento-X Studio' }],
+    authors: [{ name: 'X Element Studio' }],
     alternates: {
       canonical: canonicalPath,
       languages: buildLanguageAlternates(),
@@ -125,8 +126,8 @@ export async function generateMetadata({
       type: 'website',
       locale: ogLocaleFor(locale),
       alternateLocale: alternateLocales,
-      url: `https://elemento-x.com${canonicalPath === '/' ? '' : canonicalPath}`,
-      siteName: 'Elemento-X',
+      url: `https://xelement.studio${canonicalPath === '/' ? '' : canonicalPath}`,
+      siteName: 'X Element',
       title: t('ogTitle'),
       description: t('ogDescription'),
       // app/opengraph-image.tsx lives at the root (single canonical
@@ -182,39 +183,47 @@ export function generateStaticParams(): { locale: Locale }[] {
 // controlled (no user input) and the ESLint `react/no-danger` rule is
 // the right thing to gate against — except for this exact JSON-LD
 // pattern that Google's docs prescribe.
-// BCP-47 canonical-form map for structured data. Mirrors the OG locale
-// map but with a hyphen (BCP-47) instead of an underscore (OG).
-const BCP47: Record<string, string> = {
-  en: 'en',
-  'pt-br': 'pt-BR',
-  es: 'es',
-  fr: 'fr',
-}
-
-function buildStructuredData(locale: string): string {
-  const inLanguage = BCP47[locale] ?? 'en'
+//
+// BCP-47 canonical mapping is extracted to `lib/seo/bcp47.ts` so the
+// `?? 'en'` fallback (structurally unreachable in production but
+// guarded against future `generateStaticParams` regressions) has its
+// own unit-test surface.
+function buildStructuredData(locale: string, description: string): string {
+  const inLanguage = toBCP47(locale)
   const ld = {
     '@context': 'https://schema.org',
     '@graph': [
       {
         '@type': 'Organization',
-        '@id': 'https://elemento-x.com/#organization',
-        name: 'Elemento-X',
-        url: 'https://elemento-x.com',
-        logo: 'https://elemento-x.com/apple-icon',
+        '@id': 'https://xelement.studio/#organization',
+        name: 'X Element',
+        url: 'https://xelement.studio',
+        logo: 'https://xelement.studio/apple-icon',
+        description,
         // sameAs left empty for now — to be populated once the studio
         // ships official LinkedIn / GitHub / X handles. Adding them
         // later is a one-line edit; ranking only kicks in when the
         // accounts exist, so leaving the array empty avoids false
         // signals.
         sameAs: [],
+        // ContactPoint exposes the contact form URL rather than a raw
+        // mailbox — the inbox stays behind the rate-limited /api/contact
+        // pipeline (rate-limit + Notion persist + Resend notify),
+        // avoiding the spam-magnet effect of publishing an email in
+        // public structured data.
+        contactPoint: {
+          '@type': 'ContactPoint',
+          contactType: 'customer support',
+          url: 'https://xelement.studio/#contact',
+          availableLanguage: ['en', 'pt-BR', 'es', 'fr'],
+        },
       },
       {
         '@type': 'WebSite',
-        '@id': 'https://elemento-x.com/#website',
-        url: 'https://elemento-x.com',
-        name: 'Elemento-X',
-        publisher: { '@id': 'https://elemento-x.com/#organization' },
+        '@id': 'https://xelement.studio/#website',
+        url: 'https://xelement.studio',
+        name: 'X Element',
+        publisher: { '@id': 'https://xelement.studio/#organization' },
         inLanguage,
       },
     ],
@@ -235,11 +244,23 @@ export default async function LocaleLayout({
   // Static rendering opt-in for this locale segment.
   setRequestLocale(locale)
 
+  // Localized description reused by JSON-LD Organization. Pulled here
+  // (server-side) so the structured-data payload carries the same copy
+  // crawlers already see in the <meta name="description">, keeping
+  // SERP + knowledge-panel descriptions consistent per locale.
+  const t = await getTranslations({ locale, namespace: 'metadata' })
   const fontVars = `${inter.variable} ${exo2.variable} ${jetbrainsMono.variable}`
-  const ldJson = buildStructuredData(locale)
+  const ldJson = buildStructuredData(locale, t('description'))
   return (
     <html lang={locale} className={fontVars}>
-      <body data-atmosphere="signal" data-density="standard" data-accent="gold">
+      {/* `data-density` was previously set here but no CSS rule
+          consumed it — dead attribute, audit F6.1 finding F-SYS-02 /
+          card F6.4. Removed rather than wired (no current design need
+          for density variants in the landing). The atmosphere/accent
+          attributes stay because tokens.css consumes them for the
+          dark-mode / accent-color overrides documented in
+          CLAUDE.md. */}
+      <body data-atmosphere="signal" data-accent="gold">
         <NextIntlClientProvider>{children}</NextIntlClientProvider>
         {/* JSON-LD structured data. Payload is code-controlled (no user
             input). `<` escaped to `<` blocks any future `</script>`

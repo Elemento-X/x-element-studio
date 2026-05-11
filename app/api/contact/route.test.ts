@@ -177,10 +177,10 @@ describe('POST /api/contact — method & gates', () => {
 
   it('returns 403 FORBIDDEN cross-origin in prod', async () => {
     vi.stubEnv('NODE_ENV', 'production')
-    vi.stubEnv('NEXT_PUBLIC_SITE_URL', 'https://elemento-x.com')
+    vi.stubEnv('NEXT_PUBLIC_SITE_URL', 'https://xelement.studio')
     vi.stubEnv('NEXT_PUBLIC_CONTACT_FORM_ENABLED', 'true')
-    vi.stubEnv('FROM_EMAIL', 'team@elemento-x.com')
-    vi.stubEnv('NOTIFY_EMAIL', 'ops@elemento-x.com')
+    vi.stubEnv('FROM_EMAIL', 'team@xelement.studio')
+    vi.stubEnv('NOTIFY_EMAIL', 'ops@xelement.studio')
     vi.stubEnv('RESEND_API_KEY', 're_x')
     vi.stubEnv('NOTION_API_KEY', 'ntn_x')
     vi.stubEnv('NOTION_DATABASE_ID', 'db_x')

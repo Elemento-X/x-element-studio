@@ -22,7 +22,7 @@
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  margin-bottom: 16px;
+  margin-bottom: var(--s-4);
 }
 
 .eyebrow::before {
@@ -30,7 +30,7 @@
   display: inline-block;
   width: 14px;
   height: 1px;
-  background: var(--ex-gold);
+  background: var(--xe-gold);
 }
 
 .number {
@@ -39,7 +39,7 @@
   color: var(--fg-3);
   letter-spacing: 0.08em;
   display: block;
-  margin-bottom: 24px;
+  margin-bottom: var(--s-5);
 }
 
 .title {
@@ -63,6 +63,6 @@
 @media (max-width: 1024px) {
   .head {
     grid-template-columns: 1fr;
-    gap: 32px;
+    gap: var(--s-6);
   }
 }

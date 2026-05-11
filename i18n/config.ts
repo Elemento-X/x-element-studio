@@ -14,7 +14,7 @@ import { defineRouting } from 'next-intl/routing'
  * is intended. SEO `hreflang` tags inherit from these.
  *
  * `localePrefix: 'as-needed'`: the default locale (en) serves the
- * domain root unprefixed (`elemento-x.com/`) — better for the
+ * domain root unprefixed (`xelement.studio/`) — better for the
  * international landing's organic SEO. Other locales carry their
  * prefix (`/pt-br`, `/es`, `/fr`). Switching default in the future
  * would be a URL-breaking change; documented here.

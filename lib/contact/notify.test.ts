@@ -117,7 +117,7 @@ describe('notifyContact — happy path', () => {
     expect(arg.replyTo).toBe('subject@example.com')
     expect(arg.from).toBe('Test <test@example.com>')
     expect(arg.to).toBe('ops@example.com')
-    expect(arg.subject).toBe('[Elemento-X] Partnership — Subject Person')
+    expect(arg.subject).toBe('[X Element] Partnership — Subject Person')
   })
 
   it('escapes HTML in user-controlled fields (XSS hardening)', async () => {

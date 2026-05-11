@@ -1,10 +1,10 @@
-# Elemento-X — Design.md
+# X Element — Design.md
 
 > We are not loud. We are effective.
 > We are not visible. We are essential.
 > We don't decorate. We optimize.
 
-Este documento é o guia de referência rápida para qualquer trabalho de design dentro do ecossistema Elemento-X. Use-o como ponto de partida antes de qualquer criação visual, interface, apresentação ou material de comunicação.
+Este documento é o guia de referência rápida para qualquer trabalho de design dentro do ecossistema X Element. Use-o como ponto de partida antes de qualquer criação visual, interface, apresentação ou material de comunicação.
 
 ---
 
@@ -28,14 +28,14 @@ Este documento é o guia de referência rápida para qualquer trabalho de design
 
 | Token | Hex | Uso |
 |---|---|---|
-| `--ex-deep-black` | `#0D0D0F` | Canvas principal |
-| `--ex-near-black` | `#111114` | Painéis |
-| `--ex-graphite` | `#1A1A1E` | Superfícies elevadas |
-| `--ex-dark-gray` | `#2B2B2E` | Bordas, inputs |
-| `--ex-gold` | `#F5C21A` | **Único acento. Uma vez por tela.** |
-| `--ex-gold-dim` | `#C89E14` | Hover em botão gold |
-| `--ex-soft-white` | `#EAEAEA` | Texto primário (nunca branco puro) |
-| `--ex-muted-gray` | `#6A6A6F` | Metadata, timestamps, labels |
+| `--xe-deep-black` | `#0D0D0F` | Canvas principal |
+| `--xe-near-black` | `#111114` | Painéis |
+| `--xe-graphite` | `#1A1A1E` | Superfícies elevadas |
+| `--xe-dark-gray` | `#2B2B2E` | Bordas, inputs |
+| `--xe-gold` | `#F5C21A` | **Único acento. Uma vez por tela.** |
+| `--xe-gold-dim` | `#C89E14` | Hover em botão gold |
+| `--xe-soft-white` | `#EAEAEA` | Texto primário (nunca branco puro) |
+| `--xe-muted-gray` | `#6A6A6F` | Metadata, timestamps, labels |
 
 ### Foreground semântico
 | Token | Referência | Uso |
@@ -171,7 +171,7 @@ Header:      eyebrow (uppercase, tracked, muted) + título mono/display
 
 | Estado | Comportamento |
 |---|---|
-| Hover (botão gold) | Shift para `--ex-gold-dim`, sem motion |
+| Hover (botão gold) | Shift para `--xe-gold-dim`, sem motion |
 | Hover (ghost) | Border: subtle → strong; text: fg-2 → fg-1 |
 | Hover (rows) | Background +4pt cinza (`rgba(234,234,234,0.03)`) |
 | Press | Brightness -10%. **Sem scale. Sem bounce.** |
@@ -204,7 +204,7 @@ Header:      eyebrow (uppercase, tracked, muted) + título mono/display
 <i data-lucide="activity" class="icon"></i>
 <script>lucide.createIcons();</script>
 ```
-- Default: `--fg-2` | Hover: `--fg-1` | Ativo: `--ex-gold`
+- Default: `--fg-2` | Hover: `--fg-1` | Ativo: `--xe-gold`
 - Tamanho: 16px (UI), 20px (nav), 24px (hero)
 - Stroke default do Lucide. Nunca filled. Nunca colorido fora dos 3 estados.
 
@@ -232,7 +232,7 @@ Header:      eyebrow (uppercase, tracked, muted) + título mono/display
 ## 13. VISUALIZAÇÃO DE DADOS
 
 - **Série base:** `--fg-3` (cinza muted)
-- **Série destacada:** `--ex-gold` — **apenas uma por gráfico**
+- **Série destacada:** `--xe-gold` — **apenas uma por gráfico**
 - Sem paletas multicoloridas. Máximo: gold + 2 tons de cinza.
 - Gridlines: `--line-hairline`. Eixos: `--fg-3`.
 - Labels: 11px, uppercase, tracked, muted.
@@ -302,5 +302,5 @@ Antes de entregar qualquer artefato de design, confirme:
 
 ---
 
-*Elemento-X Design System — versão derivada do brand board fundador.*
+*X Element Design System — versão derivada do brand board fundador.*
 *Última atualização: Abril 2026.*

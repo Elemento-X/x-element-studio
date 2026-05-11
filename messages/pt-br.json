@@ -1,16 +1,16 @@
 {
   "metadata": {
-    "title": "Elemento-X — Sistemas inteligentes. Impacto real.",
-    "titleTemplate": "%s · Elemento-X",
+    "title": "X Element — Sistemas inteligentes. Impacto real.",
+    "titleTemplate": "%s · X Element",
     "description": "Estúdio de tecnologia entregando Full Stack, AI Engineering, Product Strategy e Design Systems. Removemos gargalos e entregamos infraestrutura escalável.",
-    "ogTitle": "Elemento-X — Sistemas inteligentes. Impacto real.",
+    "ogTitle": "X Element — Sistemas inteligentes. Impacto real.",
     "ogDescription": "Construímos os sistemas invisíveis por trás de produtos de alta performance.",
-    "ogImageAlt": "Estúdio Elemento-X — emblema dourado em fundo escuro. Sistemas inteligentes. Impacto real.",
-    "twitterTitle": "Elemento-X — Sistemas inteligentes. Impacto real.",
+    "ogImageAlt": "Estúdio X Element — emblema dourado em fundo escuro. Sistemas inteligentes. Impacto real.",
+    "twitterTitle": "X Element — Sistemas inteligentes. Impacto real.",
     "twitterDescription": "Construímos os sistemas invisíveis por trás de produtos de alta performance."
   },
   "nav": {
-    "brandLabel": "Página inicial Elemento-X",
+    "brandLabel": "Página inicial X Element",
     "primaryLabel": "Primária",
     "links": {
       "capabilities": "Capacidades",
@@ -19,7 +19,9 @@
       "contact": "Contato"
     },
     "statusOperational": "OPERATIONAL · {time} UTC",
-    "cta": "Iniciar"
+    "cta": "Iniciar",
+    "menuOpen": "Abrir menu de navegação",
+    "menuClose": "Fechar menu de navegação"
   },
   "hero": {
     "eyebrow": "EX · 001  /  STUDIO",
@@ -28,7 +30,7 @@
     "headlineLine1": "Construímos",
     "headlineLine2": "os sistemas que",
     "headlineLine3": "removem trabalho manual",
-    "sub": "Elemento-X é um estúdio de tecnologia para times que pagam o custo do trabalho manual. Desenhamos, entregamos e passamos a operação de sistemas que recuperam horas — medidas em produção, não em slides.",
+    "sub": "X Element é um estúdio de tecnologia para times que pagam o custo do trabalho manual. Desenhamos, entregamos e passamos a operação de sistemas que recuperam horas — medidas em produção, não em slides.",
     "ctaPrimary": "Enviar brief",
     "ctaGhost": "Falar com fundadores",
     "scrollHint": "Role para explorar",
@@ -63,7 +65,7 @@
         "num": "03 · UPTIME",
         "stat": "99.98",
         "unit": "%",
-        "label": "Medido em toda a infraestrutura operada pela Elemento-X, últimos 12 meses."
+        "label": "Medido em toda a infraestrutura operada pela X Element, últimos 12 meses."
       },
       "timeSaved": {
         "num": "04 · TIME SAVED",
@@ -231,7 +233,7 @@
     "line2": "Mas tudo funciona",
     "line3": "por nossa causa.",
     "body": "Somos o time chamado quando o sistema tem que funcionar. Quando downtime é caro. Quando quem está mais perto do problema precisa de <strong>alavancagem</strong>, não outra reunião.",
-    "sig": "Elemento-X  ·  Manifesto  ·  2026"
+    "sig": "X Element  ·  Manifesto  ·  2026"
   },
   "finalCta": {
     "eyebrow": "Iniciar contato  ·  006",
@@ -266,7 +268,7 @@
       "contact": {
         "title": "Contato",
         "links": {
-          "email": "contact@elemento-x.com",
+          "email": "contact@xelement.studio",
           "discovery": "Agendar discovery",
           "press": "Imprensa / marca",
           "careers": "Carreiras"
@@ -282,7 +284,7 @@
         }
       }
     },
-    "copyright": "© 2026 ELEMENTO-X",
+    "copyright": "© 2026 X ELEMENT",
     "nodeStatus": "EX-CORE-01 · OPERATIONAL",
     "privacy": "Privacidade",
     "terms": "Termos"
@@ -309,8 +311,8 @@
       "network": "Falha de conexão. Tente novamente.",
       "rateLimit": "Limite atingido. Aguarde uma hora.",
       "validation": "Corrija os campos marcados.",
-      "disabled": "Formulário pausado. Envie para contact@elemento-x.com.",
-      "generic": "Falha no envio. Tente novamente — ou escreva para contact@elemento-x.com."
+      "disabled": "Formulário pausado. Envie para contact@xelement.studio.",
+      "generic": "Falha no envio. Tente novamente — ou escreva para contact@xelement.studio."
     },
     "success": {
       "eyebrow": "Brief recebido",

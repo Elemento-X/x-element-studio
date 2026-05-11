@@ -1,6 +1,6 @@
 ---
-name: elemento-x-design
-description: Use this skill to generate well-branded interfaces and assets for Elemento-X, either for production or throwaway prototypes/mocks/etc. Contains essential design guidelines, colors, type, fonts, assets, and UI kit components for prototyping.
+name: x-element-design
+description: Use this skill to generate well-branded interfaces and assets for X Element, either for production or throwaway prototypes/mocks/etc. Contains essential design guidelines, colors, type, fonts, assets, and UI kit components for prototyping.
 user-invocable: true
 ---
 

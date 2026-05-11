@@ -1,6 +1,6 @@
-# Elemento-X Ops Console — UI Kit
+# X Element Ops Console — UI Kit
 
-A high-fidelity recreation of Elemento-X's core product surface: a command console for monitoring automation pipelines, signals, and system health. The console is the primary *"what matters right now?"* view for the platform.
+A high-fidelity recreation of X Element's core product surface: a command console for monitoring automation pipelines, signals, and system health. The console is the primary *"what matters right now?"* view for the platform.
 
 ## What this kit covers
 

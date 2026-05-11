@@ -25,7 +25,7 @@
 
 ### Sub headline (≤ 30 words)
 
-> Elemento-X is a technology studio for teams paying the cost of manual work. We design, ship, and hand over systems that recover hours — measured in production, not in slides.
+> X Element is a technology studio for teams paying the cost of manual work. We design, ship, and hand over systems that recover hours — measured in production, not in slides.
 
 29 palavras. Persona por dor (#1+#2), anti-positioning ("not in slides"), prepara proof bar (190h Tablix).
 
@@ -145,7 +145,7 @@
 
 ### Signature
 
-> `Elemento-X · Manifesto · 2026` *(kept)*
+> `X Element · Manifesto · 2026` *(kept)*
 
 ---
 
@@ -190,7 +190,7 @@
 | Email free-domain (soft warn) | A work email gets you a faster reply. |
 | Brief empty | Tell us, in one paragraph, the system you want fixed. |
 | Brief too short (<40 chars) | A bit more context — one paragraph helps us scope a real reply. |
-| Submission failed | That didn't go through. Try once more, or email contact@elemento-x.com directly. |
+| Submission failed | That didn't go through. Try once more, or email contact@xelement.studio directly. |
 
 ### Success message
 

@@ -9,7 +9,7 @@ import type { MetadataRoute } from 'next'
  * Next-generated sitemap.xml.
  */
 
-const BASE_URL = 'https://elemento-x.com'
+const BASE_URL = 'https://xelement.studio'
 
 export default function robots(): MetadataRoute.Robots {
   return {

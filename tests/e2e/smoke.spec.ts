@@ -51,9 +51,9 @@ test.describe('Landing smoke (cross-locale)', () => {
       expect(response?.status()).toBe(200)
 
       // Title from app/[locale]/layout.tsx metadata is localized — only
-      // assert the brand suffix is present (it stays "Elemento-X"
+      // assert the brand suffix is present (it stays "X Element"
       // across every locale).
-      await expect(page).toHaveTitle(/Elemento-X/)
+      await expect(page).toHaveTitle(/X Element/)
 
       // <html lang> attribute matches the routing locale exactly
       const langAttr = await page.locator('html').getAttribute('lang')
@@ -96,9 +96,9 @@ test.describe('Landing smoke (cross-locale)', () => {
       await expect(page.locator('footer').first()).toBeVisible()
 
       // Brand link in the Nav header — `aria-label` is localized but
-      // always contains "Elemento" in every translation.
+      // always contains "X Element" in every translation.
       await expect(
-        page.getByRole('link', { name: /Elemento.X/i }).first(),
+        page.getByRole('link', { name: /X Element/i }).first(),
       ).toBeVisible()
 
       expect(pageErrors).toEqual([])

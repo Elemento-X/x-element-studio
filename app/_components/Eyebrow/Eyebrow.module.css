@@ -16,9 +16,9 @@
   display: inline-block;
   width: 14px;
   height: 1px;
-  background: var(--ex-gold);
+  background: var(--xe-gold);
 }
 
 .signal {
-  color: var(--ex-gold);
+  color: var(--xe-gold);
 }

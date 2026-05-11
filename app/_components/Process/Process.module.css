@@ -32,16 +32,16 @@
 
 @media (hover: hover) and (pointer: fine) {
   .step:hover .arrow {
-    color: var(--ex-gold);
+    color: var(--xe-gold);
     transform: translateX(4px);
   }
 
   .step:hover .num {
-    color: var(--ex-gold);
+    color: var(--xe-gold);
   }
 
   .step:hover .title {
-    color: var(--ex-gold);
+    color: var(--xe-gold);
   }
 
   .step:hover .illust {
@@ -54,7 +54,7 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: 12px;
+  gap: var(--s-3);
 }
 
 .num {
@@ -106,7 +106,7 @@
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  gap: 8px;
+  gap: var(--s-2);
 }
 
 .tagK {
@@ -119,7 +119,7 @@
 
 /* Codified illustration tile */
 .illust {
-  margin-top: 8px;
+  margin-top: var(--s-2);
   aspect-ratio: 4 / 5;
   background: var(--bg-canvas);
   border: 1px solid var(--line-hairline);
@@ -236,7 +236,7 @@
 }
 
 .coordSignal {
-  color: var(--ex-gold);
+  color: var(--xe-gold);
 }
 
 /* ── Sequential animation system ───────────────────────────────────
@@ -255,10 +255,10 @@
     color: var(--fg-1);
   }
   15% {
-    color: var(--ex-gold);
+    color: var(--xe-gold);
   }
   85% {
-    color: var(--ex-gold);
+    color: var(--xe-gold);
   }
   100% {
     color: var(--fg-1);
@@ -290,6 +290,20 @@
 .gridActive .step {
   pointer-events: none;
   animation: enable-hover 1ms linear 5350ms forwards;
+}
+
+/* Touch contexts (mobile/tablet, no hover) bypass the hover-gate
+   entirely. The 5.35s lock was designed for desktop pointer-fine
+   hover states — on touch there is no hover, so locking tap during
+   the animation has no purpose and blocks legitimate interaction
+   (audit F6.1 finding F-PROC-01). `hover: none` + `pointer: coarse`
+   is the canonical touch-device query (avoids matching trackpad-on-
+   tablet-OS edge cases that report hover support). */
+@media (hover: none) and (pointer: coarse) {
+  .gridActive .step {
+    pointer-events: auto;
+    animation: none;
+  }
 }
 
 /* Step 1 — tick fires at glow start (400ms), in sync */
@@ -922,5 +936,19 @@
   }
   .section {
     padding: 72px 0;
+  }
+  /* In the 1-col mobile layout the 4:5 portrait aspect makes the
+     four step illustrations consume ~1440px of total scroll, with
+     coord labels cramped near the card edges. 5:4 (landscape) keeps
+     the visualization legible without forcing the page taller.
+     Audit F6.1 finding F-PROC-02. */
+  .illust {
+    aspect-ratio: 5 / 4;
+  }
+  /* Mobile-only typographic adjustment: 56px italic display dwarfs
+     the 22px title in the narrow card. 44px keeps the hierarchy
+     readable. Audit F6.1 finding F-PROC-03. */
+  .num {
+    font-size: 44px;
   }
 }

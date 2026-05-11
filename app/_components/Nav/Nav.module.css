@@ -14,7 +14,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 32px;
+  gap: var(--s-6);
 }
 
 .brand {
@@ -26,7 +26,7 @@
 .logoChip {
   width: 32px;
   height: 32px;
-  background: var(--ex-gold);
+  background: var(--xe-gold);
   border-radius: var(--r-2);
   display: grid;
   place-items: center;
@@ -48,6 +48,13 @@
   color: var(--fg-1);
   letter-spacing: 0.18em;
   text-transform: uppercase;
+}
+
+.primaryNav {
+  /* Wraps the link list. On desktop this is a transparent inline
+     wrapper; on mobile it becomes the drawer surface (see media
+     queries below). */
+  display: contents;
 }
 
 .links {
@@ -82,7 +89,7 @@
 .cta {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: var(--s-4);
 }
 
 .status {
@@ -91,15 +98,18 @@
   color: var(--fg-3);
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--s-2);
 }
 
 .dot {
   width: 6px;
   height: 6px;
-  background: var(--ex-gold);
+  background: var(--xe-gold);
   border-radius: 50%;
-  box-shadow: 0 0 8px rgba(245, 194, 26, 0.6);
+  /* Brand rule: borders separate, not shadows. The `pulse` animation
+     below carries the "operational" signal on its own — the previous
+     0 0 8px gold glow was a decorative shadow that violated the rule
+     (audit F6.1 finding F-NAV-03). Kept as `animation` only. */
   animation: pulse 2.4s ease-in-out infinite;
 }
 
@@ -113,14 +123,205 @@
   }
 }
 
+/* ---------- MOBILE MENU TOGGLE ---------- */
+
+/* Hidden on desktop, revealed on tablet/mobile. The toggle is rendered
+   in the DOM at all viewports so SSR markup is identical across
+   breakpoints (no hydration mismatch race against CSS media queries). */
+.menuToggle {
+  display: none;
+  background: transparent;
+  border: 1px solid var(--line-subtle);
+  border-radius: var(--r-2);
+  /* 44×44 satisfies WCAG 2.5.5 / Apple HIG touch target floor — same
+     guarantee Button.module.css now carries via `min-height: 44px`. */
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  align-items: center;
+  justify-content: center;
+  color: var(--fg-2);
+  cursor: pointer;
+  transition:
+    color var(--t-fast),
+    border-color var(--t-fast);
+}
+
+.menuToggle:hover {
+  color: var(--fg-1);
+  border-color: var(--line-strong);
+}
+
+.menuToggle:focus-visible {
+  outline: 1px solid var(--xe-gold);
+  outline-offset: 2px;
+}
+
+/* Icon swap via opacity crossfade — no rotate/scale, strict adherence
+   to the brand motion budget. The X glyph is a pre-rendered SVG (two
+   crossed lines as final state, never transformed in motion) layered
+   over the bars; opening toggles opacity on both layers. */
+.menuIcon {
+  position: relative;
+  display: inline-block;
+  width: 18px;
+  height: 14px;
+  color: currentColor;
+}
+
+.menuIconBars {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  opacity: 1;
+  transition: opacity var(--t-fast);
+}
+
+.menuIconBars span {
+  display: block;
+  height: 1.5px;
+  width: 100%;
+  background: currentColor;
+}
+
+.menuIconBars span:nth-child(2) {
+  width: 70%;
+  margin-left: auto;
+}
+
+.menuIconX {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity var(--t-fast);
+  /* Center the 16×16 viewBox into the 18×14 wrapper without scaling. */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.menuIconX svg {
+  width: 14px;
+  height: 14px;
+  display: block;
+}
+
+.menuIconOpen .menuIconBars {
+  opacity: 0;
+}
+
+.menuIconOpen .menuIconX {
+  opacity: 1;
+}
+
+/* ---------- TABLET / MOBILE ---------- */
+
 @media (max-width: 1024px) {
+  /* Mobile drawer surface. `.primaryNav` switches from `display:
+     contents` (transparent wrapper) to a positioned panel below the
+     nav header. */
+  .primaryNav {
+    display: block;
+    position: absolute;
+    top: 72px;
+    left: 0;
+    right: 0;
+    background: var(--bg-canvas);
+    border-bottom: 1px solid var(--line-hairline);
+    /* Slide-down via clip-path keeps the panel out of layout cost when
+       closed (no `display: none` flicker, no `visibility` quirks with
+       focus management). Brand motion budget respected: opacity +
+       clip-path, no scale/rotate. */
+    clip-path: inset(0 0 100% 0);
+    opacity: 0;
+    pointer-events: none;
+    transition:
+      clip-path var(--t-modal),
+      opacity var(--t-modal);
+  }
+
+  .primaryNavOpen {
+    clip-path: inset(0 0 0 0);
+    opacity: 1;
+    pointer-events: auto;
+  }
+
   .links {
-    display: none;
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--s-1);
+    padding: var(--s-4) var(--s-5) var(--s-5);
+  }
+
+  .links li {
+    width: 100%;
+  }
+
+  .links a {
+    display: flex;
+    align-items: center;
+    /* 44px floor — same touch target rule that drives Button + Toggle. */
+    min-height: 44px;
+    padding: var(--s-3) 0;
+    font-size: 15px;
+    color: var(--fg-1);
+    border-bottom: 1px solid var(--line-hairline);
+  }
+
+  .links li:last-child a {
+    border-bottom: none;
+  }
+
+  .num {
+    font-size: 11px;
+    color: var(--fg-3);
+    margin-right: var(--s-3);
+  }
+
+  .menuToggle {
+    display: inline-flex;
   }
 }
 
 @media (max-width: 720px) {
+  .inner {
+    gap: var(--s-4);
+  }
+
   .status {
     display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Aggressive mobile: hide the wordmark text (logo chip still
+     carries the brand mark). The CTA + toggle keep the row balanced
+     and prevent the locale-specific CTA text ("Iniciar um brief",
+     "Commencer un brief") from forcing horizontal overflow on
+     ≤320px viewports (audit finding F-NAV-02). */
+  .wordmark {
+    display: none;
+  }
+
+  .cta {
+    gap: var(--s-2);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .primaryNav {
+    transition: none;
+  }
+
+  .menuIcon span {
+    transition: none;
+  }
+
+  .dot {
+    animation: none;
   }
 }

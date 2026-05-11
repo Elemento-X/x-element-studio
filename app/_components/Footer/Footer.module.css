@@ -7,7 +7,7 @@
 .grid {
   display: grid;
   grid-template-columns: 1.5fr 1fr 1fr 1fr;
-  gap: 48px;
+  gap: var(--s-7);
   margin-bottom: 56px;
 }
 
@@ -21,7 +21,7 @@
 .logoChip {
   width: 44px;
   height: 44px;
-  background: var(--ex-gold);
+  background: var(--xe-gold);
   border-radius: var(--r-2);
   display: grid;
   place-items: center;
@@ -66,7 +66,7 @@
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--s-3);
 }
 
 .col a {
@@ -83,7 +83,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-top: 32px;
+  padding-top: var(--s-6);
   border-top: 1px solid var(--line-hairline);
   font-family: var(--font-mono);
   font-size: 11px;
@@ -107,7 +107,7 @@
 }
 
 .diamond {
-  color: var(--ex-gold);
+  color: var(--xe-gold);
 }
 
 @media (max-width: 1024px) {
@@ -118,7 +118,24 @@
 }
 
 @media (max-width: 720px) {
+  /* Single column stacks brand → practice → contact → signal so the
+     brand block's 32ch copy doesn't squeeze a half-empty practice
+     column next to it. Audit F6.1 finding F-FOOT-01. */
   .grid {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
+  }
+  .brand {
+    max-width: none;
+  }
+}
+
+@media (max-width: 540px) {
+  /* Bottom row (copyright | privacy/terms) crowds into overflow with
+     longer locale strings. Stack vertically below 540px so each line
+     gets its own row. Audit F6.1 finding F-FOOT-02. */
+  .bottom {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--s-4);
   }
 }

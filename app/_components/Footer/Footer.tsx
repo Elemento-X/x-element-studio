@@ -5,7 +5,7 @@ import styles from './Footer.module.css'
 
 // Stable column structure (anchors + link keys); labels come from
 // messages. The contact-column hrefs all map to the operator inbox.
-const CONTACT_EMAIL = 'mailto:contact@elemento-x.com'
+const CONTACT_EMAIL = 'mailto:contact@xelement.studio'
 
 const COLS = [
   {
@@ -53,7 +53,7 @@ export async function Footer() {
                 height={44}
               />
             </span>
-            <div className={styles.wordmark}>Elemento&#8209;X</div>
+            <div className={styles.wordmark}>X&nbsp;Element</div>
             <p>{t('tagline')}</p>
           </div>
 

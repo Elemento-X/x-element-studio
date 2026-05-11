@@ -50,13 +50,13 @@ export async function FinalCta() {
             {!formEnabled && (
               <div className={styles.cta}>
                 <Button
-                  href="mailto:contact@elemento-x.com"
+                  href="mailto:contact@xelement.studio"
                   variant="primary"
                   withArrow
                 >
                   {t('ctaPrimary')}
                 </Button>
-                <Button href="mailto:contact@elemento-x.com" variant="ghost">
+                <Button href="mailto:contact@xelement.studio" variant="ghost">
                   {t('ctaGhost')}
                 </Button>
               </div>

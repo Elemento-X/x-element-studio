@@ -10,7 +10,11 @@
   gap: var(--s-4);
 }
 
-@media (max-width: 640px) {
+/* Aligned to the rest of the project's mobile breakpoint at 720px.
+   The previous 640px was a one-off divergence that created a
+   641–720 sliver where the form rendered 2-col inside a card already
+   in 1-col mobile mode. Audit F6.1 findings F-CTA-01 + F-CTA-05. */
+@media (max-width: 720px) {
   .row {
     grid-template-columns: 1fr;
   }
@@ -127,11 +131,18 @@
 .input[aria-invalid='true'],
 .select[aria-invalid='true'],
 .textarea[aria-invalid='true'] {
+  /* Stronger differentiation from the hover state (which raises the
+     border to --line-strong on its own). Error state now:
+       - left edge inset 3px (was 2px) — more visible directional cue
+       - bottom edge 1px hairline in --fg-1 — second axis of distinction
+     Both stay inside the brand palette (no red, no error-orange) per
+     the studio's "controlled, minimal" palette. Audit F6.1 finding
+     F-CTA-04. */
   border-color: var(--line-strong);
   border-width: 1px;
-  /* Inset shadow on the left edge — subtle directional hint without
-     introducing a non-brand color. */
-  box-shadow: inset 2px 0 0 var(--fg-1);
+  box-shadow:
+    inset 3px 0 0 var(--fg-1),
+    inset 0 -1px 0 var(--fg-1);
 }
 
 .textarea {
@@ -143,7 +154,7 @@
 .select {
   appearance: none;
   -webkit-appearance: none;
-  /* Chevron color is hardcoded #8e8e94 (mirrors --fg-3 / --ex-muted-gray
+  /* Chevron color is hardcoded #8e8e94 (mirrors --fg-3 / --xe-muted-gray
      in app/tokens.css). Data URIs can't read CSS variables, and using
      background-color + mask-image would tint the entire <select> field
      instead of just the chevron — <select> doesn't support pseudo-
@@ -208,7 +219,7 @@
    global 'bone' variant to the Button component. */
 .submitBone.submitBone {
   background: var(--fg-1);
-  color: var(--ex-deep-black);
+  color: var(--xe-deep-black);
 }
 .submitBone.submitBone:hover {
   background: var(--fg-1);
@@ -223,6 +234,39 @@
   opacity: 0.5;
 }
 
+/* Loading indicator while the submit is in flight. Sits inline with
+   the button label, reuses the brand motif (small dot pulsing) from
+   Nav.dot but without the decorative glow that violates "borders
+   separate, not shadows". `currentColor` makes the dot inherit the
+   button's text color, so when the disabled state drops opacity to
+   0.5 the dot fades with it — no separate state needed. */
+.loadingDot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  background: currentColor;
+  border-radius: 50%;
+  margin-right: 4px;
+  animation: loadingDotPulse 1.2s ease-in-out infinite;
+  vertical-align: middle;
+}
+
+@keyframes loadingDotPulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loadingDot {
+    animation: none;
+  }
+}
+
 .success {
   display: flex;
   flex-direction: column;
@@ -230,11 +274,11 @@
   padding: var(--s-6);
   /* Border is neutral; the single gold of the viewport migrates from
      the (now-hidden) .card::before to the success card's top edge —
-     1px hairline of `--ex-gold` inherits the role as confirmation
+     1px hairline of `--xe-gold` inherits the role as confirmation
      marker. Spec: @designer (FinalCta gold-budget) — keeps "1 gold
      per primary viewport" with continuity from the form state. */
   border: 1px solid var(--line-strong);
-  border-top: 1px solid var(--ex-gold);
+  border-top: 1px solid var(--xe-gold);
   border-radius: var(--r-2);
   background: var(--bg-input);
 }

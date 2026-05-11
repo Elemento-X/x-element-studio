@@ -68,6 +68,14 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 25
     needs: quality-gate
+    # Visual baselines are platform-sensitive (glibc / pango / fontconfig
+    # versions change font hinting and accumulate sub-pixel drift across a
+    # full-page screenshot). Pinning the runner to the same Playwright
+    # container used to regenerate baselines keeps the comparison
+    # deterministic. Bump this tag in lockstep with @playwright/test in
+    # package.json — they must always match.
+    container:
+      image: mcr.microsoft.com/playwright:v1.59.1-jammy
 
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
@@ -80,11 +88,12 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Install Playwright browsers
-        run: npx playwright install chromium --with-deps
-
       # webServer in playwright.config.ts builds + starts the production
       # server in CI (avoids Turbopack dev-server stale manifests).
+      #
+      # Playwright browsers + OS deps ship pre-installed in the container,
+      # so we skip `npx playwright install --with-deps` — running it again
+      # would re-download identical binaries on every run.
       #
       # PW_SKIP_CONTACT_FORM=1: the contact-form golden-path spec requires
       # a live /api/contact (which validates real envs at runtime — Resend,

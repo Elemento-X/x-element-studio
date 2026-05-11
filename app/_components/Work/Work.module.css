@@ -6,24 +6,24 @@
 .grid {
   display: grid;
   grid-template-columns: 1.4fr 1fr;
-  gap: 24px;
+  gap: var(--s-5);
 }
 
 .row {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  gap: 24px;
-  margin-top: 24px;
+  gap: var(--s-5);
+  margin-top: var(--s-5);
 }
 
 .case {
   background: var(--bg-panel);
   border: 1px solid var(--line-subtle);
   border-radius: var(--r-3);
-  padding: 28px 28px 24px;
+  padding: 28px 28px var(--s-5);
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--s-4);
   position: relative;
   overflow: hidden;
   transition:
@@ -40,7 +40,7 @@
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  gap: 16px;
+  gap: var(--s-4);
 }
 
 .client {
@@ -55,7 +55,7 @@
   font-family: var(--font-mono);
   font-size: 10px;
   letter-spacing: 0.12em;
-  color: var(--ex-gold);
+  color: var(--xe-gold);
   text-transform: uppercase;
   display: flex;
   align-items: center;
@@ -66,7 +66,7 @@
   content: '';
   width: 5px;
   height: 5px;
-  background: var(--ex-gold);
+  background: var(--xe-gold);
   border-radius: 50%;
 }
 
@@ -105,15 +105,15 @@
 
 .stats {
   display: flex;
-  gap: 24px;
-  padding-top: 16px;
+  gap: var(--s-5);
+  padding-top: var(--s-4);
   border-top: 1px solid var(--line-hairline);
 }
 
 .stat {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--s-1);
 }
 
 .k {
@@ -133,7 +133,7 @@
 }
 
 .vSignal {
-  color: var(--ex-gold);
+  color: var(--xe-gold);
 }
 
 .label {
@@ -166,7 +166,7 @@
 }
 
 .signal {
-  color: var(--ex-gold);
+  color: var(--xe-gold);
 }
 
 @media (max-width: 1024px) {
@@ -176,6 +176,15 @@
   .row {
     grid-template-columns: 1fr 1fr;
   }
+  /* `.row` carries 3 secondary case cards. In the 2-col tablet layout
+     the 3rd card would land alone in the left column with the right
+     column empty — and it's the card carrying the gold `vSignal` stat,
+     so the orphan also fragments "1 gold per primary viewport". Span
+     the last card across both columns so the row reads as intentional.
+     Audit F6.1 finding F-WORK-01. */
+  .row .case:last-child {
+    grid-column: span 2;
+  }
 }
 
 @media (max-width: 720px) {
@@ -184,5 +193,27 @@
   }
   .section {
     padding: 72px 0;
+  }
+  /* Fixed heights (`.viz` 180px, `.vizTall` 260px) read squashed when
+     the card narrows to ~280px — chart visualizations compress into
+     near-square frames. 16:9 keeps the visualization proportionate
+     to the card's mobile width without needing per-viz overrides.
+     Audit F6.1 finding F-WORK-02. */
+  .viz,
+  .vizTall {
+    height: auto;
+    aspect-ratio: 16 / 9;
+  }
+  /* 3 stats × ~80–100px each + 2 × 24px gap = up to 340px, blows the
+     280px usable width on 320px viewports (worse in PT-BR/FR).
+     Switching to a 3-col grid with `font-size: 18px` keeps each stat
+     in its own column without overflow. Audit F6.1 finding F-WORK-03. */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--s-4);
+  }
+  .v {
+    font-size: 18px;
   }
 }

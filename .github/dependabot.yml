@@ -38,10 +38,6 @@ updates:
       playwright:
         patterns:
           - "@playwright/*"
-      tailwind:
-        patterns:
-          - "tailwindcss"
-          - "prettier-plugin-tailwindcss"
       types:
         patterns:
           - "@types/node"
