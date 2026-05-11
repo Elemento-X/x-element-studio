@@ -24,15 +24,29 @@ test.describe('Reduced-motion contract', () => {
 
     const consoleErrors: string[] = []
     const pageErrors: string[] = []
+    const realResponseFailures: string[] = []
 
     page.on('pageerror', (err) => {
       pageErrors.push(err.message)
     })
 
     page.on('console', (msg) => {
-      if (msg.type() === 'error') {
-        consoleErrors.push(msg.text())
-      }
+      if (msg.type() !== 'error') return
+      const text = msg.text()
+      // Drop the browser's generic "Failed to load resource" boilerplate
+      // — we track real failures with URL via page.on('response') below.
+      // Same rationale as tests/e2e/smoke.spec.ts.
+      if (/Failed to load resource/.test(text)) return
+      consoleErrors.push(text)
+    })
+
+    page.on('response', (res) => {
+      if (res.status() < 400) return
+      const url = res.url()
+      // Filter Next 16 + next-intl RSC prefetch 404s (framework interop,
+      // not a regression). See smoke.spec.ts for the full rationale.
+      if (/[?&]_rsc=/.test(url)) return
+      realResponseFailures.push(`${res.status()} ${url}`)
     })
 
     const response = await page.goto('/')
@@ -109,5 +123,6 @@ test.describe('Reduced-motion contract', () => {
     // No JS errors during the reduced-motion render path
     expect(pageErrors).toEqual([])
     expect(consoleErrors).toEqual([])
+    expect(realResponseFailures).toEqual([])
   })
 })

@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import { getTranslations } from 'next-intl/server'
 import { Reveal } from '../Reveal/Reveal'
 import { SectionHead } from '../SectionHead/SectionHead'
 import { ProcessGrid } from './ProcessGrid'
@@ -16,21 +17,20 @@ interface StepCoord {
   signal?: boolean
 }
 
-interface Step {
-  num: string
-  title: string
-  copy: string
-  artifact: string
+interface StepStructure {
+  key: 'discover' | 'architect' | 'build' | 'scale'
   illust: ReactNode
   coords: StepCoord[]
 }
 
-const STEPS: Step[] = [
+// Stable per-step structure (illust + visualization coords). Visible
+// copy (title, body, artifact) lives in messages under process.steps.<key>.
+// The coord labels are intentionally code-like (SCAN · 01, BLUEPRINT ·
+// 02 …) — they stay in source as part of the visual motif, not as
+// translatable copy.
+const STEPS: StepStructure[] = [
   {
-    num: '01',
-    title: 'Discover',
-    copy: 'We map the system you already run. We surface the constraints nobody writes down. We name the one thing actually in the way — before anyone touches code.',
-    artifact: 'Signal brief',
+    key: 'discover',
     illust: <DiscoverIllust />,
     coords: [
       { pos: 'tl', text: 'SCAN · 01' },
@@ -40,10 +40,7 @@ const STEPS: Step[] = [
     ],
   },
   {
-    num: '02',
-    title: 'Architect',
-    copy: 'We model the solution before we build it. Data contracts, interfaces, failure modes — written down, reviewed, signed. The build is execution, not discovery.',
-    artifact: 'System blueprint',
+    key: 'architect',
     illust: <ArchitectIllust />,
     coords: [
       { pos: 'tl', text: 'BLUEPRINT · 02' },
@@ -53,10 +50,7 @@ const STEPS: Step[] = [
     ],
   },
   {
-    num: '03',
-    title: 'Build',
-    copy: 'Typed code, observable from the first commit, shipped in production-sized slices. No staging theatre. No demo branches. The system you see is the system that runs.',
-    artifact: 'Shipped surface',
+    key: 'build',
     illust: <BuildIllust />,
     coords: [
       { pos: 'tl', text: 'PIPELINE · 03' },
@@ -66,10 +60,7 @@ const STEPS: Step[] = [
     ],
   },
   {
-    num: '04',
-    title: 'Scale',
-    copy: 'We harden it, document it, and hand over the keys. Your team operates the system without us. The engagement ends when the system runs alone — that is the point.',
-    artifact: 'Operational handoff',
+    key: 'scale',
     illust: <ScaleIllust />,
     coords: [
       { pos: 'tl', text: 'ORBIT · 04' },
@@ -94,26 +85,28 @@ const Arrow = () => (
   </svg>
 )
 
-export function Process() {
+export async function Process() {
+  const t = await getTranslations('process')
+
   return (
     <section className={`${styles.section} block`} id="process">
       <div className="container-wide container">
         <SectionHead
-          eyebrow="Process"
-          number="004 · METHOD"
-          title="Four phases. No ceremony."
-          copy="Every engagement moves through the same four stages. Each phase produces an artifact the next one needs. No deck for the deck’s sake."
+          eyebrow={t('eyebrow')}
+          number={t('number')}
+          title={t('title')}
+          copy={t('copy')}
         />
 
         <ProcessGrid>
           {STEPS.map((s) => (
-            <Reveal key={s.num} as="li" className={styles.step}>
+            <Reveal key={s.key} as="li" className={styles.step}>
               <div className={styles.head}>
-                <span className={styles.num}>{s.num}</span>
+                <span className={styles.num}>{t(`steps.${s.key}.num`)}</span>
                 <Arrow />
               </div>
-              <h3 className={styles.title}>{s.title}</h3>
-              <p className={styles.copy}>{s.copy}</p>
+              <h3 className={styles.title}>{t(`steps.${s.key}.title`)}</h3>
+              <p className={styles.copy}>{t(`steps.${s.key}.copy`)}</p>
 
               <div className={styles.illust} aria-hidden="true">
                 <span className={`${styles.corner} ${styles.cornerTl}`} />
@@ -138,8 +131,10 @@ export function Process() {
               </div>
 
               <div className={styles.tag}>
-                <span className={styles.tagK}>Artifact</span>
-                <span className={styles.tagV}>{s.artifact}</span>
+                <span className={styles.tagK}>{t('artifactLabel')}</span>
+                <span className={styles.tagV}>
+                  {t(`steps.${s.key}.artifact`)}
+                </span>
               </div>
             </Reveal>
           ))}

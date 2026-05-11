@@ -1,0 +1,320 @@
+{
+  "metadata": {
+    "title": "Elemento-X — Systèmes intelligents. Impact réel.",
+    "titleTemplate": "%s · Elemento-X",
+    "description": "Studio technologique livrant Full Stack, AI Engineering, Product Strategy et Design Systems. Nous éliminons les goulets et livrons une infrastructure scalable.",
+    "ogTitle": "Elemento-X — Systèmes intelligents. Impact réel.",
+    "ogDescription": "Nous construisons les systèmes invisibles derrière les produits à haute performance.",
+    "ogImageAlt": "Studio Elemento-X — emblème doré sur fond sombre. Systèmes intelligents. Impact réel.",
+    "twitterTitle": "Elemento-X — Systèmes intelligents. Impact réel.",
+    "twitterDescription": "Nous construisons les systèmes invisibles derrière les produits à haute performance."
+  },
+  "nav": {
+    "brandLabel": "Accueil Elemento-X",
+    "primaryLabel": "Principale",
+    "links": {
+      "capabilities": "Capacités",
+      "process": "Processus",
+      "signal": "Signal",
+      "contact": "Contact"
+    },
+    "statusOperational": "OPERATIONAL · {time} UTC",
+    "cta": "Démarrer"
+  },
+  "hero": {
+    "eyebrow": "EX · 001  /  STUDIO",
+    "pillSystemActive": "SYSTEM ACTIVE",
+    "pillLatency": "SIG · 42MS LATENCY",
+    "headlineLine1": "Nous bâtissons",
+    "headlineLine2": "les systèmes qui",
+    "headlineLine3": "effacent le manuel",
+    "sub": "Elemento-X est un studio technologique pour les équipes qui paient le coût du travail manuel. Nous concevons, livrons et transmettons des systèmes qui récupèrent des heures — mesurées en production, pas en diapositives.",
+    "ctaPrimary": "Envoyer le brief",
+    "ctaGhost": "Parler aux fondateurs",
+    "scrollHint": "Défiler pour explorer",
+    "coords": {
+      "latLabel": "LAT",
+      "latValue": "—23.5489°S",
+      "lngLabel": "LNG",
+      "lngValue": "—46.6388°W",
+      "nodeLabel": "NODE",
+      "nodeValue": "EX-CORE-01"
+    }
+  },
+  "trust": {
+    "ariaLabel": "Positionnement",
+    "eyebrow": "Positionnement  ·  002",
+    "headCopy": "Un partenaire ciblé pour les équipes qui construisent des outils internes, des plateformes SaaS, des flux pilotés par IA et une infrastructure d'automatisation. Exécution silencieuse. Résultats mesurés.",
+    "gridLabel": "Métriques du studio",
+    "stats": {
+      "engagements": {
+        "num": "01 · ENGAGEMENTS",
+        "stat": "42",
+        "unit": "/ livrés",
+        "label": "Systèmes en production livrés en SaaS, fintech, logistique et opérations internes."
+      },
+      "automation": {
+        "num": "02 · AUTOMATION",
+        "stat": "128",
+        "unit": "/ flux",
+        "label": "Pipelines actifs remplaçant le travail manuel dans des organisations partenaires."
+      },
+      "uptime": {
+        "num": "03 · UPTIME",
+        "stat": "99.98",
+        "unit": "%",
+        "label": "Mesuré sur toute l'infrastructure opérée par Elemento-X, 12 derniers mois."
+      },
+      "timeSaved": {
+        "num": "04 · TIME SAVED",
+        "stat": "11.4k",
+        "unit": "h / an",
+        "label": "Heures d'ingénierie et d'opérations récupérées via automatisation et tooling."
+      }
+    }
+  },
+  "capabilities": {
+    "eyebrow": "Capacités",
+    "number": "003 · CORE",
+    "title": "Ce que nous construisons",
+    "copy": "Sept disciplines. Une équipe. Chaque engagement utilise le minimum qui résout le système — rien de cérémonial, rien pour le mur. Nous intervenons pour architecturer, livrer et transmettre l'opération qui continue après notre départ.",
+    "services": {
+      "fullStack": {
+        "num": "01 / 07",
+        "title": "Full-stack engineering",
+        "copy": "Typé de bout en bout. Observable dès le premier jour. Conçu pour survivre à trois réécritures sans que personne demande de l'aide.",
+        "meta": "Web · API · Infra",
+        "duration": "continu"
+      },
+      "ai": {
+        "num": "02 / 07",
+        "title": "AI engineering",
+        "copy": "Sélection de modèle, retrieval, évaluation, guardrails. De l'inférence qui passe en production — pas dans un notebook de démo.",
+        "meta": "LLM · RAG · Evals",
+        "duration": "3–12 sem."
+      },
+      "automation": {
+        "num": "03 / 07",
+        "title": "Automation pipelines",
+        "copy": "Des flux pilotés par événements qui retirent l'humain de la couture entre deux systèmes, deux fuseaux horaires ou deux tableurs.",
+        "meta": "Pipelines · Agents · Webhooks",
+        "duration": "2–6 sem."
+      },
+      "internalTools": {
+        "num": "04 / 07",
+        "title": "Internal tools",
+        "copy": "Consoles d'opération que l'équipe ouvre avant les e-mails. Dashboards qui font ressortir le chiffre qui compte vraiment.",
+        "meta": "Admin · Ops · Analytics",
+        "duration": "4–8 sem."
+      },
+      "productStrategy": {
+        "num": "05 / 07",
+        "title": "Product strategy",
+        "copy": "Des roadmaps avec du mordant. Périmètre lié à un résultat mesurable — et le périmètre coupé pour la même raison.",
+        "meta": "Discovery · Thesis · Roadmap",
+        "duration": "14j"
+      },
+      "designSystems": {
+        "num": "06 / 07",
+        "title": "Design systems",
+        "copy": "Primitives tokenisées et bibliothèques de composants qui se cumulent entre équipes, produits et les trois prochaines années de recrutement.",
+        "meta": "Tokens · Components · Docs",
+        "duration": "6–10 sem."
+      },
+      "interfaceDesign": {
+        "num": "07 / 07",
+        "title": "Interface design",
+        "copy": "Interfaces conçues pour les décisions. Denses là où la densité aide, silencieuses partout ailleurs. Aucun écran n'existe sans raison.",
+        "meta": "Research · Flows · Fidelity",
+        "duration": "4–8 sem."
+      }
+    },
+    "tagline": {
+      "eyebrow": "Modèle d'engagement",
+      "line": "Sprint, retainer ou embed. Nous calibrons le partenariat au système — pas au calendrier.",
+      "cta": "Envoyer le brief"
+    }
+  },
+  "process": {
+    "eyebrow": "Processus",
+    "number": "004 · METHOD",
+    "title": "Quatre phases. Sans cérémonie.",
+    "copy": "Chaque engagement traverse les mêmes quatre étapes. Chaque phase produit un artefact dont la suivante a besoin. Aucune diapositive pour la diapositive.",
+    "artifactLabel": "Artefact",
+    "steps": {
+      "discover": {
+        "num": "01",
+        "title": "Discover",
+        "copy": "Nous cartographions le système que vous opérez. Nous faisons remonter les contraintes non écrites. Nous nommons la seule chose qui gêne — avant que quiconque touche au code.",
+        "artifact": "Signal brief"
+      },
+      "architect": {
+        "num": "02",
+        "title": "Architect",
+        "copy": "Nous modélisons la solution avant de construire. Contrats, interfaces, modes de défaillance — écrits, revus, signés. Le build est exécution, pas découverte.",
+        "artifact": "System blueprint"
+      },
+      "build": {
+        "num": "03",
+        "title": "Build",
+        "copy": "Code typé, observable dès le premier commit, livré en tranches de production. Pas de théâtre de staging. Pas de branche de démo. Le système que vous voyez tourne.",
+        "artifact": "Shipped surface"
+      },
+      "scale": {
+        "num": "04",
+        "title": "Scale",
+        "copy": "Nous le durcissons, le documentons, et remettons les clés. Votre équipe opère le système sans nous. L'engagement se termine quand le système tourne seul — c'est l'idée.",
+        "artifact": "Operational handoff"
+      }
+    }
+  },
+  "work": {
+    "eyebrow": "Signal",
+    "number": "005 · IMPACT",
+    "titleLine1": "Impact",
+    "titleLine2": "sélectionné",
+    "copy": "Registre partiel. Détails intentionnellement discrets. La majeure partie de ce que nous livrons est invisible à l'utilisateur final — mesuré par ce qui cesse de casser, pas par ce qui est annoncé.",
+    "statusLabel": "Opérationnel",
+    "cases": {
+      "mediaOps": {
+        "client": "EX-2049 · Opérations médias internes",
+        "title": "190 heures par an, récupérées d'une équipe d'opérations médias.",
+        "copy": "Un processus quotidien multi-outils — exports manuels, assemblage manuel de tableurs, validations Slack — remplacé par un pipeline événementiel avec une seule surface d'audit. L'équipe a récupéré sa semaine.",
+        "stats": {
+          "hours": "Heures / an",
+          "manualSteps": "Étapes manuelles",
+          "errorRate": "Taux d'erreur"
+        }
+      },
+      "knowledgeAgent": {
+        "client": "EX-2112 · Équipe d'opérations (NDA)",
+        "title": "Un agent de connaissance privé pour une équipe d'opérations de 200 personnes.",
+        "copy": "Retrieval sur les documents internes, evals structurés, accès par rôle. Les APIs vendors ne touchent jamais la donnée client. Des réponses en secondes ont remplacé des threads de plusieurs jours.",
+        "stats": {
+          "queries": "Requêtes / jour",
+          "evalScore": "Score d'eval",
+          "ttAnswer": "Temps de réponse"
+        }
+      },
+      "logistics": {
+        "client": "EX-1984 · Logistique (NDA)",
+        "title": "Throughput de dispatch triplé, avec la même équipe.",
+        "stats": {
+          "throughput": "Throughput",
+          "errors": "Erreurs",
+          "headcount": "Effectif"
+        }
+      },
+      "platform": {
+        "client": "EX-2277 · Plateforme multi-produits (NDA)",
+        "title": "Cinq surfaces produit, un système tokenisé.",
+        "stats": {
+          "components": "Composants",
+          "releaseTime": "Temps de release",
+          "visualDrift": "Drift visuel"
+        }
+      },
+      "financeOps": {
+        "client": "EX-2318 · Opérations financières (NDA)",
+        "title": "Sept onglets condensés en une seule console d'opération.",
+        "stats": {
+          "contextSwitches": "Changements de contexte",
+          "resolutionTime": "Temps de résolution",
+          "tickets": "Tickets / mois"
+        }
+      }
+    }
+  },
+  "manifesto": {
+    "ariaLabel": "Manifeste",
+    "line1": "Nous ne sommes pas vus.",
+    "line2": "Mais tout fonctionne",
+    "line3": "grâce à nous.",
+    "body": "Nous sommes l'équipe appelée quand le système doit fonctionner. Quand le downtime coûte cher. Quand celui qui est le plus proche du problème a besoin de <strong>levier</strong>, pas d'une autre réunion.",
+    "sig": "Elemento-X  ·  Manifeste  ·  2026"
+  },
+  "finalCta": {
+    "eyebrow": "Initier le contact  ·  006",
+    "titleLine1": "Envoyez le",
+    "titleLine2": "brief.",
+    "body": "Une page. Le système que vous voulez réparer. Un résultat mesurable. Nous répondons en 24 heures — oui, non, ou comment.",
+    "ctaPrimary": "Envoyer le brief",
+    "ctaGhost": "Parler aux fondateurs",
+    "cardEyebrow": "Engagement brief",
+    "brief": {
+      "availability": { "k": "Disponibilité", "v": "Q3 · 2026" },
+      "response": { "k": "Réponse", "v": "< 24 heures" },
+      "engagements": { "k": "Engagements", "v": "3 actifs / 2 ouverts" },
+      "diagnostic": { "k": "Diagnostic", "v": "14 jours" },
+      "minScope": { "k": "Périmètre minimum", "v": "1 système" },
+      "regions": { "k": "Régions", "v": "Global · Remote" }
+    },
+    "disclaimer": "Quelques équipes sélectionnées par trimestre. Sélection par adéquation — pouvons-nous rendre le système mesurablement meilleur. La signature du contrat suit."
+  },
+  "footer": {
+    "tagline": "Systèmes intelligents. Impact réel. Nous construisons ce que personne ne voit — pour que tout fonctionne.",
+    "cols": {
+      "practice": {
+        "title": "Pratique",
+        "links": {
+          "capabilities": "Capacités",
+          "process": "Processus",
+          "signal": "Signal",
+          "manifesto": "Manifeste"
+        }
+      },
+      "contact": {
+        "title": "Contact",
+        "links": {
+          "email": "contact@elemento-x.com",
+          "discovery": "Planifier une discovery",
+          "press": "Presse / marque",
+          "careers": "Carrières"
+        }
+      },
+      "signal": {
+        "title": "Signal",
+        "links": {
+          "linkedin": "LinkedIn",
+          "github": "GitHub",
+          "twitter": "X / Twitter",
+          "dribbble": "Dribbble"
+        }
+      }
+    },
+    "copyright": "© 2026 ELEMENTO-X",
+    "nodeStatus": "EX-CORE-01 · OPERATIONAL",
+    "privacy": "Confidentialité",
+    "terms": "Conditions"
+  },
+  "contactForm": {
+    "ariaLabel": "Formulaire de contact",
+    "honeypotLabel": "Laissez ce champ vide",
+    "fields": {
+      "name": "Nom",
+      "email": "E-mail",
+      "company": "Société",
+      "companyOptional": "(facultatif)",
+      "engagement": "Engagement",
+      "engagementPlaceholder": "Choisissez l'engagement",
+      "engagementOther": "Précisez le type",
+      "message": "Message",
+      "messageHelp": "Une page. Le système que vous voulez réparer. Un résultat mesurable."
+    },
+    "submit": {
+      "idle": "Envoyer le brief",
+      "submitting": "Envoi en cours…"
+    },
+    "errors": {
+      "network": "Échec de connexion. Réessayez.",
+      "rateLimit": "Limite atteinte. Attendez une heure.",
+      "validation": "Corrigez les champs marqués.",
+      "disabled": "Formulaire en pause. Écrivez à contact@elemento-x.com.",
+      "generic": "Échec d'envoi. Réessayez — ou écrivez à contact@elemento-x.com."
+    },
+    "success": {
+      "eyebrow": "Brief reçu",
+      "body": "Brief reçu. Réponse sous 24 heures — oui, non, ou comment."
+    }
+  }
+}

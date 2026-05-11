@@ -1,8 +1,11 @@
+import { getTranslations } from 'next-intl/server'
 import { Button } from '../Button/Button'
 import { HeroGlyph } from './HeroGlyph'
 import styles from './Hero.module.css'
 
-export function Hero() {
+export async function Hero() {
+  const t = await getTranslations('hero')
+
   return (
     <section className={styles.hero}>
       <div className={styles.grid} aria-hidden="true" />
@@ -15,36 +18,33 @@ export function Hero() {
       <div className={`container-wide container ${styles.content}`}>
         <div className={styles.meta}>
           <span className={`${styles.eyebrow} ${styles.eyebrowSignal}`}>
-            EX · 001 &nbsp;/&nbsp; STUDIO
+            {t('eyebrow')}
           </span>
           <span className={styles.pill}>
-            <span className={styles.signalDiamond}>◆</span>SYSTEM ACTIVE
+            <span className={styles.signalDiamond}>◆</span>
+            {t('pillSystemActive')}
           </span>
           <span className={`${styles.pill} ${styles.pillMono}`}>
-            SIG · 42MS LATENCY
+            {t('pillLatency')}
           </span>
         </div>
 
         <h1 className={styles.headline}>
-          We build
+          {t('headlineLine1')}
           <br />
-          <span className={styles.thin}>the systems that</span>
+          <span className={styles.thin}>{t('headlineLine2')}</span>
           <br />
-          <span className={styles.gold}>erase manual work</span>.
+          <span className={styles.gold}>{t('headlineLine3')}</span>.
         </h1>
 
-        <p className={styles.sub}>
-          Elemento-X is a technology studio for teams paying the cost of manual
-          work. We design, ship, and hand over systems that recover hours
-          &mdash; measured in production, not in slides.
-        </p>
+        <p className={styles.sub}>{t('sub')}</p>
 
         <div className={styles.cta}>
           <Button href="#contact" variant="primary" withArrow>
-            Send brief
+            {t('ctaPrimary')}
           </Button>
           <Button href="#contact" variant="ghost">
-            Talk to founders
+            {t('ctaGhost')}
           </Button>
         </div>
       </div>
@@ -53,20 +53,20 @@ export function Hero() {
         <div className={styles.bottomInner}>
           <div className={styles.scroll}>
             <span className={styles.scrollLine} />
-            <span>Scroll to explore</span>
+            <span>{t('scrollHint')}</span>
           </div>
           <div className={styles.coords}>
             <div>
-              <span className={styles.key}>LAT</span>
-              <span className={styles.val}>—23.5489°S</span>
+              <span className={styles.key}>{t('coords.latLabel')}</span>
+              <span className={styles.val}>{t('coords.latValue')}</span>
             </div>
             <div>
-              <span className={styles.key}>LNG</span>
-              <span className={styles.val}>—46.6388°W</span>
+              <span className={styles.key}>{t('coords.lngLabel')}</span>
+              <span className={styles.val}>{t('coords.lngValue')}</span>
             </div>
             <div>
-              <span className={styles.key}>NODE</span>
-              <span className={styles.val}>EX-CORE-01</span>
+              <span className={styles.key}>{t('coords.nodeLabel')}</span>
+              <span className={styles.val}>{t('coords.nodeValue')}</span>
             </div>
           </div>
         </div>

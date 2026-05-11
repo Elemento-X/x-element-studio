@@ -2,6 +2,7 @@
 
 import { Turnstile } from '@marsidev/react-turnstile'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useTranslations } from 'next-intl'
 import { useState } from 'react'
 import {
   type Control,
@@ -27,14 +28,9 @@ type SubmitState =
   | { status: 'idle' }
   | { status: 'submitting' }
   | { status: 'success' }
-  | { status: 'error'; message: string }
+  | { status: 'error'; messageKey: ErrorKey }
 
-const ERROR_NETWORK = 'Connection failed. Try again.'
-const ERROR_RATE_LIMIT = 'Rate limit hit. Wait an hour.'
-const ERROR_VALIDATION = 'Fix the fields marked invalid.'
-const ERROR_DISABLED = 'Form is paused. Email contact@elemento-x.com.'
-const ERROR_GENERIC =
-  'Submit failed. Try again — or email contact@elemento-x.com.'
+type ErrorKey = 'network' | 'rateLimit' | 'validation' | 'disabled' | 'generic'
 
 // Isolated subcomponent for the conditional "Engagement detail" field.
 // Calling useWatch here (instead of `watch()` in the parent) keeps the
@@ -54,12 +50,13 @@ function EngagementOtherField({
   error,
   disabled,
 }: EngagementOtherFieldProps) {
+  const t = useTranslations('contactForm.fields')
   const engagement = useWatch({ control, name: 'engagement' })
   if (engagement !== 'other') return null
   return (
     <div className={`${styles.field} ${styles.fieldEnter}`}>
       <label htmlFor="contact-other" className={styles.label}>
-        Specify type
+        {t('engagementOther')}
       </label>
       <input
         id="contact-other"
@@ -80,6 +77,12 @@ function EngagementOtherField({
 }
 
 export function ContactForm() {
+  const t = useTranslations('contactForm')
+  const tFields = useTranslations('contactForm.fields')
+  const tSubmit = useTranslations('contactForm.submit')
+  const tErrors = useTranslations('contactForm.errors')
+  const tSuccess = useTranslations('contactForm.success')
+
   const [state, setState] = useState<SubmitState>({ status: 'idle' })
   // Token from Cloudflare Turnstile widget callback. Only attached to
   // the submit body when Turnstile is enabled (TURNSTILE_SITE_KEY set).
@@ -148,25 +151,23 @@ export function ContactForm() {
       }
       const code = body.error?.code
 
-      let message: string = ERROR_GENERIC
-      if (res.status === 429) message = ERROR_RATE_LIMIT
+      let messageKey: ErrorKey = 'generic'
+      if (res.status === 429) messageKey = 'rateLimit'
       else if (res.status === 400 && code === 'VALIDATION_ERROR')
-        message = ERROR_VALIDATION
-      else if (res.status === 503) message = ERROR_DISABLED
+        messageKey = 'validation'
+      else if (res.status === 503) messageKey = 'disabled'
 
-      setState({ status: 'error', message })
+      setState({ status: 'error', messageKey })
     } catch {
-      setState({ status: 'error', message: ERROR_NETWORK })
+      setState({ status: 'error', messageKey: 'network' })
     }
   }
 
   if (state.status === 'success') {
     return (
       <div className={styles.success} role="status" aria-live="polite">
-        <span className={styles.successEyebrow}>Brief received</span>
-        <p className={styles.successBody}>
-          Brief in. Response within 24 hours — yes, no, or how.
-        </p>
+        <span className={styles.successEyebrow}>{tSuccess('eyebrow')}</span>
+        <p className={styles.successBody}>{tSuccess('body')}</p>
       </div>
     )
   }
@@ -176,13 +177,13 @@ export function ContactForm() {
       className={styles.form}
       onSubmit={handleSubmit(onSubmit, onInvalid)}
       noValidate
-      aria-label="Contact form"
+      aria-label={t('ariaLabel')}
     >
       {/* Honeypot — visually hidden, off-screen, tab-skipped. Bots fill
           this; humans don't. Server returns silent 200 if tripped. */}
       <div className={styles.honeypot} aria-hidden="true">
         <label>
-          Leave this field empty
+          {t('honeypotLabel')}
           <input
             type="text"
             tabIndex={-1}
@@ -195,7 +196,7 @@ export function ContactForm() {
       <div className={styles.row}>
         <div className={styles.field}>
           <label htmlFor="contact-name" className={styles.label}>
-            Name
+            {tFields('name')}
           </label>
           <input
             id="contact-name"
@@ -216,7 +217,7 @@ export function ContactForm() {
 
         <div className={styles.field}>
           <label htmlFor="contact-email" className={styles.label}>
-            Email
+            {tFields('email')}
           </label>
           <input
             id="contact-email"
@@ -239,7 +240,8 @@ export function ContactForm() {
 
       <div className={styles.field}>
         <label htmlFor="contact-company" className={styles.label}>
-          Company <span className={styles.optional}>(optional)</span>
+          {tFields('company')}{' '}
+          <span className={styles.optional}>{tFields('companyOptional')}</span>
         </label>
         <input
           id="contact-company"
@@ -262,7 +264,7 @@ export function ContactForm() {
 
       <div className={styles.field}>
         <label htmlFor="contact-engagement" className={styles.label}>
-          Engagement
+          {tFields('engagement')}
         </label>
         <select
           id="contact-engagement"
@@ -276,7 +278,7 @@ export function ContactForm() {
           {...register('engagement')}
         >
           <option value="" disabled>
-            Choose engagement
+            {tFields('engagementPlaceholder')}
           </option>
           {ENGAGEMENT_OPTIONS.map((o) => (
             <option key={o.value} value={o.value}>
@@ -300,7 +302,7 @@ export function ContactForm() {
 
       <div className={styles.field}>
         <label htmlFor="contact-message" className={styles.label}>
-          Message
+          {tFields('message')}
         </label>
         <textarea
           id="contact-message"
@@ -314,7 +316,7 @@ export function ContactForm() {
           {...register('message')}
         />
         <span id="contact-message-help" className={styles.help}>
-          One page. The system you want fixed. A measurable outcome.
+          {tFields('messageHelp')}
         </span>
         {errors.message && (
           <span id="contact-message-error" className={styles.error}>
@@ -346,7 +348,7 @@ export function ContactForm() {
           }
           className={styles.submitBone}
         >
-          {isSubmitting ? 'Sending…' : 'Send brief'}
+          {isSubmitting ? tSubmit('submitting') : tSubmit('idle')}
         </Button>
         {state.status === 'error' && (
           <span
@@ -354,7 +356,7 @@ export function ContactForm() {
             role="alert"
             aria-live="assertive"
           >
-            {state.message}
+            {tErrors(state.messageKey)}
           </span>
         )}
       </div>

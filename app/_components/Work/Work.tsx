@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import { getTranslations } from 'next-intl/server'
 import { Reveal } from '../Reveal/Reveal'
 import { SectionHead } from '../SectionHead/SectionHead'
 import {
@@ -11,17 +12,16 @@ import {
 } from './visualizations'
 import styles from './Work.module.css'
 
-interface CaseStat {
-  k: string
+interface CaseStatValue {
   v: string
   signal?: boolean
 }
 
-interface CaseProps {
+interface CaseCardProps {
   client: string
   title: string
   copy?: string
-  stats: CaseStat[]
+  stats: { k: string; v: string; signal?: boolean }[]
   viz: ReactNode
   vizLabels: {
     topLeft?: string
@@ -29,9 +29,96 @@ interface CaseProps {
     bottomLeft?: string
     bottomRight?: string
   }
+  statusLabel: string
   tall?: boolean
-  signalLabel?: string
 }
+
+// Case-card values (numbers, deltas, viz labels) are intentional code
+// — they're part of the visual motif, not translatable copy. Only the
+// labels (client name, title, body copy, stat keys) come from messages.
+interface CaseStructure {
+  key: 'mediaOps' | 'knowledgeAgent' | 'logistics' | 'platform' | 'financeOps'
+  statValues: Record<string, CaseStatValue>
+  vizLabels: CaseCardProps['vizLabels']
+  viz: ReactNode
+  tall?: boolean
+  hasCopy?: boolean
+}
+
+const CASES_FEATURED: CaseStructure[] = [
+  {
+    key: 'mediaOps',
+    statValues: {
+      hours: { v: '+190', signal: true },
+      manualSteps: { v: '12 → 1' },
+      errorRate: { v: 'near zero' },
+    },
+    viz: <ChartViz />,
+    vizLabels: {
+      topLeft: 'MANUAL OPS · HRS/WK',
+      bottomLeft: 'Q1 — Q4',
+      topRight: 'SIGNAL ↑ 190H/Y',
+    },
+    tall: true,
+    hasCopy: true,
+  },
+  {
+    key: 'knowledgeAgent',
+    statValues: {
+      queries: { v: '4.2k' },
+      evalScore: { v: '94%', signal: true },
+      ttAnswer: { v: '2d → 4s' },
+    },
+    viz: <OrbitViz />,
+    vizLabels: {
+      topLeft: 'AGENT MESH · 12 NODES',
+      bottomRight: 'ACTIVE',
+    },
+    hasCopy: true,
+  },
+]
+
+const CASES_ROW: CaseStructure[] = [
+  {
+    key: 'logistics',
+    statValues: {
+      throughput: { v: '3.2×', signal: true },
+      errors: { v: '−41%' },
+      headcount: { v: 'unchanged' },
+    },
+    viz: <BarsViz />,
+    vizLabels: {
+      topLeft: 'DISPATCH · WK',
+      topRight: '↑ 3.2×',
+    },
+  },
+  {
+    key: 'platform',
+    statValues: {
+      components: { v: '147' },
+      releaseTime: { v: '−62%', signal: true },
+      visualDrift: { v: 'closed' },
+    },
+    viz: <LayersViz />,
+    vizLabels: {
+      topLeft: 'TOKENS · COMPONENTS · DOCS',
+      bottomRight: 'v2.4',
+    },
+  },
+  {
+    key: 'financeOps',
+    statValues: {
+      contextSwitches: { v: '−74%', signal: true },
+      resolutionTime: { v: '12m avg' },
+      tickets: { v: '−48%' },
+    },
+    viz: <CrosshairViz />,
+    vizLabels: {
+      topLeft: 'TARGET · OPS',
+      bottomRight: '98.5%',
+    },
+  },
+]
 
 function CaseCard({
   client,
@@ -40,13 +127,14 @@ function CaseCard({
   stats,
   viz,
   vizLabels,
+  statusLabel,
   tall = false,
-}: CaseProps) {
+}: CaseCardProps) {
   return (
     <Reveal as="article" className={styles.case}>
       <div className={styles.head}>
         <span className={styles.client}>{client}</span>
-        <span className={styles.status}>Operational</span>
+        <span className={styles.status}>{statusLabel}</span>
       </div>
       <figure className={`${styles.viz} ${tall ? styles.vizTall : ''}`}>
         <VizGridBg />
@@ -94,104 +182,62 @@ function CaseCard({
   )
 }
 
-export function Work() {
+export async function Work() {
+  const t = await getTranslations('work')
+  const statusLabel = t('statusLabel')
+
+  function buildStats(c: CaseStructure) {
+    return Object.entries(c.statValues).map(([statKey, val]) => ({
+      k: t(`cases.${c.key}.stats.${statKey}`),
+      v: val.v,
+      signal: val.signal,
+    }))
+  }
+
   return (
     <section className={`${styles.section} block`} id="work">
       <div className="container-wide container">
         <SectionHead
-          eyebrow="Signal"
-          number="005 · IMPACT"
+          eyebrow={t('eyebrow')}
+          number={t('number')}
           title={
             <>
-              Selected
+              {t('titleLine1')}
               <br />
-              impact
+              {t('titleLine2')}
             </>
           }
-          copy="A partial record. Specifics intentionally understated. Most of what we ship is invisible to end users — measured by what stops breaking, not by what gets announced."
+          copy={t('copy')}
         />
 
         <div className={styles.grid}>
-          <CaseCard
-            client="EX-2049 · Internal media operations"
-            title="190 hours a year, recovered from a media operations team."
-            copy="A daily multi-tool process — manual exports, spreadsheet stitching, Slack approvals — replaced by an event-driven pipeline with a single audit surface. The team got their week back."
-            stats={[
-              { k: 'Hours / year', v: '+190', signal: true },
-              { k: 'Manual steps', v: '12 → 1' },
-              { k: 'Error rate', v: 'near zero' },
-            ]}
-            viz={<ChartViz />}
-            vizLabels={{
-              topLeft: 'MANUAL OPS · HRS/WK',
-              bottomLeft: 'Q1 — Q4',
-              topRight: 'SIGNAL ↑ 190H/Y',
-            }}
-            tall
-          />
-
-          <CaseCard
-            client="EX-2112 · Operations team (NDA)"
-            title="A private knowledge agent for a 200-person operations team."
-            copy="Retrieval over internal documents, structured evals, role-scoped access. Vendor APIs never touch customer data. Answers in seconds replaced threads in days."
-            stats={[
-              { k: 'Queries / day', v: '4.2k' },
-              { k: 'Eval score', v: '94%', signal: true },
-              { k: 'Time-to-answer', v: '2d → 4s' },
-            ]}
-            viz={<OrbitViz />}
-            vizLabels={{
-              topLeft: 'AGENT MESH · 12 NODES',
-              bottomRight: 'ACTIVE',
-            }}
-          />
+          {CASES_FEATURED.map((c) => (
+            <CaseCard
+              key={c.key}
+              client={t(`cases.${c.key}.client`)}
+              title={t(`cases.${c.key}.title`)}
+              copy={c.hasCopy ? t(`cases.${c.key}.copy`) : undefined}
+              stats={buildStats(c)}
+              viz={c.viz}
+              vizLabels={c.vizLabels}
+              statusLabel={statusLabel}
+              tall={c.tall}
+            />
+          ))}
         </div>
 
         <div className={styles.row}>
-          <CaseCard
-            client="EX-1984 · Logistics (NDA)"
-            title="Dispatch throughput tripled, with the same team."
-            stats={[
-              { k: 'Throughput', v: '3.2×', signal: true },
-              { k: 'Errors', v: '−41%' },
-              { k: 'Headcount', v: 'unchanged' },
-            ]}
-            viz={<BarsViz />}
-            vizLabels={{
-              topLeft: 'DISPATCH · WK',
-              topRight: '↑ 3.2×',
-            }}
-          />
-
-          <CaseCard
-            client="EX-2277 · Multi-product platform (NDA)"
-            title="Five product surfaces, one tokenized system."
-            stats={[
-              { k: 'Components', v: '147' },
-              { k: 'Release time', v: '−62%', signal: true },
-              { k: 'Visual drift', v: 'closed' },
-            ]}
-            viz={<LayersViz />}
-            vizLabels={{
-              topLeft: 'TOKENS · COMPONENTS · DOCS',
-              bottomRight: 'v2.4',
-            }}
-          />
-
-          <CaseCard
-            client="EX-2318 · Finance ops (NDA)"
-            title="Seven tabs collapsed into one operations console."
-            stats={[
-              { k: 'Context switches', v: '−74%', signal: true },
-              { k: 'Resolution time', v: '12m avg' },
-              { k: 'Tickets / month', v: '−48%' },
-            ]}
-            viz={<CrosshairViz />}
-            vizLabels={{
-              topLeft: 'TARGET · OPS',
-              bottomRight: '98.5%',
-            }}
-          />
+          {CASES_ROW.map((c) => (
+            <CaseCard
+              key={c.key}
+              client={t(`cases.${c.key}.client`)}
+              title={t(`cases.${c.key}.title`)}
+              stats={buildStats(c)}
+              viz={c.viz}
+              vizLabels={c.vizLabels}
+              statusLabel={statusLabel}
+            />
+          ))}
         </div>
       </div>
     </section>
