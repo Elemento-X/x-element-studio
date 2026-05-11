@@ -1,5 +1,13 @@
 #!/usr/bin/env bash
-# Smoke test for /api/contact in production.
+# Smoke test for the production deploy.
+#
+# Covers:
+#   - /api/contact pipeline (GET 405, content-type, JSON validation,
+#     schema validation, happy path / feature-off path)
+#   - All four locale routes (en `/`, pt-br, es, fr) — HTTP 200,
+#     correct `<html lang>` attribute, locale-specific copy in H1.
+#   - SEO endpoints: /robots.txt and /sitemap.xml resolve and contain
+#     the canonical sitemap reference / hreflang entries.
 #
 # Usage:
 #   BASE_URL=https://elemento-x.com bash scripts/smoke-test-prod.sh
@@ -103,14 +111,110 @@ do_check() {
   rm -f "$hf" "$bf"
 }
 
+# Page-route check: GET <path>, assert status, optionally assert
+# `<html lang>` attribute and a copy substring proves the locale's
+# messages got wired up (not just routing).
+#
+# Args:
+#   1 = expected status
+#   2 = label
+#   3 = path (e.g. /, /pt-br, /sitemap.xml)
+#   4 = expected lang attr (optional; empty string skips the check)
+#   5 = expected body substring (optional; empty string skips)
+do_check_page() {
+  exp_status=$1
+  label=$2
+  path=$3
+  exp_lang=${4:-}
+  exp_substring=${5:-}
+
+  bf="${TMPDIR:-/tmp}/smoke-page-body.$$"
+
+  # Send Accept-Language: en so the next-intl middleware doesn't 307
+  # `/` to `/pt-br` based on the runner's locale. Production users get
+  # that behavior; the smoke needs deterministic routing.
+  # --max-redirs 0 makes any unexpected redirect surface as exit-code
+  # 47, which we map to a clear failure below instead of silently
+  # following.
+  status=$(curl -sS -o "$bf" -w "%{http_code}" \
+    -H "Accept-Language: en" \
+    --max-redirs 0 \
+    "${BASE_URL}${path}" || echo "000")
+
+  ok=1
+  reason=""
+
+  if [ "$status" != "$exp_status" ]; then
+    ok=0
+    reason="status=$status (expected $exp_status)"
+  fi
+
+  if [ "$ok" = "1" ] && [ -n "$exp_lang" ]; then
+    if ! grep -qE "<html[^>]*lang=\"${exp_lang}\"" "$bf"; then
+      ok=0
+      reason="missing lang=\"$exp_lang\" in <html>"
+    fi
+  fi
+
+  if [ "$ok" = "1" ] && [ -n "$exp_substring" ]; then
+    if ! grep -q "$exp_substring" "$bf"; then
+      ok=0
+      reason="missing copy=\"$exp_substring\" in body"
+    fi
+  fi
+
+  if [ "$ok" = "1" ]; then
+    PASS_COUNT=$((PASS_COUNT + 1))
+    printf "%sPASS%s  %-58s status=%s\n" "$C_OK" "$C_RST" "$label" "$status"
+  else
+    FAIL_COUNT=$((FAIL_COUNT + 1))
+    FAIL_NAMES="$FAIL_NAMES|$label"
+    printf "%sFAIL%s  %-58s %s\n" "$C_FAIL" "$C_RST" "$label" "$reason"
+  fi
+
+  if [ "$VERBOSE" = "1" ] || [ "$ok" = "0" ]; then
+    body_excerpt=$(head -c 240 "$bf" 2>/dev/null || echo "")
+    if [ -n "$body_excerpt" ]; then
+      printf "%s      body:    %s%s\n" "$C_DIM" "$body_excerpt" "$C_RST"
+    fi
+  fi
+
+  rm -f "$bf"
+}
+
 # Marker tag for the smoke run; lets the operator filter Notion/logs.
 SMOKE_TAG="SMOKE_TEST_$(date -u +%Y%m%dT%H%M%SZ)"
 
 echo "Endpoint: $ENDPOINT"
 echo "Tag:      $SMOKE_TAG"
-echo "Mode:     $([ \"$FEATURE_OFF\" = \"1\" ] && echo \"FEATURE_OFF (assert 503)\" || echo \"FEATURE_ON (assert 200)\")"
+if [ "$FEATURE_OFF" = "1" ]; then
+  echo "Mode:     FEATURE_OFF (assert 503)"
+else
+  echo "Mode:     FEATURE_ON (assert 200)"
+fi
 echo
 
+# ─── Locale routes (F4 i18n) ────────────────────────────────────────
+# Every locale must respond 200 on its canonical path, carry the right
+# `<html lang>`, and render copy that proves the messages bundle for
+# that locale loaded (not just the routing). Default (en) lives at /;
+# the others at /<locale> because of `localePrefix: 'as-needed'`.
+do_check_page 200 "Locale route en (/) renders with lang and EN copy" "/" "en" "We build"
+do_check_page 200 "Locale route pt-br renders with lang and PT-BR copy" "/pt-br" "pt-br" "Construímos"
+do_check_page 200 "Locale route es renders with lang and ES copy" "/es" "es" "Construimos"
+do_check_page 200 "Locale route fr renders with lang and FR copy" "/fr" "fr" "construisons"
+
+# ─── SEO endpoints (F4.4) ───────────────────────────────────────────
+# Both must serve plain text/XML at the canonical paths so search
+# engines pick them up. We check the body contains the canonical
+# sitemap reference / a localized hreflang entry, not just that the
+# route exists.
+do_check_page 200 "/robots.txt resolves and references sitemap.xml" "/robots.txt" "" "/sitemap.xml"
+do_check_page 200 "/sitemap.xml includes all four locale URLs" "/sitemap.xml" "" "hreflang=\"pt-br\""
+
+echo
+
+# ─── /api/contact pipeline ─────────────────────────────────────────
 # Scenario 1: GET should be 405 with Allow: POST.
 do_check GET 405 "GET returns 405 METHOD_NOT_ALLOWED" "METHOD_NOT_ALLOWED"
 

@@ -85,7 +85,16 @@ jobs:
 
       # webServer in playwright.config.ts builds + starts the production
       # server in CI (avoids Turbopack dev-server stale manifests).
+      #
+      # PW_SKIP_CONTACT_FORM=1: the contact-form golden-path spec requires
+      # a live /api/contact (which validates real envs at runtime — Resend,
+      # Notion, Upstash). In CI we don't ship those secrets to the runner
+      # (and shouldn't: it would expose them in deployment logs). Skip the
+      # spec there; it runs locally with .env.local and against the deploy
+      # preview via smoke-test-prod.sh.
       - name: Run E2E tests
+        env:
+          PW_SKIP_CONTACT_FORM: '1'
         run: npx playwright test --project=chromium
 
       - name: Upload Playwright report

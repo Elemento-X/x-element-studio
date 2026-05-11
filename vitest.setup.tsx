@@ -42,6 +42,68 @@ for (const [k, v] of Object.entries(baseTestEnv)) {
 // real bundler still enforces the rule outside tests.
 vi.mock('server-only', () => ({}))
 
+// next-intl mock: tests don't run the real i18n pipeline (no middleware,
+// no per-request locale). We resolve every `t(key)` against the EN
+// source-of-truth (`messages/en.json`) so assertions read real copy.
+// `t.rich(key, tags)` strips inline tags to plain text — adequate for
+// unit-level matching; React tree shape is exercised by E2E.
+import enMessages from './messages/en.json'
+
+type MessageNode = string | { [key: string]: MessageNode }
+
+function readMessage(path: string): string {
+  const segments = path.split('.')
+  let node: MessageNode = enMessages as unknown as MessageNode
+  for (const seg of segments) {
+    if (typeof node !== 'object' || node === null) return path
+    node = (node as { [k: string]: MessageNode })[seg] ?? path
+  }
+  return typeof node === 'string' ? node : path
+}
+
+type TFn = ((
+  key: string,
+  values?: Record<string, string | number>,
+) => string) & {
+  rich: (
+    key: string,
+    tags?: Record<string, (chunks: ReactNode) => ReactNode>,
+  ) => string
+}
+
+function makeT(namespace?: string): TFn {
+  const resolve = (key: string) => (namespace ? `${namespace}.${key}` : key)
+  const t = ((key: string, values?: Record<string, string | number>) => {
+    let msg = readMessage(resolve(key))
+    if (values) {
+      for (const [k, v] of Object.entries(values)) {
+        msg = msg.replace(new RegExp(`\\{${k}\\}`, 'g'), String(v))
+      }
+    }
+    return msg
+  }) as TFn
+  t.rich = (key: string) => {
+    const msg = readMessage(resolve(key))
+    // Strip inline tags like <strong>x</strong> → x for unit assertions.
+    return msg.replace(/<(\w+)>([^<]*)<\/\1>/g, '$2')
+  }
+  return t
+}
+
+vi.mock('next-intl', () => ({
+  useTranslations: (namespace?: string) => makeT(namespace),
+  NextIntlClientProvider: ({ children }: { children: ReactNode }) => children,
+  hasLocale: () => true,
+}))
+
+vi.mock('next-intl/server', () => ({
+  getTranslations: async (param?: string | { namespace?: string }) => {
+    const namespace = typeof param === 'string' ? param : param?.namespace
+    return makeT(namespace)
+  },
+  setRequestLocale: () => {},
+}))
+
 afterEach(() => {
   cleanup()
 })

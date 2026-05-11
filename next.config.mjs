@@ -1,3 +1,9 @@
+import createNextIntlPlugin from 'next-intl/plugin'
+
+// next-intl plugin: points at the server-side request config so message
+// loading works in RSC. Path is the next-intl convention (`./i18n/request.ts`).
+const withNextIntl = createNextIntlPlugin('./i18n/request.ts')
+
 // Static security headers applied globally via Next's headers() config.
 // Content-Security-Policy lives in middleware.ts (it needs a per-request
 // nonce, which a static config can't generate). Everything else is
@@ -35,4 +41,4 @@ const nextConfig = {
   },
 }
 
-export default nextConfig
+export default withNextIntl(nextConfig)

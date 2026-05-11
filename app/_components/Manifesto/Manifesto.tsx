@@ -1,10 +1,17 @@
 import Image from 'next/image'
+import { getTranslations } from 'next-intl/server'
 import { Reveal } from '../Reveal/Reveal'
 import styles from './Manifesto.module.css'
 
-export function Manifesto() {
+export async function Manifesto() {
+  const t = await getTranslations('manifesto')
+
   return (
-    <section id="manifesto" className={styles.manifesto} aria-label="Manifesto">
+    <section
+      id="manifesto"
+      className={styles.manifesto}
+      aria-label={t('ariaLabel')}
+    >
       <div className={styles.bg} aria-hidden="true">
         <div className={styles.glow} />
         <div className={styles.shaft} />
@@ -17,23 +24,19 @@ export function Manifesto() {
         </span>
 
         <blockquote className={styles.lines}>
-          <p className={styles.line}>We are not seen.</p>
-          <p className={`${styles.line} ${styles.gold}`}>
-            But everything works
-          </p>
-          <p className={styles.line}>because of us.</p>
+          <p className={styles.line}>{t('line1')}</p>
+          <p className={`${styles.line} ${styles.gold}`}>{t('line2')}</p>
+          <p className={styles.line}>{t('line3')}</p>
         </blockquote>
 
         <p className={styles.body}>
-          We are the team called when the system has to work. When downtime is
-          expensive. When the people closest to the problem need{' '}
-          <strong>leverage</strong>, not another meeting.
+          {t.rich('body', {
+            strong: (chunks) => <strong>{chunks}</strong>,
+          })}
         </p>
 
         <footer className={styles.sig}>
-          <cite>
-            Elemento&#8209;X &nbsp;·&nbsp; Manifesto &nbsp;·&nbsp; 2026
-          </cite>
+          <cite>{t('sig')}</cite>
         </footer>
       </Reveal>
     </section>

@@ -1,19 +1,23 @@
+import { getTranslations } from 'next-intl/server'
 import { env } from '@/config/env'
 import { Button } from '../Button/Button'
 import { ContactForm } from '../ContactForm/ContactFormLazy'
 import { Reveal } from '../Reveal/Reveal'
 import styles from './FinalCta.module.css'
 
-const BRIEF_ROWS = [
-  { k: 'Availability', v: 'Q3 · 2026', signal: true },
-  { k: 'Response', v: '< 24 hours' },
-  { k: 'Engagements', v: '3 active / 2 open' },
-  { k: 'Diagnostic', v: '14 days' },
-  { k: 'Minimum scope', v: '1 system' },
-  { k: 'Regions', v: 'Global · Remote' },
+// Stable list of brief rows. `signal: true` flags the row that gets
+// the gold treatment when the dormant (mailto) state is rendered.
+const BRIEF_KEYS: { key: string; signal?: boolean }[] = [
+  { key: 'availability', signal: true },
+  { key: 'response' },
+  { key: 'engagements' },
+  { key: 'diagnostic' },
+  { key: 'minScope' },
+  { key: 'regions' },
 ]
 
-export function FinalCta() {
+export async function FinalCta() {
+  const t = await getTranslations('finalCta')
   const formEnabled = env.NEXT_PUBLIC_CONTACT_FORM_ENABLED
 
   // Brand rule: 1 gold per primary viewport. With the form active, the
@@ -36,18 +40,13 @@ export function FinalCta() {
       <div className="container-wide container">
         <div className={styles.inner}>
           <Reveal>
-            <span className={eyebrowClassName}>
-              Initiate contact &nbsp;·&nbsp; 006
-            </span>
+            <span className={eyebrowClassName}>{t('eyebrow')}</span>
             <h2 className={styles.title}>
-              Send the
+              {t('titleLine1')}
               <br />
-              <span className={briefClassName}>brief.</span>
+              <span className={briefClassName}>{t('titleLine2')}</span>
             </h2>
-            <p className={styles.body}>
-              One page. The system you want fixed. A measurable outcome. We
-              answer in 24 hours &mdash; yes, no, or how.
-            </p>
+            <p className={styles.body}>{t('body')}</p>
             {!formEnabled && (
               <div className={styles.cta}>
                 <Button
@@ -55,10 +54,10 @@ export function FinalCta() {
                   variant="primary"
                   withArrow
                 >
-                  Send brief
+                  {t('ctaPrimary')}
                 </Button>
                 <Button href="mailto:contact@elemento-x.com" variant="ghost">
-                  Talk to founders
+                  {t('ctaGhost')}
                 </Button>
               </div>
             )}
@@ -68,30 +67,26 @@ export function FinalCta() {
             {formEnabled ? (
               <>
                 <span className={`${styles.eyebrow} ${styles.eyebrowMuted}`}>
-                  Engagement brief
+                  {t('cardEyebrow')}
                 </span>
                 <ContactForm />
               </>
             ) : (
               <>
-                <span className={styles.eyebrow}>Engagement brief</span>
+                <span className={styles.eyebrow}>{t('cardEyebrow')}</span>
                 <dl className={styles.brief}>
-                  {BRIEF_ROWS.map((r) => (
-                    <div key={r.k} className={styles.row}>
-                      <dt className={styles.k}>{r.k}</dt>
+                  {BRIEF_KEYS.map((r) => (
+                    <div key={r.key} className={styles.row}>
+                      <dt className={styles.k}>{t(`brief.${r.key}.k`)}</dt>
                       <dd
                         className={`${styles.v} ${r.signal ? styles.vSignal : ''}`}
                       >
-                        {r.v}
+                        {t(`brief.${r.key}.v`)}
                       </dd>
                     </div>
                   ))}
                 </dl>
-                <div className={styles.disclaimer}>
-                  We partner with a select number of teams each quarter.
-                  Selection is by fit &mdash; can we make the system measurably
-                  better. The deal closing is secondary.
-                </div>
+                <div className={styles.disclaimer}>{t('disclaimer')}</div>
               </>
             )}
           </Reveal>

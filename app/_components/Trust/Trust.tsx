@@ -1,63 +1,32 @@
+import { getTranslations } from 'next-intl/server'
 import { Reveal } from '../Reveal/Reveal'
 import styles from './Trust.module.css'
 
-const STATS = [
-  {
-    num: '01 · ENGAGEMENTS',
-    stat: '42',
-    unit: '/ shipped',
-    label:
-      'Production systems delivered across SaaS, fintech, logistics, and internal ops.',
-  },
-  {
-    num: '02 · AUTOMATION',
-    stat: '128',
-    unit: '/ flows',
-    label:
-      'Active pipelines replacing manual work across partner organizations.',
-  },
-  {
-    num: '03 · UPTIME',
-    stat: '99.98',
-    unit: '%',
-    label:
-      'Measured across all Elemento-X-operated infrastructure, trailing 12 months.',
-  },
-  {
-    num: '04 · TIME SAVED',
-    stat: '11.4k',
-    unit: 'hrs / yr',
-    label:
-      'Recovered engineering and operations hours through automation and tooling.',
-  },
-]
+// Stable list of stat keys — order is intentional, copy lives in messages.
+const STAT_KEYS = ['engagements', 'automation', 'uptime', 'timeSaved'] as const
 
-export function Trust() {
+export async function Trust() {
+  const t = await getTranslations('trust')
+
   return (
-    <section className={styles.trust} aria-label="Positioning">
+    <section className={styles.trust} aria-label={t('ariaLabel')}>
       <div className="container-wide container">
         <Reveal className={styles.head}>
           <div>
-            <span className={styles.eyebrow}>
-              Positioning &nbsp;·&nbsp; 002
-            </span>
+            <span className={styles.eyebrow}>{t('eyebrow')}</span>
           </div>
-          <div className={styles.headCopy}>
-            A focused partner for teams building internal tools, SaaS platforms,
-            AI-driven workflows, and automation infrastructure. Quiet execution.
-            Measured outcomes.
-          </div>
+          <div className={styles.headCopy}>{t('headCopy')}</div>
         </Reveal>
 
-        <ul className={styles.grid} aria-label="Studio metrics">
-          {STATS.map((s) => (
-            <Reveal key={s.num} as="li" className={styles.cell}>
-              <div className={styles.num}>{s.num}</div>
+        <ul className={styles.grid} aria-label={t('gridLabel')}>
+          {STAT_KEYS.map((k) => (
+            <Reveal key={k} as="li" className={styles.cell}>
+              <div className={styles.num}>{t(`stats.${k}.num`)}</div>
               <div className={styles.stat}>
-                {s.stat}
-                <span className={styles.unit}>{s.unit}</span>
+                {t(`stats.${k}.stat`)}
+                <span className={styles.unit}>{t(`stats.${k}.unit`)}</span>
               </div>
-              <div className={styles.label}>{s.label}</div>
+              <div className={styles.label}>{t(`stats.${k}.label`)}</div>
             </Reveal>
           ))}
         </ul>
