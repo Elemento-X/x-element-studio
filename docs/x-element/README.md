@@ -1,3 +1,6 @@
+> **READ-ONLY — do not edit any file under `docs/x-element/`.**
+> This bundle is the original handoff snapshot from Claude Design. Production lives in `app/_components/<Section>/`. Edits to the bundle desynchronize the historical record without changing what ships. If a design decision needs to change, change it in `app/` and update `app/tokens.css` / `.claude/commands/x-element-studio.md`.
+
 # CODING AGENTS: READ THIS FIRST
 
 This is a **handoff bundle** from Claude Design (claude.ai/design).

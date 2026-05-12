@@ -1,3 +1,6 @@
+> **READ-ONLY — do not edit any file under `docs/x-element-design-system/`.**
+> This bundle is the original brand-bible snapshot from Claude Design. Production tokens live in `app/tokens.css`; the active brand reference lives in `.claude/commands/x-element-studio.md`. Edits to the bundle desynchronize the historical record without changing what ships.
+
 # CODING AGENTS: READ THIS FIRST
 
 This is a **handoff bundle** from Claude Design (claude.ai/design).

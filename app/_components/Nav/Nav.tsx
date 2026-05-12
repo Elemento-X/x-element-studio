@@ -48,11 +48,11 @@ export function Nav() {
 
   useEffect(() => {
     if (!menuOpen) return
-    const onKeyDown = (e: KeyboardEvent) => {
+    const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') closeMenu()
     }
-    window.addEventListener('keydown', onKeyDown)
-    return () => window.removeEventListener('keydown', onKeyDown)
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
   }, [menuOpen, closeMenu])
 
   // Focus-trap inside the drawer while open. Keyboard users tabbing
@@ -73,7 +73,7 @@ export function Nav() {
 
     first?.focus()
 
-    const onKeyDown = (e: KeyboardEvent) => {
+    const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key !== 'Tab') return
       if (e.shiftKey && document.activeElement === first) {
         e.preventDefault()
@@ -84,8 +84,8 @@ export function Nav() {
       }
     }
 
-    drawer.addEventListener('keydown', onKeyDown)
-    return () => drawer.removeEventListener('keydown', onKeyDown)
+    drawer.addEventListener('keydown', handleKeyDown)
+    return () => drawer.removeEventListener('keydown', handleKeyDown)
   }, [menuOpen])
 
   // When the drawer closes via Escape or toggle (not via link click,
