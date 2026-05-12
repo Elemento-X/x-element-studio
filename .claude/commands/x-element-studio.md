@@ -12,34 +12,46 @@ Site marketing / landing page do **X Element Studio** — estúdio de tecnologia
 - **Tagline (EN):** *Intelligent systems. Real impact.*
 - **Voz:** *We are not seen. But everything works because of us.*
 
-## Stack (alvo)
+## Stack (em produção)
 
-> A definir com Maclean antes do scaffolding. Recomendação atual: **Next.js 14 (App Router) + TypeScript + CSS Modules** — SSR/SEO out-of-the-box, alinhado com `@rocketseat/eslint-config/next`, sem Tailwind (a marca prefere tokens manuais via `colors_and_type.css`, não classes utilitárias).
+- **Next.js 16 (App Router)** + **React 19** + **TypeScript** strict
+- **CSS Modules** + design tokens em `app/tokens.css`. **Sem Tailwind** (removido em `5b00b22`); marca usa tokens manuais via `colors_and_type.css` original como referência.
+- **next-intl** — EN (default, sem prefixo) · PT-BR · ES · FR sob `app/[locale]/` (slugs lowercase: `pt-br`, `es`, `fr`)
+- **`@rocketseat/eslint-config/next`** + Prettier
+- **Pipeline de contato:** Zod + Cloudflare Turnstile + Upstash Redis + Notion + Resend
+- **Testes:** Vitest (unit/integ) + Playwright (E2E em container pinado por lockstep com `package.json`)
 
 ## Estrutura
 
 ```
 x-element-studio/
-├── .claude/                       # Equipe de agentes, hooks, rules, metrics
-├── src/
-│   ├── docs/
-│   │   ├── x-element/            # Handoff Claude Design — Landing Page
-│   │   │   └── project/
-│   │   │       ├── Landing Page-print.html  # Source de verdade do design
-│   │   │       ├── colors_and_type.css      # Tokens (cores, type, spacing)
-│   │   │       ├── tweaks-panel.jsx         # Ignorar (overlay de design)
-│   │   │       ├── assets/                  # Logos, ícones brand (svg/png)
-│   │   │       └── fonts/                   # Inter (18/24/28pt)
-│   │   └── x-element-design-system/        # Sistema completo
-│   │       └── project/
-│   │           ├── Design.md                # Guia de bolso (PT-BR)
-│   │           ├── README.md                # Brand bible (EN)
-│   │           ├── colors_and_type.css      # = mesmo dos tokens da landing
-│   │           ├── preview/                 # Cards do DS (cores, type, btns)
-│   │           ├── ui_kits/dashboard/       # Ops Console (futuro produto)
-│   │           ├── assets/                  # Brand board, conceitos, marks
-│   │           └── fonts/                   # Inter
-└── (a criar) app/, components/, public/, package.json...
+├── app/
+│   ├── [locale]/                 # i18n root (next-intl)
+│   │   ├── layout.tsx
+│   │   └── page.tsx              # composição da landing
+│   ├── _components/<Section>/    # componentes co-localizados
+│   ├── api/{contact,csp-report}/route.ts
+│   ├── globals.css · tokens.css
+│   └── (apple-icon|icon|opengraph-image|twitter-image|robots|sitemap)
+├── i18n/{request.ts, config.ts}, messages/{pt-br,en,es,fr}.json
+├── config/env.ts                 # Zod env schema (fail-fast)
+├── lib/{contact,csp,observability,seo}/
+├── middleware.ts                 # negociação de locale
+├── public/{fonts,assets}/
+├── docs/                         # operacional (live) + design handoff (READ-ONLY)
+│   ├── runbooks/, api/openapi-contact.yaml, copy-*.md, spikes/
+│   ├── x-element/                # READ-ONLY — prototype HTML/CSS
+│   │   └── project/
+│   │       ├── Landing Page-print.html  # Source visual de verdade
+│   │       ├── colors_and_type.css      # Tokens originais (referência)
+│   │       ├── tweaks-panel.jsx         # NÃO PORTADO (overlay design)
+│   │       ├── assets/, fonts/
+│   └── x-element-design-system/  # READ-ONLY — brand bible + DS preview
+│       └── project/
+│           ├── Design.md (PT-BR), README.md (EN)
+│           ├── colors_and_type.css (= mesmos tokens)
+│           ├── preview/, ui_kits/dashboard/, assets/, fonts/
+└── .claude/                      # agents · commands · hooks · rules · plans · metrics
 ```
 
 ## Filosofia de marca (inegociável)
@@ -96,12 +108,19 @@ Modos (controlados por `data-` attrs no `<body>`):
 - `data-density`: `editorial` / `standard` (default) / `dense`
 - `data-accent`: `gold` (default) / `ember` / `bone` / `oxide`
 
-## Comandos (a configurar pós-scaffold)
+## Comandos
 
-- Dev: `npm run dev`
-- Build: `npm run lint && npm run build`
-- Lint: `npx eslint .`
-- Typecheck: `npm run typecheck` (`tsc --noEmit`)
+```bash
+npm run dev              # http://localhost:3000 serve EN no root; /pt-br · /es · /fr para traduções
+npm run build            # lint + next build (lint é gate)
+npm run typecheck        # tsc --noEmit
+npm run lint             # eslint . (flat config)
+npm run test:run         # vitest run
+npm run test:coverage    # vitest run --coverage
+npm run test:e2e         # playwright test (needs container)
+```
+
+**Lockstep do Playwright:** ao bumpar `@playwright/test`, atualizar a tag do container em `ci.yml` no mesmo PR. Mismatch → E2E quebra com `Executable doesn't exist`.
 
 ## Equipe ativa
 
