@@ -75,7 +75,7 @@ jobs:
     # deterministic. Bump this tag in lockstep with @playwright/test in
     # package.json — they must always match.
     container:
-      image: mcr.microsoft.com/playwright:v1.59.1-jammy
+      image: mcr.microsoft.com/playwright:v1.60.0-jammy
 
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
