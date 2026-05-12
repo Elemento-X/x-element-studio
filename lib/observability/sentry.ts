@@ -1,6 +1,8 @@
 import 'server-only'
 
 /**
+ * @stub Sentry integration point — not wired in production yet.
+ *
  * Sentry stub. No-op when SENTRY_DSN is not set; loads `@sentry/nextjs`
  * lazily when it is.
  *
@@ -10,6 +12,11 @@ import 'server-only'
  *    Vercel logs alone for the first few weeks.
  *  - But we want the *integration point* in place so wiring it later is
  *    a one-PR change (install dep + set DSN) rather than a refactor.
+ *
+ * ts-prune flags `initSentry`/`captureError` as unused exports. That is
+ * **intentional** while the stub is dormant; do not remove. They are part
+ * of the dormant public surface and become callable the moment Sentry is
+ * wired per the steps below.
  */
 
 /**
@@ -90,7 +97,10 @@ export async function initSentry(): Promise<void> {
  * a real alert (e.g. `permanent_error` from Notion = operator action
  * required NOW).
  */
-export function captureError(err: unknown, context?: Record<string, unknown>): void {
+export function captureError(
+  err: unknown,
+  context?: Record<string, unknown>,
+): void {
   if (!_initialized || !process.env.SENTRY_DSN) return
   try {
     // @ts-expect-error — see initSentry.

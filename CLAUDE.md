@@ -6,28 +6,50 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **X Element Studio** — landing site for a high-performance technology studio. Brand voice: *"Darkness as default. Gold as signal."* — controlled, minimal, never warm.
 
-Repo: https://github.com/Elemento-X/elemento-x-studio
+Repo: https://github.com/Elemento-X/x-element-studio
 
 The full project context (brand, tokens, sections, design rules) lives in `.claude/commands/x-element-studio.md`. Read that first; it is the source of truth for any visual or copy decision.
 
 ## Stack
 
 - **Next.js 16 (App Router)** + **React 19** + **TypeScript** (strict, `noUncheckedIndexedAccess`)
-- **CSS Modules** + design tokens in `app/tokens.css` (no Tailwind by design — the system is token-first, not utility-first)
+- **next-intl** for i18n (PT-BR · EN · ES · FR) under `app/[locale]/`
+- **CSS Modules** + design tokens in `app/tokens.css` (no Tailwind — removed in commit `5b00b22`; the system is token-first, not utility-first)
 - **`next/font/local`** for Inter (WOFF2 from `public/fonts/`, weights 300/400/500/600 only); **Exo 2** + **JetBrains Mono** via `next/font/google` (self-hosted at build time, zero render-blocking external requests)
 - **lucide-react** for functional UI icons (brand motifs are bespoke SVG in `public/assets/`)
+- **Contact pipeline:** Zod + Cloudflare Turnstile + Upstash Redis (rate-limit/idempotency) + Notion (persistence) + Resend (mail)
+- **Vitest** (unit/integration) + **Playwright** (E2E pinned to container `mcr.microsoft.com/playwright:vX.Y.Z-jammy`)
+
+### Security pins (do not remove without rotation)
+
+`package.json` declares `overrides.postcss: ^8.5.10` to lift the transitive `postcss` graph above [GHSA-qx2v-qp2m-jg93](https://github.com/advisories/GHSA-qx2v-qp2m-jg93) (XSS via unescaped `</style>` in CSS Stringify). Next 16.2.6 still ships postcss 8.4.31 transitively — the override is the fix. Remove only if Next bumps its bundled postcss past 8.5.10 *and* this advisory remains the only reason for the pin.
 
 ## Commands
 
 ```bash
-npm run dev        # next dev — http://localhost:3000
-npm run build      # next build — production output
-npm run lint       # next lint (ESLint + Prettier via @rocketseat/eslint-config/next)
-npm run typecheck  # tsc --noEmit
-npm run format     # prettier --write .
+npm run dev              # next dev — http://localhost:3000 serves EN at root; /pt-br · /es · /fr for translations
+npm run build            # npm run lint && next build (lint is a build gate)
+npm run start            # next start
+npm run lint             # eslint . (flat config: eslint.config.mjs)
+npm run typecheck        # tsc --noEmit
+npm run format           # prettier --write .
+npm run test:run         # vitest run (one-shot)
+npm run test:coverage    # vitest run --coverage
+npm run test:e2e         # playwright test (needs running server + container)
 ```
 
 The hooks in `.claude/hooks/` run lint, typecheck, prettier, secret-scan, and protect-files automatically on every Edit/Write. They use `npx --no-install`, so they only fire when the local tool is installed.
+
+## CI
+
+[`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs four jobs on `push` and `pull_request` (branches `main`, `dev`) plus a weekly schedule:
+
+1. **Lint, Typecheck & Build** — gate; the other jobs `needs:` this one.
+2. **Unit & Integration Tests** — Vitest.
+3. **E2E Tests (Playwright)** — runs **inside** `mcr.microsoft.com/playwright:vX.Y.Z-jammy`. Visual baselines are platform-sensitive; the container keeps them deterministic.
+4. **Dependency Audit** — `npm audit --audit-level=high`.
+
+> **Playwright lockstep rule (non-negotiable):** when bumping `@playwright/test` in `package.json`, bump the container tag in `ci.yml` in the **same PR**. Mismatch fails E2E with `browserType.launch: Executable doesn't exist`. The comment at the container declaration in `ci.yml` documents this — keep it accurate.
 
 ## Architecture
 
@@ -35,31 +57,55 @@ The hooks in `.claude/hooks/` run lint, typecheck, prettier, secret-scan, and pr
 
 ```
 app/
-  layout.tsx          # Root layout — Inter local font, body data-attrs (atmosphere/accent)
-  page.tsx            # Landing — composes section components in order
-  globals.css         # Reset + .container utility + reduced-motion
-  tokens.css          # All design tokens + atmosphere/accent mode overrides
-  _components/        # App Router private folder (underscore = no route generated)
+  [locale]/                   # next-intl i18n root — pt-BR (default) | en | es | fr
+    layout.tsx                # Root layout — Inter local font, body data-attrs (atmosphere/accent)
+    page.tsx                  # Landing — composes section components in order
+  _components/                # App Router private folder (underscore = no route generated)
     <Section>/
       <Section>.tsx           # Component (server by default; "use client" only when needed)
       <Section>.module.css    # Co-located styles
+  api/
+    contact/route.ts          # POST — Zod + Turnstile + Notion + Resend + rate-limit
+    csp-report/route.ts       # POST — CSP violation collector (Report-Only)
+  globals.css                 # Reset + .container utility + reduced-motion
+  tokens.css                  # All design tokens + atmosphere/accent mode overrides
+  {apple-icon,icon,opengraph-image,twitter-image}.tsx  # Next route convention
+  {robots,sitemap}.ts                                  # Next route convention
+i18n/
+  request.ts                  # next-intl request config (locale → messages loader)
+  config.ts                   # routing config — locales, defaultLocale ('en'), localePrefix ('as-needed')
+messages/
+  {pt-br,en,es,fr}.json       # translation catalogs (lowercase slugs)
+config/
+  env.ts                      # Zod env schema (fail-fast at boot)
+lib/
+  contact/                    # Zod schema + Resend client + Notion + idempotency
+  csp/                        # Rate-limit (IPv6 /64 bucketing) + receiver
+  observability/              # Sentry stub (not wired — see sentry.ts header)
+  seo/                        # JSON-LD payload + BCP-47 mapper
+middleware.ts                 # next-intl locale negotiation
 public/
-  fonts/              # Inter 18pt WOFF2 (300/400/500/600 only) — Exo 2 + JetBrains via next/font/google
-  assets/             # Brand SVG/PNG (logo flask, wordmarks, motif icons)
-docs/             # Claude Design handoff bundles (READ-ONLY reference)
-  x-element/                 # Landing page source-of-truth (HTML/CSS prototype)
-  x-element-design-system/   # Brand bible + DS preview cards + dashboard kit
+  fonts/                      # Inter 18pt WOFF2 (300/400/500/600 only)
+  assets/                     # Brand SVG/PNG (logo flask, wordmarks, motif icons)
+docs/                         # Operational docs (live) + design handoff (READ-ONLY)
+  runbooks/                   # deploy · secret-rotation · contact-form-incident
+  api/openapi-contact.yaml    # /api/contact contract
+  copy-*.md                   # @copywriter briefs
+  spikes/, visual-audit-*.md  # Historical snapshots
+  x-element/                  # READ-ONLY — design handoff (HTML/CSS prototype)
+  x-element-design-system/    # READ-ONLY — brand bible + DS preview cards
 .claude/
-  agents/             # Specialized QA/review/security/etc. agents
-  commands/           # Slash commands — including x-element-studio.md (project context)
-  hooks/              # PreToolUse/PostToolUse JS scripts (format/lint/protect/secret-scan)
-  rules/              # Path-scoped rules (qa-pipeline, security, api-contract, api-routes)
-  metrics/            # pipeline.jsonl + categories.json (QA telemetry)
+  agents/                     # 14 specialized QA/review/security/etc. agents
+  commands/                   # Slash commands — including x-element-studio.md (project context)
+  hooks/                      # PreToolUse/PostToolUse JS scripts (format/lint/protect/secret-scan)
+  rules/                      # Path-scoped rules (qa-pipeline, security, api-contract, api-routes)
+  plans/                      # Planning artifacts (audit reports, roadmaps)
+  metrics/                    # pipeline.jsonl + categories.json (QA telemetry)
 ```
 
 ### Section composition (Landing)
 
-`app/page.tsx` mounts: `Nav → Hero → Trust → Capabilities → Process → Work → Manifesto → FinalCta → Footer`. Each is co-located in `app/_components/<Section>/` and imported from `./_components/<Section>/<Section>` (relative) or `@/app/_components/<Section>/<Section>` (cross-route).
+`app/[locale]/page.tsx` mounts: `Nav → Hero → Trust → Capabilities → Process → Work → Manifesto → FinalCta → Footer`. `FinalCta` renders `ContactForm` via `ContactFormLazy` when `NEXT_PUBLIC_CONTACT_FORM_ENABLED=true`, otherwise falls back to a mailto button. Each section is co-located in `app/_components/<Section>/` and imported from `@/app/_components/<Section>/<Section>` (cross-route). All copy is read through `next-intl`'s `useTranslations`/`getTranslations` — no hardcoded strings in section files.
 
 Shared primitives:
 
@@ -91,7 +137,7 @@ If a change makes the page look "cool," it's wrong. If it looks **inevitable**, 
 
 ## QA pipeline (see `.claude/rules/qa-pipeline.md`)
 
-Code delivery: `(@tester + @security) → @reviewer`. Extended path-matrix triggers `@design-qa`, `@copywriter`, `@performance`, `@seo` automatically based on what files change. UI changes must reconcile against `docs/x-element/project/Landing Page-print.html` (the source of visual truth).
+Code delivery: `(@tester ∥ @security) → @reviewer`. Extended path-matrix triggers `@design-qa`, `@copywriter`, `@performance`, `@seo`, `@dba`, `@devops` automatically based on what files change. UI changes must reconcile against `docs/x-element/project/Landing Page-print.html` (the source of visual truth). The pipeline is non-negotiable; see the rule for state machine, severity gating, waivers, smart re-run, and the hotfix fast-path.
 
 ## Notes for future agents
 
